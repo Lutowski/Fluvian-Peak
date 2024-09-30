@@ -52,7 +52,7 @@
 /obj/item/rogueweapon/mace/silver
 	name = "Silver War Hammer"
 	desc = "A light war hammer forged of silver."
-	icon_state = "smace"
+	icon_state = "silverhammer"
 	force = 24
 	gripped_intents = null
 	possible_item_intents = list(/datum/intent/mace/strike, /datum/intent/mace/smash)
@@ -60,7 +60,6 @@
 	smeltresult = /obj/item/ingot/silver
 	smelt_bar_num = 2
 	is_silver = TRUE
-	dropshrink = 0.80
 
 /obj/item/rogueweapon/mace/getonmobprop(tag)
 	if(tag)
@@ -184,13 +183,27 @@
 	force = 25
 	icon_state = "cudgel"
 	force_wielded = 25
-	gripped_intents = null
+	gripped_intents = list(/datum/intent/mace/strike,/datum/intent/mace/smash)
 	smeltresult = /obj/item/ash
 	wlength = WLENGTH_SHORT
 	w_class = WEIGHT_CLASS_NORMAL
 	wbalance = 0
 	minstr = 7
 	wdefense = 3
+
+/obj/item/rogueweapon/mace/cudgel/justice
+	name = "'Justice'"
+	desc = "The icon of the right of office of the Marshal. While mostly ceremonial in design, it serves it's purpose in dishing out some much needed justice."
+	force = 30
+	icon_state = "justice"
+	force_wielded = 30
+	gripped_intents = list(/datum/intent/mace/strike,/datum/intent/mace/smash)
+	smeltresult = /obj/item/ingot/steel
+	wlength = WLENGTH_SHORT
+	w_class = WEIGHT_CLASS_NORMAL
+	wbalance = 4
+	minstr = 7
+	wdefense = 5
 
 /obj/item/rogueweapon/mace/cudgel/getonmobprop(tag)
 	. = ..()
