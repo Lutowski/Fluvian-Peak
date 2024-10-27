@@ -7,12 +7,12 @@
 	spawn_positions = 1
 	f_title = "Bathmatron"
 	allowed_races = RACES_ALL_KINDS
-	tutorial = "You are renting out the bath-house in a joint operation with the Innkeep. Providing security for the bathwenches and helping them find work, or a troublemaking rake that the others hate to tolerate."
+	tutorial = "You are renting out the bathhouse in a joint operation with the Innkeep. You provide security for the bathwenches and help them to find work--when you're not being a trouble-making rake that others suffer to tolerate."
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/job/roguetown/niteman
 	display_order = JDO_NITEMASTER
 	give_bank_account = 20
-	min_pq = 0
+	min_pq = 1 //No drugs until you finish the tutorial, Jimmy!
 	max_pq = null
 	bypass_lastclass = TRUE
 
