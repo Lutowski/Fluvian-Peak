@@ -8,6 +8,11 @@
 	stressadd = -2
 	desc = span_green("I saw a sinner get punished!")
 
+/datum/stressevent/lovezizo
+	timer = 99999 MINUTES
+	stressadd = -666 // :)
+	desc = span_green("ZIZOZIZOZIZO")
+
 /datum/stressevent/joke
 	timer = 30 MINUTES
 	stressadd = -2

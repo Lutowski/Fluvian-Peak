@@ -21,7 +21,6 @@ var/global/list/roguegamemodes = list("Rebellion", "Vampires and Werewolves", "E
 
 	var/list/allantags = list()
 
-	var/datum/team/roguecultists
 // DEBUG
 	var/list/forcedmodes = list()
 	var/mob/living/carbon/human/vlord = null
@@ -43,6 +42,7 @@ var/global/list/roguegamemodes = list("Rebellion", "Vampires and Werewolves", "E
 	var/kingsubmit = FALSE
 	var/deathknightspawn = FALSE
 	var/ascended = FALSE
+	var/cultascended = FALSE
 	var/list/datum/mind/deathknights = list()
 
 /datum/game_mode/chaosmode/proc/reset_skeletons()
@@ -148,6 +148,9 @@ var/global/list/roguegamemodes = list("Rebellion", "Vampires and Werewolves", "E
 				if("Maniac")
 					pick_maniac()
 					log_game("Minor Antagonist: Maniac)")
+				if("Zizoid Cultist")
+					pick_cultist()
+					log_game("Major Antagonist: Cultists")
 				if("Extended")
 					log_game("Major Antagonist: Extended")
 		return TRUE
@@ -332,6 +335,29 @@ var/global/list/roguegamemodes = list("Rebellion", "Vampires and Werewolves", "E
 		GLOB.pre_setup_antags |= antag
 	restricted_jobs = list()
 
+/datum/game_mode/chaosmode/proc/pick_cultist()
+	restricted_jobs = list("King",
+	"Queen",
+	"Merchant",
+	"Priest")
+	antag_candidates = get_players_for_role(ROLE_ZIZOIDCULTIST)
+	var/datum/mind/villain = pick_n_take(antag_candidates)
+	if(villain)
+		var/blockme = FALSE
+		if(!(villain in allantags))
+			blockme = TRUE
+		if(blockme)
+			return
+		allantags -= villain
+		pre_cultists += villain
+		villain.special_role = "cultist"
+		villain.restricted_roles = restricted_jobs.Copy()
+		testing("[key_name(villain)] has been selected as the [villain.special_role]")
+		log_game("[key_name(villain)] has been selected as the [villain.special_role]")
+	for(var/antag in pre_cultists)
+		GLOB.pre_setup_antags |= antag
+	restricted_jobs = list()
+
 /datum/game_mode/chaosmode/proc/pick_maniac()
 	restricted_jobs = list("Grand Duke", "Consort")
 	antag_candidates = get_players_for_role(ROLE_MANIAC)
@@ -481,6 +507,13 @@ var/global/list/roguegamemodes = list("Rebellion", "Vampires and Werewolves", "E
 		addtimer(CALLBACK(traitor, TYPE_PROC_REF(/datum/mind, add_antag_datum), new_antag), rand(10,100))
 		GLOB.pre_setup_antags -= traitor
 		villains += traitor
+
+///////////////// CULTIST
+	for(var/datum/mind/cultist in pre_cultists)
+		var/datum/antagonist/new_antag = new /datum/antagonist/zizocultist/leader()
+		addtimer(CALLBACK(cultist, TYPE_PROC_REF(/datum/mind, add_antag_datum), new_antag), rand(10,100))
+		GLOB.pre_setup_antags -= cultist
+		cultists += cultist
 
 ///////////////// LICH
 	for(var/datum/mind/lichman in pre_liches)

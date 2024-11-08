@@ -43,6 +43,8 @@ GLOBAL_LIST_INIT(badomens, list())
 			used = "A Noble has perished."
 		if(OMEN_SUNSTEAL)
 			used = "The Sun, she is wounded!"
+		if(OMEN_ASCEND)
+			used = "Zizo will rise once again."
 		if(OMEN_SKELETONSIEGE)
 			used = "Unwelcome visitors!"
 		if(ASCEND_FIRST)
