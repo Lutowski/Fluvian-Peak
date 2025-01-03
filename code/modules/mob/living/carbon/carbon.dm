@@ -375,10 +375,10 @@
 		return
 	I.item_flags |= BEING_REMOVED
 	breakouttime = I.slipouttime
-	if(STASTR > 10)
+	if((STASTR > 10) || (mind && mind.has_antag_datum(/datum/antagonist/zombie)))
 		cuff_break = FAST_CUFFBREAK
 		breakouttime = I.breakouttime
-	if(STASTR > 15 || (mind && mind.has_antag_datum(/datum/antagonist/zombie)) )
+	if(STASTR > 15)
 		cuff_break = INSTANT_CUFFBREAK
 	if(!cuff_break)
 		to_chat(src, "<span class='notice'>I attempt to remove [I]...</span>")
@@ -631,6 +631,8 @@
 		if(!internal_organs.len)
 			break //Guess we're out of organs!
 		var/obj/item/organ/guts = pick(internal_organs)
+		if(istype(guts, /obj/item/organ/brain)) //Don't hurl brains for mind sanity reasons
+			continue
 		var/turf/T = get_turf(src)
 		guts.Remove(src)
 		guts.forceMove(T)
@@ -1268,3 +1270,4 @@
 			return FALSE
 	if(istype(loc, /turf/open/water) && !(mobility_flags & MOBILITY_STAND))
 		return FALSE
+
