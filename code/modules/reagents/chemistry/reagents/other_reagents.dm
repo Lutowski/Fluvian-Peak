@@ -79,7 +79,7 @@
 	..()
 
 /datum/reagent/water/gross
-	taste_description = "lead"
+	taste_description = "something vile"
 	color = "#98934bc6"
 
 /datum/reagent/water/gross/reaction_mob(mob/living/L, method=TOUCH, reac_volume)
@@ -93,6 +93,52 @@
 	M.adjustToxLoss(1)
 	M.add_nausea(12) //Over 8 units will cause puking
 
+/datum/chemical_reaction/grosswaterboil //boiling water purifies it
+	name = "gross water purification"
+	id = /datum/reagent/water
+	results = list(/datum/reagent/water = 1)
+	required_reagents = list(/datum/reagent/water/gross = 1)
+	required_temp = 375
+
+/datum/reagent/water/bathwater
+	taste_description = "bathwater"
+	color = "#c9e5eec6"
+
+/datum/reagent/water/salty
+	taste_description = "salt"
+	color = "#417ac5c6"
+
+/datum/reagent/water/salty/reaction_mob(mob/living/L, method=TOUCH, reac_volume)
+	if(method == INGEST) // Make sure you DRANK the salty water before losing hydration
+		..()
+
+/datum/reagent/water/salty/on_mob_life(mob/living/carbon/M)
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		if(!HAS_TRAIT(H, TRAIT_NOHUNGER)&&!HAS_TRAIT(H, TRAIT_SEA_DRINKER))
+			H.adjust_hydration(-6)  //saltwater dehydrates more than it hydrates
+		else if(HAS_TRAIT(H, TRAIT_SEA_DRINKER))
+			H.adjust_hydration(hydration)  //saltwater dehydrates more than it hydrates
+	..()
+
+/datum/chemical_reaction/saltwaterify
+	name = "saltwater"
+	id = /datum/reagent/water/salty
+	results = list(/datum/reagent/water/salty = 2)
+	required_reagents = list(/datum/reagent/water/salty = 1, /datum/reagent/water = 1)
+
+/datum/chemical_reaction/saltwaterboil //boiling water purifies it
+	name = "saltwater purification"
+	id = /datum/reagent/water
+	results = list(/datum/reagent/water = 1)
+	required_reagents = list(/datum/reagent/water/salty = 1)
+	required_temp = 375
+
+/datum/chemical_reaction/saltwaterboil/on_reaction(datum/reagents/holder, created_volume)
+	var/location = get_turf(holder.my_atom)
+	new /obj/item/reagent_containers/powder/salt(location)
+	new /obj/item/reagent_containers/powder/salt(location)
+	new /obj/item/reagent_containers/powder/salt(location)
 
 /*
  *	Water reaction to turf
@@ -490,18 +536,6 @@
 	color = "#808080" // rgb: 128, 128, 128
 	taste_mult = 0 // oderless and tasteless
 
-/datum/reagent/oxygen/reaction_obj(obj/O, reac_volume)
-	if((!O) || (!reac_volume))
-		return 0
-	var/temp = holder ? holder.chem_temp : T20C
-	O.atmos_spawn_air("o2=[reac_volume/2];TEMP=[temp]")
-
-/datum/reagent/oxygen/reaction_turf(turf/open/T, reac_volume)
-	if(istype(T))
-		var/temp = holder ? holder.chem_temp : T20C
-		T.atmos_spawn_air("o2=[reac_volume/2];TEMP=[temp]")
-	return
-
 /datum/reagent/copper
 	name = "Copper"
 	description = "A highly ductile metal. Things made out of copper aren't very durable, but it makes a decent material for electrical wiring."
@@ -515,18 +549,6 @@
 	reagent_state = GAS
 	color = "#808080" // rgb: 128, 128, 128
 	taste_mult = 0
-
-/datum/reagent/nitrogen/reaction_obj(obj/O, reac_volume)
-	if((!O) || (!reac_volume))
-		return 0
-	var/temp = holder ? holder.chem_temp : T20C
-	O.atmos_spawn_air("n2=[reac_volume/2];TEMP=[temp]")
-
-/datum/reagent/nitrogen/reaction_turf(turf/open/T, reac_volume)
-	if(istype(T))
-		var/temp = holder ? holder.chem_temp : T20C
-		T.atmos_spawn_air("n2=[reac_volume/2];TEMP=[temp]")
-	return
 
 /datum/reagent/hydrogen
 	name = "Hydrogen"
@@ -885,18 +907,6 @@
 	color = "#B0B0B0" // rgb : 192, 192, 192
 	taste_description = "something unknowable"
 
-/datum/reagent/carbondioxide/reaction_obj(obj/O, reac_volume)
-	if((!O) || (!reac_volume))
-		return 0
-	var/temp = holder ? holder.chem_temp : T20C
-	O.atmos_spawn_air("co2=[reac_volume/5];TEMP=[temp]")
-
-/datum/reagent/carbondioxide/reaction_turf(turf/open/T, reac_volume)
-	if(istype(T))
-		var/temp = holder ? holder.chem_temp : T20C
-		T.atmos_spawn_air("co2=[reac_volume/5];TEMP=[temp]")
-	return
-
 /datum/reagent/nitrous_oxide
 	name = "Nitrous Oxide"
 	description = "A potent oxidizer used as fuel in rockets and as an anaesthetic during surgery."
@@ -904,17 +914,6 @@
 	metabolization_rate = 1.5 * REAGENTS_METABOLISM
 	color = "#808080"
 	taste_description = "sweetness"
-
-/datum/reagent/nitrous_oxide/reaction_obj(obj/O, reac_volume)
-	if((!O) || (!reac_volume))
-		return 0
-	var/temp = holder ? holder.chem_temp : T20C
-	O.atmos_spawn_air("n2o=[reac_volume/5];TEMP=[temp]")
-
-/datum/reagent/nitrous_oxide/reaction_turf(turf/open/T, reac_volume)
-	if(istype(T))
-		var/temp = holder ? holder.chem_temp : T20C
-		T.atmos_spawn_air("n2o=[reac_volume/5];TEMP=[temp]")
 
 /datum/reagent/nitrous_oxide/reaction_mob(mob/living/M, method=TOUCH, reac_volume)
 	if(method == VAPOR)
