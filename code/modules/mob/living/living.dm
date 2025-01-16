@@ -182,7 +182,9 @@
 				// Five or above tiles between people
 				if(6 to INFINITY)
 					self_points += 1
-
+			// If we have Giant virtue
+			if(HAS_TRAIT(src,TRAIT_BIGGUY))
+				self_points += 2
 			// If charging into the BACK of the enemy (facing away)
 			if(L.dir == get_dir(src, L))
 				self_points += 2
@@ -960,6 +962,35 @@
 	else
 		return pick("trails_1", "trails_2")
 
+/mob/living/experience_pressure_difference(pressure_difference, direction, pressure_resistance_prob_delta = 0)
+	if(buckled)
+		return
+	if(client && client.move_delay >= world.time + world.tick_lag*2)
+		pressure_resistance_prob_delta -= 30
+
+	var/list/turfs_to_check = list()
+
+	if(has_limbs)
+		var/turf/T = get_step(src, angle2dir(dir2angle(direction)+90))
+		if (T)
+			turfs_to_check += T
+
+		T = get_step(src, angle2dir(dir2angle(direction)-90))
+		if(T)
+			turfs_to_check += T
+
+		for(var/t in turfs_to_check)
+			T = t
+			if(T.density)
+				pressure_resistance_prob_delta -= 20
+				continue
+			for (var/atom/movable/AM in T)
+				if (AM.density && AM.anchored)
+					pressure_resistance_prob_delta -= 20
+					break
+	if(!force_moving)
+		..(pressure_difference, direction, pressure_resistance_prob_delta)
+
 /mob/living/can_resist()
 	return !((next_move > world.time) || incapacitated(ignore_restraints = TRUE, ignore_stasis = TRUE))
 
@@ -1272,10 +1303,8 @@
 	animate(pixel_x = final_pixel_x , pixel_y = final_pixel_y , time = 2)
 	setMovetype(movement_type & ~FLOATING) // If we were without gravity, the bouncing animation got stopped, so we make sure to restart it in next life().
 
-/mob/living/proc/get_temperature()
-//ATMO/TURF/TEMPERATURE
-	var/turf/cur_turf = get_turf(src)
-	var/loc_temp = cur_turf.temperature
+/mob/living/proc/get_temperature(datum/gas_mixture/environment)
+	var/loc_temp = environment ? environment.temperature : T0C
 	if(isobj(loc))
 		var/obj/oloc = loc
 		var/obj_temp = oloc.return_temperature()
