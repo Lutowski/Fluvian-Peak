@@ -156,7 +156,8 @@
 	if(resident_role)
 		var/datum/job/job = SSjob.name_occupations[human.job]
 		if(job.type != resident_role)
-			return FALSE
+			if(!HAS_TRAIT(human, TRAIT_RESIDENT))
+				return FALSE
 	if(resident_advclass)
 		if(!human.advjob)
 			return FALSE
@@ -371,6 +372,8 @@
 			return
 	if(istype(I, /obj/item/lockpick))
 		trypicklock(I, user)
+	if(istype(I, /obj/item/melee/touch_attack/lesserknock))
+		trypicklock(I, user)
 	if(istype(I,/obj/item/lockpickring))
 		var/obj/item/lockpickring/pickring = I
 		if(pickring.picks.len)
@@ -518,7 +521,10 @@
 		pickchance *= P.picklvl
 		pickchance = clamp(pickchance, 1, 95)
 
-
+		if(ishuman(user))
+			var/mob/living/carbon/human/H = user
+			message_admins("[H.real_name]([key_name(user)]) is attempting to lockpick [src.name]. [ADMIN_JMP(src)]")
+			log_admin("[H.real_name]([key_name(user)]) is attempting to lockpick [src.name].")
 
 		while(!QDELETED(I) &&(lockprogress < locktreshold))
 			if(!do_after(user, picktime, target = src))
@@ -531,6 +537,10 @@
 					add_sleep_experience(L, /datum/skill/misc/lockpicking, L.STAINT/2)
 				if(lockprogress >= locktreshold)
 					to_chat(user, "<span class='deadsay'>The locking mechanism gives.</span>")
+					if(ishuman(user))
+						var/mob/living/carbon/human/H = user
+						message_admins("[H.real_name]([key_name(user)]) successfully lockpicked [src.name]. [ADMIN_JMP(src)]")
+						log_admin("[H.real_name]([key_name(user)]) successfully lockpicked [src.name].")
 					lock_toggle(user)
 					break
 				else
