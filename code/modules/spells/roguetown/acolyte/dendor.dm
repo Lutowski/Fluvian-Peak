@@ -164,15 +164,19 @@ var/static/list/druid_forms = list(
 		"level" = 2
 	),
 	"mossback" = list(
-				"path" = /mob/living/simple_animal/hostile/retaliate/rogue/mossback,
+		"path" = /mob/living/simple_animal/hostile/retaliate/rogue/mossback,
 		"level" = 3
 	),
 	"mole" = list(
 		"path" = /mob/living/simple_animal/hostile/retaliate/rogue/mole,
 		"level" = 3
 	),
-	// Advanced forms (Level 6)
-	"dragon" = list(
+	"saiga" = list(
+		"path" = /mob/living/simple_animal/hostile/retaliate/rogue/saiga,
+		"level" = 3
+	),
+	// Advanced forms (Level 6) - Commented out
+	/*"dragon" = list(
 		"path" = /mob/living/simple_animal/hostile/retaliate/rogue/dragon,
 		"level" = 6
 	),
@@ -183,16 +187,11 @@ var/static/list/druid_forms = list(
 	"troll" = list(
 		"path" = /mob/living/simple_animal/hostile/retaliate/rogue/troll,
 		"level" = 6
-	),
-	"saiga" = list(
-		"path" = /mob/living/simple_animal/hostile/retaliate/rogue/saiga,
-		"level" = 3
-	),
+	),*/
 )
 
 /obj/effect/proc_holder/spell/self/dendor_shapeshift/Initialize()
 	. = ..()
-	START_PROCESSING(SSfastprocess, src)
 	charge_type = "recharge"
 	charge_counter = charge_max
 	charge_max = 30 SECONDS
@@ -200,53 +199,38 @@ var/static/list/druid_forms = list(
 	still_recharging_msg = span_warning("[name] is still recharging!")
 
 /obj/effect/proc_holder/spell/self/dendor_shapeshift/cast(mob/living/carbon/human/user)
-	to_chat(user, span_notice("DEBUG: Starting shapeshift cast"))
-	
-	// Keep existing psicross check for initial transformation
-	var/obj/shapeshift_holder/H = locate() in user
-	if(H)
-		// Remove psicross requirement for restoration
-		to_chat(user, span_notice("DEBUG: Found existing shapeshift, restoring"))
-		do_restore(user)
+	if(!user)
 		return FALSE
-		
-	// Check for required items only for initial transformation
+	
 	var/has_psicross = FALSE
-	for(var/obj/item/clothing/neck/roguetown/psicross/dendor/P in user.get_equipped_items())
+	for(var/obj/item/clothing/neck/roguetown/psicross/dendor/P in user)
 		has_psicross = TRUE
 		break
 	if(!has_psicross)
 		to_chat(user, span_warning("You need Dendor's psicross to cast this spell!"))
 		return FALSE
 		
-	// Only show form selection if we haven't picked one before
 	if(!saved_form)
 		var/list/animal_list = list()
 		var/druidic_level = user.mind?.get_skill_level(/datum/skill/magic/druidic) || 0
-		to_chat(user, span_notice("DEBUG: Druidic level is [druidic_level]"))
 		
 		for(var/animal_name in druid_forms)
 			var/list/animal_data = druid_forms[animal_name]
 			if(animal_data["level"] <= druidic_level)
 				animal_list[animal_name] = animal_data["path"]
-				to_chat(user, span_notice("DEBUG: Added [animal_name] to available forms"))
 				
 		if(!length(animal_list))
 			to_chat(user, span_warning("Your druidic knowledge is insufficient to take on any beast forms!"))
 			return FALSE
 			
-		to_chat(user, span_notice("DEBUG: Opening form selection menu"))
 		var/new_shapeshift_type = input(user, "Choose Your Animal Form! (Druidic Level: [druidic_level])", "It's Morphing Time!", null) as null|anything in sortList(animal_list)
 		if(!new_shapeshift_type)
-			to_chat(user, span_warning("DEBUG: No form selected"))
 			return FALSE
 			
-		to_chat(user, span_notice("DEBUG: Selected form [new_shapeshift_type]"))
 		saved_form = animal_list[new_shapeshift_type]
 	
 	selected_form = saved_form
 	if(selected_form)
-		to_chat(user, span_notice("DEBUG: Attempting shapeshift"))
 		do_shapeshift(user)
 
 /obj/effect/proc_holder/spell/self/dendor_shapeshift/proc/do_shapeshift(mob/living/caster)
@@ -306,6 +290,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 25
 			shape.melee_damage_upper = 35
+			shape.rot_type = null
 			
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/wolf)
 			shape.attack_verb_continuous = "mauls"
@@ -314,6 +299,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 30
 			shape.melee_damage_upper = 40
+			shape.rot_type = null
 			
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/troll)
 			shape.attack_verb_continuous = "crushes"
@@ -322,7 +308,8 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw/troll, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 40
 			shape.melee_damage_upper = 60
-			
+			shape.rot_type = null
+
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/dragon)
 			shape.attack_verb_continuous = "tears into"
 			shape.attack_verb_simple = "tear into"
@@ -330,6 +317,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 45
 			shape.melee_damage_upper = 65
+			shape.rot_type = null
 			
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/spider)
 			shape.attack_verb_continuous = "bites"
@@ -338,6 +326,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 20
 			shape.melee_damage_upper = 30
+			shape.rot_type = null
 
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/mossback)
 			shape.attack_verb_continuous = "slashes"
@@ -346,6 +335,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 25
 			shape.melee_damage_upper = 35
+			shape.rot_type = null
 
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/bigrat)
 			shape.attack_verb_continuous = "bites"
@@ -354,6 +344,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 15
 			shape.melee_damage_upper = 25
+			shape.rot_type = null
 
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/mudcrab)
 			shape.attack_verb_continuous = "pinches"
@@ -362,6 +353,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 10
 			shape.melee_damage_upper = 20
+			shape.rot_type = null
 
 		if(/mob/living/simple_animal/pet/cat)
 			shape.attack_verb_continuous = "claws"
@@ -370,6 +362,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 5
 			shape.melee_damage_upper = 10
+			shape.rot_type = null
 
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/minotaur)
 			shape.attack_verb_continuous = "gores"
@@ -378,6 +371,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw/troll, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 40
 			shape.melee_damage_upper = 60
+			shape.rot_type = null
 			
 		if(/mob/living/simple_animal/hostile/retaliate/rogue/saiga)
 			shape.attack_verb_continuous = "rams"
@@ -386,6 +380,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 25
 			shape.melee_damage_upper = 35
+			shape.rot_type = null
 			
 		else // Default animal form setup
 			shape.attack_verb_continuous = "attacks"
@@ -394,6 +389,7 @@ var/static/list/druid_forms = list(
 			shape.base_intents = list(/datum/intent/unarmed/claw, /datum/intent/simple/bite)
 			shape.melee_damage_lower = 15
 			shape.melee_damage_upper = 25
+			shape.rot_type = null
 	
 	
 	// Combat setup
