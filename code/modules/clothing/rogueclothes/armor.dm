@@ -136,23 +136,14 @@
 
 
 
-/obj/item/clothing/suit/roguetown/armor/gambeson/otavan
-	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_SHIRT
+/obj/item/clothing/suit/roguetown/armor/gambeson/heavy/otavan
 	name = "fencer gambeson"
 	desc = "A large shirt with heavy padding meant to be used below armor. Will probably stop an arrow, unlikely to stop a bolt."
 	icon_state = "fancygamb"
-	body_parts_covered = CHEST|GROIN|LEGS|ARMS|VITALS
 	armor = list("blunt" = 80, "slash" = 50, "stab" = 40, "piercing" = 60, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT,BCLASS_BLUNT)
-	blocksound = SOFTUNDERHIT
-	blade_dulling = DULLING_BASHCHOP
-	break_sound = 'sound/foley/cloth_rip.ogg'
-	drop_sound = 'sound/foley/dropsound/cloth_drop.ogg'
-	sewrepair = TRUE
-	r_sleeve_status = SLEEVE_NORMAL
-	l_sleeve_status = SLEEVE_NORMAL
-	armor_class = ARMOR_CLASS_LIGHT
 	allowed_race = NON_DWARVEN_RACE_TYPES
+	color = "#FFFFFF"
+	shiftable = FALSE
 
 /obj/item/clothing/suit/roguetown/armor/gambeson/councillor
 	color = "#646464"
@@ -400,8 +391,8 @@
 	sellprice = 100
 
 /obj/item/clothing/suit/roguetown/armor/leather/bikini
-	name = "leather bikini"
-	desc = "Flexible cowhide armor. Lightweight, better than nothing. Now in tasteful bikini shape."
+	name = "leather corslet"
+	desc = "Flexible cowhide armor. Lightweight, better than nothing. Trimmed to protect the heart and hips."
 	body_parts_covered = CHEST|GROIN
 	icon_state = "leatherkini"
 	item_state = "leatherkini"
@@ -409,8 +400,8 @@
 	allowed_race = CLOTHED_RACES_TYPES
 
 /obj/item/clothing/suit/roguetown/armor/leather/studded/bikini
-	name = "studded leather bikini"
-	desc = "Studded leather is the most durable of all hides and leathers and about as light. This one is in bikini form."
+	name = "studded leather corslet"
+	desc = "Studded leather is the most durable of all hides and leathers and about as light. Trimmed to protect the heart and hips."
 	body_parts_covered = CHEST|GROIN
 	icon_state = "studleatherkini"
 	item_state = "studleatherkini"
@@ -418,8 +409,8 @@
 	allowed_race = CLOTHED_RACES_TYPES
 
 /obj/item/clothing/suit/roguetown/armor/leather/hide/bikini
-	name = "hide bikini"
-	desc = "A light armor of wildbeast hide. Far more durable than leather. This will not keep a person warm though..."
+	name = "hide corslet"
+	desc = "A light armor of wildbeast hide. Far more durable than leather. Trimmed to protect the heart and hips."
 	body_parts_covered = CHEST|GROIN
 	icon_state = "hidearmorkini"
 	item_state = "hidearmorkini"
@@ -595,8 +586,8 @@
 
 
 /obj/item/clothing/suit/roguetown/armor/chainmail/bikini
-	name = "chainmail bikini"
-	desc = "Not very comfortable against the skin."
+	name = "chainmail corslet"	// corslet, from the old French 'cors' or bodice, with the diminutive 'let', used to describe lightweight military armor since 1500. Chosen here to replace 'bikini', an extreme anachronism.
+	desc = "For the daring, affording maille's protection with light weight."
 	icon_state = "chainkini"
 	item_state = "chainkini"
 	allowed_sex = list(FEMALE)
@@ -605,11 +596,13 @@
 	armor_class = ARMOR_CLASS_LIGHT //placed in the medium category to keep it with its parent obj
 
 /obj/item/clothing/suit/roguetown/armor/plate/bikini
-	name = "half-plate bikini"
-	desc = "Half plate in bikini form, still just as protective somehow. Save for the stomach."
+	name = "half-plate corslet"
+	desc = "A high breastplate and hip armor allowing flexibility and great protection, save for the stomach."
 	body_parts_covered = CHEST|GROIN
 	icon_state = "halfplatekini"
 	item_state = "halfplatekini"
+	armor = list("blunt" = 80, "slash" = 100, "stab" = 80, "piercing" = 40, "fire" = 0, "acid" = 0) // Identical to steel cuirass, but covering the groin instead of the vitals.
+	max_integrity = 300	// Identical to steel cuirasss. Same steel price.
 	allowed_sex = list(FEMALE)
 	armor_class = ARMOR_CLASS_MEDIUM
 	smelt_bar_num = 2
@@ -692,7 +685,7 @@
 
 /obj/item/clothing/suit/roguetown/armor/plate/full
 	name = "plate armor"
-	desc = "Full plate. Leg protecting tassets, groin cup, armored vambraces."
+	desc = "Full plate. Slow to don and doff without the aid of a good squire."
 	icon_state = "plate"
 	body_parts_covered = CHEST|GROIN|VITALS|LEGS|ARMS
 	equip_delay_self = 12 SECONDS
@@ -737,8 +730,8 @@
 
 
 /obj/item/clothing/suit/roguetown/armor/plate/full/bikini
-	name = "fullplate bikini"
-	desc = "Full plate in bikini form, full package and full exposure."
+	name = "full-plate corslet"
+	desc = "Breastplate, pauldrons, couters, cuisses... did you forget something?"
 	icon_state = "platekini"
 	allowed_sex = list(FEMALE)
 	body_parts_covered = CHEST|GROIN|LEGS|ARMS
@@ -784,28 +777,17 @@
 	armor_class = ARMOR_CLASS_HEAVY
 	smelt_bar_num = 4
 
-/obj/item/clothing/suit/roguetown/armor/otavan
-	slot_flags = ITEM_SLOT_ARMOR
+/obj/item/clothing/suit/roguetown/armor/plate/otavan
 	name = "otavan half-plate"
 	desc = "Half-plate armor with pauldrons. Recommended to layer with the otavan gambeson."
+	armor = list("blunt" = 80, "slash" = 100, "stab" = 80, "piercing" = 20, "fire" = 0, "acid" = 0)
 	body_parts_covered = CHEST|GROIN|VITALS
 	icon_state = "corsethalfplate"
 	item_state = "corsethalfplate"
 	adjustable = CAN_CADJUST
-	armor = list("blunt" = 80, "slash" = 100, "stab" = 80, "piercing" = 20, "fire" = 0, "acid" = 0)
-	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
-	nodismemsleeves = TRUE
-	max_integrity = 500
-	allowed_sex = list(MALE, FEMALE)
-	anvilrepair = /datum/skill/craft/armorsmithing
-	smeltresult = /obj/item/ingot/steel
-	equip_delay_self = 4 SECONDS
-	unequip_delay_self = 4 SECONDS
-	armor_class = ARMOR_CLASS_HEAVY
-	smelt_bar_num = 3
 	allowed_race = NON_DWARVEN_RACE_TYPES
 
-/obj/item/clothing/suit/roguetown/armor/otavan/AdjustClothes(mob/user)
+/obj/item/clothing/suit/roguetown/armor/plate/otavan/AdjustClothes(mob/user)
 	if(loc == user)
 		playsound(user, "sound/foley/dropsound/cloth_drop.ogg", 100, TRUE, -1)
 		if(adjustable == CAN_CADJUST)
