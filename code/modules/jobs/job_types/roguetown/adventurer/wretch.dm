@@ -80,15 +80,36 @@
 			backr = /obj/item/gwstrap
 		if("Battle Axe")
 			backr = /obj/item/rogueweapon/stoneaxe/battle
+	var/helmets = list(
+		"Pigface Bascinet" 	= /obj/item/clothing/head/roguetown/helmet/bascinet/pigface,
+		"Guard Helmet"		= /obj/item/clothing/head/roguetown/helmet/heavy/guard,
+		"Barred Helmet"		= /obj/item/clothing/head/roguetown/helmet/heavy/sheriff,
+		"Bucket Helmet"		= /obj/item/clothing/head/roguetown/helmet/heavy/bucket,
+		"Knight Helmet"		= /obj/item/clothing/head/roguetown/helmet/heavy/knight,
+		"Visored Sallet"			= /obj/item/clothing/head/roguetown/helmet/sallet/visored,
+		"Armet"				= /obj/item/clothing/head/roguetown/helmet/heavy/knight/armet,
+		"Hounskull Bascinet" 		= /obj/item/clothing/head/roguetown/helmet/bascinet/pigface/hounskull,
+		"Etruscan Bascinet" 		= /obj/item/clothing/head/roguetown/helmet/bascinet/etruscan,
+		"None"
+	)
+	var/helmchoice = input("Choose your Helm.", "TAKE UP HELMS") as anything in helmets
+	if(helmchoice != "None")
+		head = helmets[helmchoice]
+
+	var/armors = list(
+		"Brigandine"		= /obj/item/clothing/suit/roguetown/armor/brigandine,
+		"Coat of Plates"	= /obj/item/clothing/suit/roguetown/armor/brigandine/coatplates,
+		"Steel Cuirass"		= /obj/item/clothing/suit/roguetown/armor/plate/half,				
+	)
+	var/armorchoice = input("Choose your armor.", "TAKE UP ARMOR") as anything in armors
+	armor = armors[armorchoice]
 	H.change_stat("strength", 2)
 	H.change_stat("constitution", 2)
 	H.change_stat("endurance", 1)
-	head = /obj/item/clothing/head/roguetown/helmet/sallet/visored
 	gloves = /obj/item/clothing/gloves/roguetown/chain
 	pants = /obj/item/clothing/under/roguetown/chainlegs
 	neck = /obj/item/clothing/neck/roguetown/bevor
 	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail
-	armor = /obj/item/clothing/suit/roguetown/armor/brigandine/coatplates
 	wrists = /obj/item/clothing/wrists/roguetown/bracers
 	shoes = /obj/item/clothing/shoes/roguetown/boots/armor
 	belt = /obj/item/storage/belt/rogue/leather/steel
@@ -102,7 +123,7 @@
 	var/bounty_total
 	bounty_total = rand(151, 250)
 	add_bounty(H.real_name, bounty_total, FALSE, my_crime, "The Justiciary of Azuria")
-
+	to_chat(H, span_danger("You are an Antagonistic role. You are expected, by choosing to be a wretch, to sow chaos and division amongst the town while driving a story. Failure to use proper gravitas for this may get you punished for Low Role Play standards."))
 
 /datum/advclass/wretch/outlaw
 	name = "Outlaw"
@@ -170,6 +191,7 @@
 	var/bounty_total
 	bounty_total = rand(151, 250)
 	add_bounty(H.real_name, bounty_total, FALSE, my_crime, "The Justiciary of Azuria")
+	to_chat(H, span_danger("You are an Antagonistic role. You are expected, by choosing to be a wretch, to sow chaos and division amongst the town while driving a story. Failure to use proper gravitas for this may get you punished for Low Role Play standards."))
 
 /datum/advclass/wretch/poacher
 	name = "Poacher"
@@ -242,6 +264,7 @@
 	var/bounty_total
 	bounty_total = rand(151, 250)
 	add_bounty(H.real_name, bounty_total, FALSE, my_crime, "The Justiciary of Azuria")
+	to_chat(H, span_danger("You are an Antagonistic role. You are expected, by choosing to be a wretch, to sow chaos and division amongst the town while driving a story. Failure to use proper gravitas for this may get you punished for Low Role Play standards."))
 
 /datum/advclass/wretch/heretic
 	name = "Heretic"
@@ -313,6 +336,7 @@
 	add_bounty(H.real_name, bounty_total, FALSE, my_crime, "The Holy See")
 	H.cmode_music = 'sound/music/combat_cult.ogg'
 	H.verbs += list(/mob/living/carbon/human/proc/devotionreport, /mob/living/carbon/human/proc/clericpray)
+	to_chat(H, span_danger("You are an Antagonistic role. You are expected, by choosing to be a wretch, to sow chaos and division amongst the town while driving a story. Failure to use proper gravitas for this may get you punished for Low Role Play standards."))
 
 /datum/advclass/wretch/necromancer
 	name = "Necromancer"
@@ -368,7 +392,7 @@
 	var/bounty_total
 	bounty_total = rand(151, 250)
 	add_bounty(H.real_name, bounty_total, FALSE, my_crime, "The Holy See")
-
+	to_chat(H, span_danger("You are an Antagonistic role. You are expected, by choosing to be a wretch, to sow chaos and division amongst the town while driving a story. Failure to use proper gravitas for this may get you punished for Low Role Play standards."))
 
 /datum/advclass/wretch/berserker
 	name = "Berserker"
@@ -444,3 +468,4 @@
 	var/bounty_total
 	bounty_total = rand(151, 250)
 	add_bounty(H.real_name, bounty_total, FALSE, my_crime, "The Justiciary of Azuria")
+	to_chat(H, span_danger("You are an Antagonistic role. You are expected, by choosing to be a wretch, to sow chaos and division amongst the town while driving a story. Failure to use proper gravitas for this may get you punished for Low Role Play standards."))
