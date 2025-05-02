@@ -14871,7 +14871,8 @@
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/indoors/shelter/mountains/decap)
 "fLp" = (
-/turf/open/water/river,
+/obj/structure/roguerock,
+/turf/open/water/swamp,
 /area/rogue/under/town/sewer)
 "fLv" = (
 /obj/structure/ladder,
@@ -17618,6 +17619,7 @@
 /obj/structure/closet/crate/chest,
 /obj/item/rope/chain,
 /obj/item/rope/chain,
+/obj/item/clothing/cloak/stabard/guardhood,
 /turf/open/floor/rogue/ruinedwood{
 	icon_state = "weird1"
 	},
@@ -21358,6 +21360,10 @@
 	},
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/indoors/shelter/woods)
+"imY" = (
+/obj/structure/roguerock,
+/turf/open/water/cleanshallow,
+/area/rogue/under/town/sewer)
 "ina" = (
 /obj/structure/fluff/railing/fence{
 	dir = 1
@@ -54709,6 +54715,10 @@
 /obj/machinery/light/rogue/wallfire/candle/blue/r,
 /turf/open/floor/carpet/royalblack,
 /area/rogue/indoors/town/bath)
+"vpg" = (
+/obj/structure/roguerock,
+/turf/open/floor/rogue/naturalstone,
+/area/rogue/under/town/sewer)
 "vps" = (
 /obj/structure/mirror{
 	pixel_x = -28;
@@ -122915,7 +122925,7 @@ miF
 fCP
 vFS
 vFS
-orc
+eMU
 orc
 orc
 ogs
@@ -123367,7 +123377,7 @@ miF
 eMU
 vFS
 vFS
-orc
+eMU
 orc
 ogs
 ogs
@@ -137830,12 +137840,12 @@ miF
 bhJ
 bhJ
 bVT
-bVT
+vFS
+vFS
+eMU
 daP
-orc
-orc
-orc
-uvk
+daP
+jcb
 ogs
 ogs
 ogs
@@ -138282,10 +138292,10 @@ qHj
 miF
 bhJ
 bhJ
-jcb
+vFS
+vFS
+eMU
 daP
-orc
-orc
 orc
 miF
 miF
@@ -138734,8 +138744,8 @@ qHj
 miF
 miF
 bhJ
-bhJ
-bhJ
+vFS
+vFS
 bhJ
 bhJ
 orc
@@ -139186,8 +139196,8 @@ miF
 miF
 miF
 bhJ
-bhJ
-bhJ
+vFS
+vFS
 bhJ
 bhJ
 bhJ
@@ -139638,8 +139648,8 @@ cxZ
 cxZ
 cxZ
 cxZ
-bhJ
-bhJ
+vFS
+cxZ
 bhJ
 bhJ
 orc
@@ -140091,8 +140101,8 @@ cxZ
 cxZ
 cxZ
 cxZ
-daP
-daP
+cxZ
+xCK
 bhJ
 orc
 bhJ
@@ -140530,9 +140540,9 @@ cxZ
 cxZ
 cxZ
 cxZ
-fLp
-fLp
-orc
+eMU
+eMU
+eMU
 bhJ
 bhJ
 bhJ
@@ -140544,8 +140554,8 @@ bhJ
 bhJ
 bhJ
 bhJ
-orc
-orc
+xCK
+xCK
 orc
 bhJ
 bhJ
@@ -140982,9 +140992,9 @@ cxZ
 cxZ
 cxZ
 cxZ
-fLp
-fLp
+eMU
 orc
+vpg
 bhJ
 bhJ
 bhJ
@@ -140997,7 +141007,7 @@ bhJ
 bhJ
 bhJ
 bhJ
-daP
+xCK
 bhJ
 bhJ
 bhJ
@@ -148659,9 +148669,9 @@ bhJ
 bhJ
 bhJ
 bhJ
-tum
+ixP
 vFS
-bVT
+vFS
 bVT
 bVT
 bVT
@@ -149111,10 +149121,10 @@ tum
 tum
 tum
 tum
-tum
-eMU
+ixP
 vFS
-bVT
+vFS
+vFS
 bVT
 bVT
 bVT
@@ -149559,15 +149569,15 @@ tum
 tum
 tum
 tum
-tum
+htN
 htN
 htN
 tum
 ixP
-eMU
 vFS
-bVT
-bVT
+vFS
+vFS
+vFS
 bVT
 bVT
 ogl
@@ -150012,11 +150022,11 @@ htN
 htN
 htN
 htN
-htN
 tum
 tum
 ixP
-eMU
+ixP
+vFS
 vFS
 vFS
 vFS
@@ -150465,10 +150475,10 @@ htN
 tum
 tum
 tum
-tum
 ixP
 ixP
-eMU
+ixP
+vFS
 vFS
 vFS
 vFS
@@ -153632,7 +153642,7 @@ ogs
 miF
 miF
 ogs
-bVT
+vFS
 vFS
 vFS
 vFS
@@ -154084,7 +154094,7 @@ ogs
 miF
 qHj
 qHj
-qHj
+vFS
 vFS
 vFS
 vFS
@@ -154535,8 +154545,8 @@ ogs
 miF
 miF
 qHj
-qHj
-qHj
+nbg
+vFS
 vFS
 vFS
 vFS
@@ -154988,7 +154998,7 @@ miF
 miF
 qHj
 qHj
-qHj
+vFS
 vFS
 vFS
 bVT
@@ -155440,7 +155450,7 @@ miF
 qHj
 qHj
 qHj
-qHj
+vFS
 vFS
 vFS
 vFS
@@ -155892,7 +155902,7 @@ miF
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -156344,7 +156354,7 @@ qHj
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -156796,7 +156806,7 @@ qHj
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -157248,7 +157258,7 @@ qHj
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -157700,7 +157710,7 @@ qHj
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -158152,11 +158162,11 @@ qHj
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 eac
-vFS
+eMU
 ogs
 jcb
 orc
@@ -158604,10 +158614,10 @@ qHj
 qHj
 qHj
 ogs
-ogs
 vFS
 vFS
 vFS
+eMU
 eMU
 ogs
 uvk
@@ -159056,7 +159066,7 @@ miF
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 eMU
@@ -159508,7 +159518,7 @@ miF
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 ogs
@@ -159960,7 +159970,7 @@ miF
 miF
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 ogs
@@ -160412,7 +160422,7 @@ miF
 miF
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 ogs
@@ -160864,7 +160874,7 @@ miF
 miF
 miF
 ogs
-ogs
+vFS
 vFS
 vFS
 eMU
@@ -161316,7 +161326,7 @@ qHj
 miF
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -161768,7 +161778,7 @@ qHj
 miF
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -162220,7 +162230,7 @@ qHj
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -162672,7 +162682,7 @@ qHj
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -163124,7 +163134,7 @@ miF
 qHj
 qHj
 ogs
-ogs
+vFS
 vFS
 vFS
 vFS
@@ -164932,7 +164942,7 @@ miF
 qHj
 qHj
 ogs
-vFS
+bVT
 eMU
 eMU
 eMU
@@ -165388,7 +165398,7 @@ eMU
 eMU
 eMU
 eMU
-eMU
+imY
 ogs
 ogs
 ogs
@@ -169464,7 +169474,7 @@ ogs
 ogs
 ogs
 ogs
-xCK
+fLp
 xCK
 xCK
 xCK
