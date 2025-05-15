@@ -7,26 +7,6 @@
 	craftdiff = 0
 	time = 2 SECONDS
 
-/datum/crafting_recipe/roguetown/wheatflour
-	name = "flour (wheat)"
-	result = /obj/item/reagent_containers/powder/flour
-	reqs = list(/obj/item/reagent_containers/food/snacks/grown/wheat = 1)
-	structurecraft = /obj/structure/fluff/millstone
-	verbage_simple = "mill"
-	verbage = "mills"
-	craftdiff = -2
-	time = 3
-
-/datum/crafting_recipe/roguetown/oatflour
-	name = "flour (oat)"
-	result = /obj/item/reagent_containers/powder/flour
-	reqs = list(/obj/item/reagent_containers/food/snacks/grown/oat = 1)
-	structurecraft = /obj/structure/fluff/millstone
-	verbage_simple = "mill"
-	verbage = "mills"
-	craftdiff = -2
-	time = 3
-
 /datum/crafting_recipe/roguetown/structure/plough
 	name = "plough"
 	result = /obj/structure/plough
@@ -84,6 +64,17 @@
 	name = "westleach zig"
 	result = /obj/item/clothing/mask/cigarette/rollie/nicotine
 	reqs = list(/obj/item/reagent_containers/food/snacks/grown/rogue/pipeweeddry = 1,
+				/obj/item/paper = 1)
+	req_table = TRUE
+	time = 10 SECONDS
+	verbage_simple = "roll"
+	verbage = "rolls"
+	craftdiff = 0
+
+/datum/crafting_recipe/roguetown/rocknutdry
+	name = "rocknut zig"
+	result = /obj/item/clothing/mask/cigarette/rollie/nicotine
+	reqs = list(/obj/item/reagent_containers/powder/rocknut = 1,
 				/obj/item/paper = 1)
 	req_table = TRUE
 	time = 10 SECONDS
