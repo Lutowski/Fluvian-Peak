@@ -35,6 +35,9 @@
 	swingdelay = 0
 	item_d_type = "stab"
 
+/datum/intent/sword/thrust/krieg
+	damfactor = 0.9
+
 /datum/intent/sword/strike
 	name = "pommel strike"
 	icon_state = "instrike"
@@ -84,6 +87,15 @@
 
 /datum/intent/sword/chop/falx
 	penfactor = 40
+
+/datum/intent/sword/cut/krieg
+	clickcd = 10
+
+/datum/intent/sword/thrust/krieg
+	damfactor = 0.8
+
+/datum/intent/rend/krieg
+	intent_intdamage_factor = 0.2
 
 //sword objs ฅ^•ﻌ•^ฅ
 
@@ -512,7 +524,8 @@
 	name = "executioners sword"
 	desc = "A longsword with extra heft to its blade, reinforced."
 	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/peel, /datum/intent/sword/strike)
-	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike, /datum/intent/axe/chop)
+	gripped_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike, /datum/intent/sword/chop)
+	alt_intents = list(/datum/intent/sword/cut, /datum/intent/sword/thrust, /datum/intent/sword/strike, /datum/intent/rend)
 	icon_state = "exe"
 	minstr = 12
 	slot_flags = ITEM_SLOT_BACK //Too big for hip
@@ -642,6 +655,14 @@
 	minstr = 4
 	wdefense = 2
 
+/obj/item/rogueweapon/sword/iron/messer/virtue
+	name = "dueling messer"
+	desc = "A basic single-edge iron hunting sword that has been modified for the express purpose of dueling, with an added guard and a leaner grip for comfort and speed."
+	icon_state = "dmesser"
+	swingsound = BLADEWOOSH_SMALL
+	wdefense = 3
+	wbalance = WBALANCE_SWIFT
+
 // This typepath is so fucked bruh but I am not repeating code and not dropping a massive merge conflict for now
 /obj/item/rogueweapon/sword/iron/messer/copper 
 	name = "copper messer"
@@ -662,6 +683,7 @@
 	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust, /datum/intent/axe/chop, /datum/intent/sword/peel)
 	gripped_intents = null
 	minstr = 5
+	wdefense = 4
 
 /obj/item/rogueweapon/sword/sabre
 	name = "sabre"
@@ -1241,3 +1263,21 @@
 				"eastabove" = 1,
 				"westabove" = 0,
 				)
+
+/obj/item/rogueweapon/sword/long/kriegmesser
+	name = "kriegmesser"
+	desc = "A large two-handed sword with a single-edged blade, a crossguard and a knife-like hilt. \
+	It is meant to be wielded with both hands and is a popular weapon amongst Grenzelhoftian mercenaries."
+	icon = 'icons/roguetown/weapons/swords64.dmi'
+	icon_state = "kriegmesser"
+	possible_item_intents = list(/datum/intent/sword/cut/krieg, /datum/intent/sword/chop/falx, /datum/intent/rend/krieg, /datum/intent/sword/strike)
+	gripped_intents = list(/datum/intent/sword/cut/krieg, /datum/intent/sword/thrust/krieg, /datum/intent/rend/krieg, /datum/intent/sword/strike)
+	alt_intents = null // Can't mordhau this
+	smeltresult = /obj/item/ingot/steel
+
+/obj/item/rogueweapon/sword/long/dec
+	name = "decorated longsword"
+	desc = "A valuable ornate longsword made for the purpose of ceremonial fashion, with a fine leather grip and a carefully engraved golden crossguard. \
+	Its blade bears twin inscriptions on either side. One reads, \"THY KINGDOM COME\" while the obverse reads, \"THY WILL BE DONE\"."
+	icon_state = "declongsword"
+	sellprice = 140
