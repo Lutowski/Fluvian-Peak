@@ -31,7 +31,7 @@
 	parrysound = list('sound/combat/parry/shield/towershield (1).ogg','sound/combat/parry/shield/towershield (2).ogg','sound/combat/parry/shield/towershield (3).ogg')
 	parrysound = list('sound/combat/parry/shield/towershield (1).ogg','sound/combat/parry/shield/towershield (2).ogg','sound/combat/parry/shield/towershield (3).ogg')
 	max_integrity = 150
-	blade_dulling = DULLING_BASHCHOP
+	blade_dulling = DULLING_SHAFT_WOOD
 	anvilrepair = /datum/skill/craft/weaponsmithing
 	COOLDOWN_DECLARE(shield_bang)
 
@@ -164,6 +164,7 @@
 	throw_range = 3
 	wlength = WLENGTH_NORMAL
 	resistance_flags = FLAMMABLE
+	blade_dulling = DULLING_SHAFT_REINFORCED
 	wdefense = 10
 	coverage = 40
 	parrysound = list('sound/combat/parry/shield/towershield (1).ogg','sound/combat/parry/shield/towershield (2).ogg','sound/combat/parry/shield/towershield (3).ogg')
@@ -180,7 +181,7 @@
 	resistance_flags = null
 	flags_1 = CONDUCT_1
 	force = 20
-	blade_dulling = DULLING_BASH
+	blade_dulling = DULLING_SHAFT_METAL
 	sellprice = 30
 
 /obj/item/rogueweapon/shield/tower/holysee/dark
@@ -213,7 +214,7 @@
 	attacked_sound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
 	parrysound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
 	max_integrity = 300
-	blade_dulling = DULLING_BASH
+	blade_dulling = DULLING_SHAFT_METAL
 	sellprice = 30
 
 /obj/item/rogueweapon/shield/tower/metal/getonmobprop(tag)
@@ -232,12 +233,14 @@
 	wdefense = 9
 	icon_state = "ancientsh"
 	smeltresult = /obj/item/ingot/aalloy
+	blade_dulling = DULLING_SHAFT_CONJURED
 
 /obj/item/rogueweapon/shield/tower/metal/palloy
 	name = "ancient shield"
 	desc = "A ancient, venerable shield. Aeon's grasp has been lifted from it."
 	icon_state = "ancientsh"
 	smeltresult = /obj/item/ingot/purifiedaalloy
+	blade_dulling = DULLING_SHAFT_METAL
 
 /obj/item/rogueweapon/shield/tower/raneshen
 	name = "rider shield"
@@ -272,8 +275,8 @@
 	coverage = 10
 	attacked_sound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
 	parrysound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
-	max_integrity = 300
-	blade_dulling = DULLING_BASH
+	max_integrity = 180
+	blade_dulling = DULLING_SHAFT_CONJURED
 	associated_skill = /datum/skill/combat/shields
 	grid_width = 32
 	grid_height = 64
@@ -312,7 +315,7 @@
 	desc = "An object once before its time, now out of it. The artisan's hammerstrikes are still visible in the mottled surface, yet \
 	the encroach of rust and rot threatens even this memory."
 	icon_state = "ancient_buckler"
-	max_integrity = 180
+	max_integrity = 80
 	smeltresult = /obj/item/ingot/purifiedaalloy
 
 /obj/item/rogueweapon/shield/heater
@@ -336,6 +339,28 @@
 			if("onback")
 				return list("shrink" = 0.6,"sx" = 1,"sy" = 4,"nx" = 1,"ny" = 2,"wx" = 3,"wy" = 3,"ex" = 0,"ey" = 2,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 8,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 1,"southabove" = 0,"eastabove" = 0,"westabove" = 0)
 
+
+/obj/item/rogueweapon/shield/iron
+	name = "iron shield"
+	desc = "A heavy iron shield. It's cheaper than steel, but more encumbering."
+	icon_state = "ironsh"
+	force = 20
+	throwforce = 25 // "I can do this all day."
+	dropshrink = 0.8
+	coverage = 30
+	attacked_sound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
+	parrysound = list('sound/combat/parry/shield/metalshield (1).ogg','sound/combat/parry/shield/metalshield (2).ogg','sound/combat/parry/shield/metalshield (3).ogg')
+	possible_item_intents = list(SHIELD_SMASH_METAL, SHIELD_BLOCK) // No SHIELD_BASH. Too heavy to swing quickly, or something.
+	max_integrity = 200
+
+/obj/item/rogueweapon/shield/iron/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen")
+				return list("shrink" = 0.6,"sx" = -5,"sy" = -1,"nx" = 6,"ny" = -1,"wx" = 0,"wy" = -2,"ex" = 0,"ey" = -2,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0)
+			if("onback")
+				return list("shrink" = 0.6,"sx" = 1,"sy" = 4,"nx" = 1,"ny" = 2,"wx" = 3,"wy" = 3,"ex" = 0,"ey" = 2,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 8,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 1,"southabove" = 0,"eastabove" = 0,"westabove" = 0)
 
 #undef SHIELD_BANG_COOLDOWN
 

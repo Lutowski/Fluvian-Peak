@@ -32,12 +32,15 @@
 		if("gold")
 			sellprice = sellprice * 10
 			name = "legendary [initial(name)]"
+			rarity_rank = 3
 		if("ultra")
 			sellprice = sellprice * 4
 			name = "ultra-rare [initial(name)]"
+			rarity_rank = 2
 		if("rare")
 			sellprice = sellprice * 2
 			name = "rare [initial(name)]"
+			rarity_rank = 1
 		if("com")
 			name = "common [initial(name)]"
 	if(!dead)
@@ -48,7 +51,7 @@
 		var/mob/living/L = user
 		if(!(L.mobility_flags & MOBILITY_PICKUP))
 			return
-	user.changeNext_move(CLICK_CD_MELEE)
+	user.changeNext_move(CLICK_CD_INTENTCAP)
 	if(dead)
 		..()
 	else

@@ -802,6 +802,19 @@
 	desc = "An ornamental stone statue of the sun Goddess Astrata, decorated with golden jewelry. Bless."
 	icon_state = "astrata_bling"
 
+//Why are all of these in one giant file.
+/obj/structure/fluff/statue/abyssor
+	name = "abyssor statue"
+	desc = "A slate statue of the ancient god abyssor. One of many depictions drawn from a dream no doubt. This particular one is horrifying to look at."
+	icon_state = "abyssor"
+	icon = 'icons/roguetown/misc/tallandwide.dmi'
+	pixel_x = -16
+
+/obj/structure/fluff/statue/abyssor/dolomite
+	name = "abyssor statue"
+	desc = "A rare dolomite statue of the ancient god abyssor. Hewn from bleached rock as if the shimmer makes his faceless gaze any less terrifying."
+	icon_state = "abyssor_dolomite"
+
 /obj/structure/fluff/statue/knight/r
 	icon_state = "knightstatue_r"
 
@@ -888,7 +901,7 @@
 					user.changeNext_move(CLICK_CD_MELEE)
 					if(W.max_blade_int)
 						W.remove_bintegrity(5)
-					L.rogfat_add(rand(4,6))
+					L.stamina_add(rand(4,6))
 					if(!(L.mobility_flags & MOBILITY_STAND))
 						probby = 0
 					if(L.STAINT < 3)
@@ -1009,7 +1022,7 @@
 	buckle_requires_restraints = 1
 	buckle_prevents_pull = 1
 	var/divine = TRUE
-	obj_flags = UNIQUE_RENAME
+	obj_flags = UNIQUE_RENAME | CAN_BE_HIT
 
 /obj/structure/fluff/psycross/post_buckle_mob(mob/living/M)
 	..()
@@ -1175,6 +1188,7 @@
 					return
 	return ..()
 
+
 /obj/structure/fluff/psycross/copper/Destroy()
 	addomen("psycross")
 	..()
@@ -1257,24 +1271,6 @@
 	name = "clockwork golem scrap"
 	desc = ""
 	icon_state = "clockgolem_dead"
-
-/obj/structure/fluff/statue/shisha
-	name = "shisha pipe"
-	desc = "A traditional shisha pipe, this one is broken."
-	icon = 'icons/roguetown/misc/64x64.dmi'
-	icon_state = "zbuski"
-	density = FALSE
-	anchored = TRUE
-	layer = ABOVE_MOB_LAYER
-	plane = GAME_PLANE_UPPER
-	blade_dulling = DULLING_BASH
-	max_integrity = 300
-
-/obj/structure/fluff/statue/shisha/hookah
-	name = "shisha pipe"
-	desc = "A traditional shisha pipe, this one is broken."
-	icon = 'icons/roguetown/misc/structure.dmi'
-	icon_state = "hookah"
 
 /obj/structure/fluff/headstake
 	name = "head on a stake"

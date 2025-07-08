@@ -5,6 +5,7 @@
 	planning_subtrees = list(
 		/datum/ai_planning_subtree/blink_if_far,
 		/datum/ai_planning_subtree/target_retaliate,
+		/datum/ai_planning_subtree/attack_obstacle_in_path,
 		/datum/ai_planning_subtree/basic_melee_attack_subtree/abyssal
 	)
 	blackboard = list(
@@ -23,6 +24,7 @@
 	planning_subtrees = list(
 		/datum/ai_planning_subtree/blink_if_far,
 		/datum/ai_planning_subtree/target_retaliate,
+		/datum/ai_planning_subtree/attack_obstacle_in_path,
 		/datum/ai_planning_subtree/basic_melee_attack_subtree/abyssal,
 		/datum/ai_planning_subtree/kick,
 	)
@@ -191,7 +193,7 @@
 				target_table = locate(/obj/structure/table) in target_shove_turf.contents
 				shove_blocked = TRUE
 		else
-			if((stander && target.rogfat >= target.maxrogfat) || target.IsOffBalanced()) //if you are kicked while fatigued, you are knocked down no matter what
+			if((stander && target.stamina >= target.max_stamina) || target.IsOffBalanced()) //if you are kicked while fatigued, you are knocked down no matter what
 				target.Knockdown(target.IsOffBalanced() ? SHOVE_KNOCKDOWN_SOLID : 100)
 				target.visible_message(span_danger("[user.name] charges [target.name], knocking them down!"),
 				span_danger("I'm knocked down from a devestating leg swipe by the [user.name]!"), span_hear("I hear aggressive clacking followed by a loud thud!"), COMBAT_MESSAGE_RANGE, user)
@@ -243,7 +245,7 @@
 	target.lastattacker = user.real_name
 	if(target.mind)
 		target.mind.attackedme[user.real_name] = world.time
-	user.rogfat_add(15)
+	user.stamina_add(15)
 	target.forcesay(GLOB.hit_appends)
 
 	finish_action(controller, TRUE, target_key)
@@ -269,6 +271,7 @@
 
 	planning_subtrees = list(
 		/datum/ai_planning_subtree/simple_find_target/closest,
+		/datum/ai_planning_subtree/attack_obstacle_in_path,
 		/datum/ai_planning_subtree/blink_if_far,
 		/datum/ai_planning_subtree/target_retaliate,
 		/datum/ai_planning_subtree/basic_melee_attack_subtree
@@ -285,6 +288,7 @@
 
 	planning_subtrees = list(
         /datum/ai_planning_subtree/simple_find_target/closest,
+		/datum/ai_planning_subtree/attack_obstacle_in_path,
 		/datum/ai_planning_subtree/blink_if_far,
 		/datum/ai_planning_subtree/target_retaliate,
 		/datum/ai_planning_subtree/basic_melee_attack_subtree,

@@ -45,28 +45,31 @@
 	ADD_TRAIT(H, TRAIT_TRAINED_SMITH, TRAIT_GENERIC)
 	if(prob(50))
 		head = /obj/item/clothing/head/roguetown/hatblu
-	if(H.mind)
-		H.mind.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/maces, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/crafting, 3, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/blacksmithing, 5, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/armorsmithing, 5, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/weaponsmithing, 5, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/smelting, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/engineering, 1, TRUE) // 1 Engineering to allow them to sub for Artificer role occaisonally
-		H.mind.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
-		if(H.age == AGE_OLD)
-			H.mind.adjust_skillrank(/datum/skill/craft/blacksmithing, 1, TRUE)
-			H.mind.adjust_skillrank(/datum/skill/craft/armorsmithing, 1, TRUE)
-			H.mind.adjust_skillrank(/datum/skill/craft/weaponsmithing, 1, TRUE)
-			H.mind.adjust_skillrank(/datum/skill/craft/smelting, 1, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/maces, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/crafting, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/blacksmithing, 5, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/armorsmithing, 5, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/weaponsmithing, 5, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/smelting, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/engineering, 1, TRUE) // 1 Engineering to allow them to sub for Artificer role occaisonally
+	H.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
+	if(H.age == AGE_OLD)
+		H.adjust_skillrank(/datum/skill/craft/blacksmithing, 1, TRUE)
+		H.adjust_skillrank(/datum/skill/craft/armorsmithing, 1, TRUE)
+		H.adjust_skillrank(/datum/skill/craft/weaponsmithing, 1, TRUE)
+		H.adjust_skillrank(/datum/skill/craft/smelting, 1, TRUE)
 	if(should_wear_femme_clothes(H))
 		pants = /obj/item/clothing/under/roguetown/trou
 		armor = /obj/item/clothing/suit/roguetown/shirt/dress/gen/random
 		backr = /obj/item/storage/backpack/rogue/satchel
-		backpack_contents = list(/obj/item/rogueweapon/hammer/iron = 1, /obj/item/rogueweapon/tongs = 1, /obj/item/recipe_book/blacksmithing = 1)
+		backpack_contents = list(
+			/obj/item/rogueweapon/hammer/iron = 1,
+			/obj/item/rogueweapon/tongs = 1,
+			/obj/item/recipe_book/blacksmithing = 1,
+			)
 		shoes = /obj/item/clothing/shoes/roguetown/shortboots
 		belt = /obj/item/storage/belt/rogue/leather
 		cloak = /obj/item/clothing/cloak/apron/blacksmith
@@ -77,7 +80,11 @@
 		shoes = /obj/item/clothing/shoes/roguetown/boots/leather
 		shirt = /obj/item/clothing/suit/roguetown/shirt/shortshirt
 		backr = /obj/item/storage/backpack/rogue/satchel
-		backpack_contents = list(/obj/item/rogueweapon/hammer/iron = 1, /obj/item/rogueweapon/tongs = 1, /obj/item/recipe_book/blacksmithing = 1)
+		backpack_contents = list(
+			/obj/item/rogueweapon/hammer/iron = 1,
+			/obj/item/rogueweapon/tongs = 1,
+			/obj/item/recipe_book/blacksmithing = 1,
+			)
 		belt = /obj/item/storage/belt/rogue/leather
 		beltl = /obj/item/storage/belt/rogue/pouch/coins/poor
 		beltr = /obj/item/roguekey/crafterguild
@@ -99,23 +106,22 @@
 
 /datum/outfit/job/roguetown/guildsman/artificer/pre_equip(mob/living/carbon/human/H)
 	..()
-	if(H.mind)
-		H.mind.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/maces, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/crafting, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/engineering, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/blacksmithing, 2, TRUE) // Artificer makes for a crappy substitute blacksmith but have the same spread
-		H.mind.adjust_skillrank(/datum/skill/craft/armorsmithing, 2, TRUE) 
-		H.mind.adjust_skillrank(/datum/skill/craft/weaponsmithing, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/magic/arcane, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/lockpicking, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/smelting, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/traps, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/ceramics, 3, TRUE)	//Just for basic pottery/glass stuff.
+	H.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/maces, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/crafting, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/engineering, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/blacksmithing, 2, TRUE) // Artificer makes for a crappy substitute blacksmith but have the same spread
+	H.adjust_skillrank(/datum/skill/craft/armorsmithing, 2, TRUE) 
+	H.adjust_skillrank(/datum/skill/craft/weaponsmithing, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/magic/arcane, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/lockpicking, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/smelting, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/traps, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/ceramics, 3, TRUE)	//Just for basic pottery/glass stuff.
 
 	head = /obj/item/clothing/head/roguetown/articap
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/jacket/artijacket
@@ -139,8 +145,9 @@
 						/obj/item/recipe_book/survival = 1,
 						)
 	// Not a real mage, no free spell point. Take Arcyne Potential if you want it.
-	H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/prestidigitation)
-	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/enchant_weapon)
+	if(H.mind)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/touch/prestidigitation)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/enchant_weapon)
 	ADD_TRAIT(H, TRAIT_ARCYNE_T1, TRAIT_GENERIC)
 	H.change_stat("strength", 1)
 	H.change_stat("intelligence", 3)
@@ -158,23 +165,22 @@
 
 /datum/outfit/job/roguetown/guildsman/architect/pre_equip(mob/living/carbon/human/H)
 	..()
-	if(H.mind)
-		H.mind.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/maces, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/labor/lumberjacking, 3, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/labor/mining, 3, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE) 
-		H.mind.adjust_skillrank(/datum/skill/craft/crafting, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/carpentry, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/masonry, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/engineering, 4, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/swimming, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/craft/traps, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
-		H.mind.adjust_skillrank(/datum/skill/misc/ceramics, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/maces, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/labor/lumberjacking, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/labor/mining, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE) 
+	H.adjust_skillrank(/datum/skill/craft/crafting, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/carpentry, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/masonry, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/engineering, 4, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/swimming, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/traps, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/reading, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/ceramics, 2, TRUE)
 
 	head = /obj/item/clothing/head/roguetown/hatblu
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/vest
@@ -185,7 +191,7 @@
 	belt = /obj/item/storage/belt/rogue/leather
 	beltr = /obj/item/flashlight/flare/torch/lantern
 	beltl = /obj/item/rogueweapon/pick/steel
-	backr = /obj/item/rogueweapon/stoneaxe/woodcut/steel
+	backr = /obj/item/rogueweapon/stoneaxe/woodcut/steel/woodcutter
 	backl = /obj/item/storage/backpack/rogue/backpack
 	backpack_contents = list(
 						/obj/item/rogueweapon/hammer/steel = 1,
