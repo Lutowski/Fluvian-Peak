@@ -7,9 +7,14 @@
 	crate_type = /obj/structure/closet/crate/chest/merchant
 
 /datum/supply_pack/rogue/armor_iron/chainmail_iron
-	name = "Chainmaille"
+	name = "Haubergeon"
 	cost = 25
 	contains = list(/obj/item/clothing/suit/roguetown/armor/chainmail/iron)
+
+/datum/supply_pack/rogue/armor_iron/hauberk_iron
+	name = "Hauberk"
+	cost = 40
+	contains = list(/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/iron)
 
 /datum/supply_pack/rogue/armor_iron/chaincoif_iron
 	name = "Chain Coif"
@@ -44,6 +49,7 @@
 /datum/supply_pack/rogue/armor_iron/fullplate
 	name = "Full Plate"
 	cost = 115 // Uhhh I don't think I should be selling them for 80
+	mandated_public_profit = 1 // Just slap a 100% profit margin on top
 	contains = list(/obj/item/clothing/suit/roguetown/armor/plate/full/iron)
 
 /datum/supply_pack/rogue/armor_iron/rearbraces
@@ -52,7 +58,7 @@
 	contains = list(/obj/item/clothing/wrists/roguetown/splintarms)
 
 /datum/supply_pack/rogue/armor_iron/bracers
-	name = "Bracers, Iron"
+	name = "Bracers, Plate"
 	cost = 25
 	contains = list(/obj/item/clothing/wrists/roguetown/bracers/iron)
 

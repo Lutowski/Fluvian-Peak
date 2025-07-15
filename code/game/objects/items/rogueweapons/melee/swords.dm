@@ -622,6 +622,7 @@
 	desc = "A bronze short sword with a slightly wider end, and no guard. Best used together with a shield, thrusted directly into your enemy's guts."
 	icon_state = "gladius"
 	max_integrity = 200
+	smeltresult = /obj/item/ingot/bronze
 	wdefense = 3
 
 /obj/item/rogueweapon/sword/iron/short/gladius/agladius
@@ -695,6 +696,17 @@
 	gripped_intents = null
 	minstr = 5
 	wdefense = 4
+
+/obj/item/rogueweapon/sword/iron/saber
+	name = "iron saber"
+	desc = "A Naledian sword mass produced for line infantry. Its fittings are simple, munitions grade, but the construction is sturdy and the blade as threatening \
+	as any."
+	icon_state = "isaber"
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust/sabre, /datum/intent/sword/peel, /datum/intent/sword/strike)
+	gripped_intents = null
+	parrysound = list('sound/combat/parry/bladed/bladedthin (1).ogg', 'sound/combat/parry/bladed/bladedthin (2).ogg', 'sound/combat/parry/bladed/bladedthin (3).ogg')
+	swingsound = BLADEWOOSH_SMALL
+	wbalance = WBALANCE_SWIFT
 
 /obj/item/rogueweapon/sword/sabre
 	name = "sabre"
