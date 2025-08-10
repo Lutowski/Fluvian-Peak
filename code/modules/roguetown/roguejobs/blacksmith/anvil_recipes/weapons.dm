@@ -56,7 +56,7 @@
 	name = "Decrepit Alloy Gladius"
 	appro_skill = /datum/skill/craft/weaponsmithing
 	req_bar = /obj/item/ingot/aalloy
-	created_item = /obj/item/rogueweapon/sword/iron/short/gladius/agladius
+	created_item = /obj/item/rogueweapon/sword/short/gladius/agladius
 	craftdiff = 0
 
 
@@ -64,14 +64,14 @@
 	name = "Purified Alloy Gladius"
 	appro_skill = /datum/skill/craft/weaponsmithing
 	req_bar = /obj/item/ingot/purifiedaalloy
-	created_item = /obj/item/rogueweapon/sword/iron/short/gladius/pagladius
+	created_item = /obj/item/rogueweapon/sword/short/gladius/pagladius
 	craftdiff = 0
 
 /datum/anvil_recipe/weapons/aalloy/shortsword
 	name = "Decrepit Alloy Shortsword"
 	appro_skill = /datum/skill/craft/weaponsmithing
 	req_bar = /obj/item/ingot/aalloy
-	created_item = /obj/item/rogueweapon/sword/iron/short/ashort
+	created_item = /obj/item/rogueweapon/sword/short/ashort
 	craftdiff = 0
 
 
@@ -265,7 +265,7 @@
 	name = "Copper Messer"
 	appro_skill = /datum/skill/craft/weaponsmithing
 	req_bar = /obj/item/ingot/copper
-	created_item = /obj/item/rogueweapon/sword/iron/messer/copper
+	created_item = /obj/item/rogueweapon/sword/short/messer/copper
 	craftdiff = 0
 
 /datum/anvil_recipe/weapons/copper/cspears
@@ -295,13 +295,13 @@
 /datum/anvil_recipe/weapons/iron/swordshort
 	name = "Short sword"
 	req_bar = /obj/item/ingot/iron
-	created_item = /obj/item/rogueweapon/sword/iron/short
+	created_item = /obj/item/rogueweapon/sword/short/iron
 	craftdiff = 0
 
 /datum/anvil_recipe/weapons/iron/messer
 	name = "Hunting sword (Messer)"
 	req_bar = /obj/item/ingot/iron
-	created_item = /obj/item/rogueweapon/sword/iron/messer
+	created_item = /obj/item/rogueweapon/sword/short/messer/iron
 	craftdiff = 0
 
 /datum/anvil_recipe/weapons/iron/dagger
@@ -757,7 +757,7 @@
 /datum/anvil_recipe/weapons/gladius
 	name = "Gladius"
 	req_bar = /obj/item/ingot/bronze
-	created_item = /obj/item/rogueweapon/sword/iron/short/gladius
+	created_item = /obj/item/rogueweapon/sword/short/gladius
 	craftdiff = 2
 
 /datum/anvil_recipe/weapons/bronze/spear
@@ -1052,6 +1052,34 @@
 	created_item = /obj/item/rogueweapon/huntingknife/idagger/silver/psydagger
 	i_type = "Weapons"
 
+/datum/anvil_recipe/weapons/psy/shortsword
+	name = "Psydonian Shortsword"
+	req_bar = /obj/item/ingot/silverblessed
+	craftdiff = 3
+	created_item = /obj/item/rogueweapon/sword/short/psy
+	i_type = "Weapons"
+
+/datum/anvil_recipe/weapons/psy/katar
+	name = "Psydonian Katar"
+	req_bar = /obj/item/ingot/silverblessed
+	craftdiff = 3
+	created_item = /obj/item/rogueweapon/katar/psydon
+	i_type = "Weapons"
+
+/datum/anvil_recipe/weapons/psy/knuckles
+	name = "Psydonian Knuckles"
+	req_bar = /obj/item/ingot/silverblessed
+	craftdiff = 3
+	created_item = /obj/item/rogueweapon/knuckles/psydon
+	i_type = "Weapons"
+
+/datum/anvil_recipe/weapons/psy/cudgel
+	name = "Psydonian Handmace"
+	req_bar = /obj/item/ingot/silverblessed
+	craftdiff = 3
+	created_item = /obj/item/rogueweapon/mace/cudgel/psy
+	i_type = "Weapons"
+
 /datum/anvil_recipe/weapons/psy/halberd
 	name = "Psydonian Halberd (+1 B. Silver, +1 Small Log)"
 	req_bar = /obj/item/ingot/silverblessed
@@ -1061,17 +1089,24 @@
 	i_type = "Weapons"
 
 /datum/anvil_recipe/weapons/psy/gsword
-	name = "Psydonian Greatsword (+1 B. Silver, +1 H. Steel)"
+	name = "Psydonian Greatsword (+1 B. Silver)"
 	req_bar = /obj/item/ingot/silverblessed
 	craftdiff = 3
 	created_item = /obj/item/rogueweapon/greatsword/psygsword
-	additional_items = list(/obj/item/ingot/silverblessed, /obj/item/ingot/steelholy)
+	additional_items = list(/obj/item/ingot/silverblessed)
 	i_type = "Weapons"
 
 /datum/anvil_recipe/weapons/psy/sword
-	name = "Psydonian Sword (+1 B. Silver)"
+	name = "Psydonian Sword"
 	req_bar = /obj/item/ingot/silverblessed
 	craftdiff = 3
-	additional_items = list(/obj/item/ingot/silverblessed)
 	created_item = /obj/item/rogueweapon/sword/long/psysword
+	i_type = "Weapons"
+
+/datum/anvil_recipe/weapons/psy/whip
+	name = "Psydonian Whip (+2 Cured Leather)"
+	req_bar = /obj/item/ingot/silverblessed
+	craftdiff = 3
+	created_item = /obj/item/rogueweapon/whip/psywhip_lesser
+	additional_items = list(/obj/item/natural/hide/cured, /obj/item/natural/hide/cured)
 	i_type = "Weapons"
