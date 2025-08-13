@@ -361,7 +361,7 @@
 		/obj/item/rogueweapon/sword = 2,
 		/obj/item/rogueweapon/sword/long = 2,
 		/obj/item/rogueweapon/sword/falx = 2,
-		/obj/item/rogueweapon/sword/falchion = 2,
+		/obj/item/rogueweapon/sword/short/falchion = 2,
 		/obj/item/rogueweapon/sword/sabre = 2,
 		/obj/item/rogueweapon/sword/rapier = 1,
 		/obj/item/rogueweapon/sword/sabre/elf = 1,

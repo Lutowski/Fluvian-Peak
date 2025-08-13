@@ -195,7 +195,7 @@
 	lootcount = 1
 	loot = list(
 		/obj/item/rogueweapon/sword = 3,
-		/obj/item/rogueweapon/sword/falchion = 1,
+		/obj/item/rogueweapon/sword/short/falchion = 1,
 		/obj/item/rogueweapon/sword/falx = 1,
 		/obj/item/rogueweapon/sword/decorated = 1,
 		/obj/item/rogueweapon/sword/long = 1,

@@ -109,7 +109,7 @@
 				if("Falchion & Wooden Shield")
 					beltr = /obj/item/rogueweapon/scabbard/sword
 					backr = /obj/item/rogueweapon/shield/wood
-					r_hand = /obj/item/rogueweapon/sword/falchion
+					r_hand = /obj/item/rogueweapon/sword/short/falchion
 					armor = /obj/item/clothing/suit/roguetown/armor/leather/heavy/coat
 					H.adjust_skillrank(/datum/skill/combat/shields, 1, TRUE)
 				if("Messer & Wooden Shield")
