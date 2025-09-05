@@ -1,5 +1,6 @@
 /mob/living/carbon/human/species/werewolf
 	race = /datum/species/werewolf
+	viewcone_override = TRUE
 	footstep_type = FOOTSTEP_MOB_HEAVY
 	var/datum/language_holder/stored_language
 	var/list/stored_skills
