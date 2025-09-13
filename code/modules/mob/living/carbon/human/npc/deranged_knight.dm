@@ -77,18 +77,21 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 	ADD_TRAIT(src, TRAIT_NOMOOD, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_NOHUNGER, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_LEECHIMMUNE, INNATE_TRAIT)
-	ADD_TRAIT(src, TRAIT_INFINITE_ENERGY, TRAIT_GENERIC)
+	ADD_TRAIT(src, TRAIT_BREADY, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_STUCKITEMS, TRAIT_GENERIC)
 	switch(rand(0, 100))
 		if(0 to 25)
 			preset = "graggar"
+			ADD_TRAIT(src, TRAIT_HORDE, TRAIT_GENERIC)
 			equipOutfit(new /datum/outfit/job/roguetown/quest_miniboss/graggar)
 		if(26 to 49)
 			preset = "matthios"
+			ADD_TRAIT(src, TRAIT_COMMIE, TRAIT_GENERIC)
 			equipOutfit(new /datum/outfit/job/roguetown/quest_miniboss/matthios)
 		if(50 to 75)
 			preset = "zizo"
+			ADD_TRAIT(src, TRAIT_CABAL, TRAIT_GENERIC)
 			equipOutfit(new /datum/outfit/job/roguetown/quest_miniboss/zizo)
 		else
 			preset = "hedgeknight"
