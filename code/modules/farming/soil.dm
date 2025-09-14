@@ -657,3 +657,12 @@
 	produce_ready = FALSE
 	plant_dead = FALSE
 	update_icon()
+
+/obj/structure/soil/herb
+	name = "herb mound"
+	icon_state = "mound"
+
+/obj/structure/soil/herb/attackby(obj/item/I, mob/user)
+	if(istype(I, /obj/item/seeds))
+		to_chat(user, span_warning("This soil is too small for a farm!"))
+		return

@@ -29,12 +29,12 @@
 		try_plant_seed(user, soil)
 		return
 	else if(istype(T, /turf/open/floor/rogue/dirt))
-		to_chat(user, span_notice("I begin making a mound for the seeds..."))
-		if(do_after(user, get_farming_do_time(user, 10 SECONDS), target = src))
+		to_chat(user, span_notice("I dig up a mound for the seeds..."))
+		if(do_after(user, get_farming_do_time(user, 1 SECONDS), target = src))
 			apply_farming_fatigue(user, 30)
 			soil = get_soil_on_turf(T)
 			if(!soil)
-				soil = new /obj/structure/soil(T)
+				soil = new /obj/structure/soil/herb(T)
 		return
 	. = ..()
 
@@ -43,8 +43,8 @@
 		to_chat(user, span_warning("There is already something planted in \the [soil]!"))
 		return
 	to_chat(user, span_notice("I plant \the [src] in \the [soil]. I should check back later when \the [src] has grown."))
-	addtimer(CALLBACK(src,TYPE_PROC_REF(/obj/item/herbseed,become_plant),soil,makes_herb),7.5 MINUTES)
-	soil.desc += span_info(" Something appears to be planted here, but I cannot descern what.")
+	addtimer(CALLBACK(src,TYPE_PROC_REF(/obj/item/herbseed,become_plant),soil,makes_herb),1 SECONDS)
+	soil.desc += span_info("Something appears to be planted here, but I cannot discern what.")
 	src.forceMove(soil)
 	return
 
