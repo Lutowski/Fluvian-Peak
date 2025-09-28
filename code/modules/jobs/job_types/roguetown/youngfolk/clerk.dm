@@ -6,7 +6,7 @@
 	total_positions = 1
 	spawn_positions = 1
 
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_ages = list(AGE_ADULT)
 
@@ -49,14 +49,6 @@
 	)
 	category_tags = list(CTAG_CLERK)
 	outfit = /datum/outfit/job/roguetown/clerk/basic
-
-/datum/job/roguetown/clerk/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/outfit/job/roguetown/clerk/basic/pre_equip(mob/living/carbon/human/H)
 	..()

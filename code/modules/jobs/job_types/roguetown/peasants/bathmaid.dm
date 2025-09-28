@@ -8,7 +8,7 @@
 	spawn_positions = 5
 
 	allowed_sexes = list(MALE, FEMALE)
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	allowed_ages = list(AGE_ADULT, AGE_MIDDLEAGED)
 	
 
@@ -30,14 +30,6 @@
 		/datum/advclass/nightmaiden/concubine,
 		/datum/advclass/nightmaiden/courtesan
 	)
-
-/datum/job/roguetown/nightmaiden/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	. = ..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup") // Classes are for aesthetic clothing only, mechanically they're identical.
 
 /datum/outfit/job/roguetown/nightmaiden
 	name = "Bathhouse Attendant"
@@ -144,7 +136,7 @@
 
 	if(H.mind)
 		var/weapons = list("Harp","Lute","Accordion","Guitar","Hurdy-Gurdy","Viola","Vocal Talisman","Flute")
-		var/weapon_choice = input("Choose your instrument.", "TAKE UP ARMS") as anything in weapons
+		var/weapon_choice = input(H, "Choose your instrument.", "TAKE UP ARMS") as anything in weapons
 		H.set_blindness(0)
 		switch(weapon_choice)
 			if("Harp")
@@ -231,7 +223,7 @@
 
 	if(H.mind)
 		var/weapons = list("Harp","Lute","Accordion","Guitar","Hurdy-Gurdy","Viola","Vocal Talisman","Flute")
-		var/weapon_choice = input("Choose your instrument.", "TAKE UP ARMS") as anything in weapons
+		var/weapon_choice = input(H, "Choose your instrument.", "TAKE UP ARMS") as anything in weapons
 		H.set_blindness(0)
 		switch(weapon_choice)
 			if("Harp")

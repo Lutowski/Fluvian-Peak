@@ -9,7 +9,7 @@
 	display_order = 6
 	min_pq = 0
 	selection_color = JCOLOR_YEOMAN
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	display_order = JDO_TAILOR
 	outfit = /datum/outfit/job/roguetown/tailor
 	give_bank_account = 16
@@ -21,14 +21,6 @@
 	job_subclasses = list(
 		/datum/advclass/tailor
 	)
-
-/datum/job/roguetown/tailor/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/advclass/tailor
 	name = "Tailor"

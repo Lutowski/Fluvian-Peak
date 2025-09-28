@@ -6,7 +6,7 @@
 	total_positions = 1
 	spawn_positions = 1
 
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	allowed_sexes = list(MALE, FEMALE)
 
 	job_traits = list(TRAIT_STEELHEARTED, TRAIT_DUNGEONMASTER, TRAIT_GUARDSMAN)
@@ -38,14 +38,6 @@
 		peopleknowme += X
 	for(var/X in GLOB.courtier_positions)
 		peopleknowme += X
-
-/datum/job/roguetown/dungeoneer/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/outfit/job/roguetown/dungeoneer
 	job_bitflag = BITFLAG_GARRISON

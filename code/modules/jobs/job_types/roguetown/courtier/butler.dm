@@ -6,7 +6,7 @@
 	total_positions = 1
 	spawn_positions = 1
 
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 
 	tutorial = "Servitude unto death; that is your motto. You are the manor's major-domo, commanding over the house servants and seeing to the administrative affairs, day to day of the estate. This role has style options for chief butlers and head maids."
 	outfit = /datum/outfit/job/roguetown/seneschal
@@ -21,14 +21,6 @@
 		/datum/advclass/seneschal/headmaid,
 		/datum/advclass/seneschal/chiefbutler
 	)
-
-/datum/job/roguetown/butler/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	. = ..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup") // Classes are for aesthetic clothing only, mechanically they're identical.
 
 /datum/advclass/seneschal
 	traits_applied = list(TRAIT_CICERONE)

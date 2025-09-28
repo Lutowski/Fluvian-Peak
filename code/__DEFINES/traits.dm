@@ -176,6 +176,7 @@
 #define TRAIT_CICERONE "Cicerone"
 #define TRAIT_EASYDISMEMBER	"Easy Dismemberment"
 #define TRAIT_HARDDISMEMBER	"Hard Dismemberment"
+#define TRAIT_EASYDECAPITATION "Easy Decapitation"
 #define TRAIT_NOPAIN	"Painless"
 #define TRAIT_NOPAINSTUN	"Enduring"
 #define TRAIT_NOBREATH	"Breathless"
@@ -207,6 +208,9 @@
 // ARMOR / CLOTHING GIVEN TRAITS (GIVEN BY WEARING CLOTHES/ARMOR PIECES)
 #define TRAIT_MONK_ROBE	"Holy Vestatures"
 #define TRAIT_RACISMISBAD "Heritage Vision"
+
+//item and enchantment traits should go under here as new ones get added
+#define TRAIT_ENGINEERING_GOGGLES "Engineering Goggles"
 
 // If you want description to show up you gotta have the trait name defined BEFORE this lol
 
@@ -319,7 +323,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_COUNTERCOUNTERSPELL = span_info("I automatically know when to counter Counterspells, and can do so without even thinking about it."),
 	TRAIT_UNSEEMLY = span_info("My face is ugly and makes everyone who looks at me miserable."),
 	TRAIT_HERETIC_SEER = span_info("I can tell other Ascendant followers without sharing their faith."),
-	TRAIT_DUALWIELDER = span_info("If I wield two identical weapons, I  roll twice for my attacks, and so will the enemy against me. I do not suffer penalties from using my off-hand in combat."),
+	TRAIT_DUALWIELDER = span_info("If I wield two weapons of the same type, I attack with them both simultaneously. I suffer a disadvantage when attempting to parry. I do not suffer penalties from using my off-hand in combat."),
 	TRAIT_SENTINELOFWITS = span_info("My Intelligence aids in my defense. Every 2 points above 10 INT become an additional 10% chance to dodge or parry. Does not count positive buffs from potions or substances."),
 	TRAIT_KEENEARS = span_info("I've a good pair of ears, and can tell who is speaking, even when they're out of sight. I can also hear whispers from further away."),
 	TRAIT_SCREENSHAKE = span_suicide("I don't feel very steady anymore..."),
@@ -383,6 +387,7 @@ GLOBAL_LIST_INIT(roguetraits, list(
 	TRAIT_COMBAT_AWARE = span_notice("My honed senses and intuition allow me to spot notable things in the midst of battle with ease."),
 	TRAIT_RACISMISBAD = span_warning("The Black Oaks can spot ANY Foreigners and Outsiders, no matter how long they've lived in Azuria. This is an easy skill to master, as it is simply identifying who isn't an elf."),
 	TRAIT_DREAMWALKER = span_warning("I walk the dream and reality at the same time. My mind frays, but my vision shall be reality."),
+	TRAIT_ENGINEERING_GOGGLES = span_warning("I can see structural details others can't"),
 ))
 
 // trait accessor defines

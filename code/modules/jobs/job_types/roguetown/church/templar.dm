@@ -6,7 +6,7 @@
 	faction = "Station"
 	tutorial = "Templars are warriors who have forsaken wealth and title in lieu of service to the church, due to either zealotry or a past shame. They guard the church and its bishop while keeping a watchful eye against heresy and nite-creechers. Within troubled dreams, they wonder if the blood they shed makes them holy or stained."
 	allowed_sexes = list(MALE, FEMALE)
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	allowed_patrons = ALL_DIVINE_PATRONS
 	outfit = /datum/outfit/job/roguetown/templar
 	min_pq = 3 //Deus vult, but only according to the proper escalation rules
@@ -31,14 +31,6 @@
 	job_bitflag = BITFLAG_CHURCH
 	has_loadout = TRUE
 	allowed_patrons = ALL_DIVINE_PATRONS
-
-/datum/job/roguetown/templar/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	. = ..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/advclass/templar/monk
 	name = "Monk"
@@ -65,6 +57,9 @@
 		/datum/skill/craft/cooking = SKILL_LEVEL_NOVICE,
 		/datum/skill/misc/medicine = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/magic/holy = SKILL_LEVEL_JOURNEYMAN,
+	)
+	subclass_stashed_items = list(
+		"The Verses and Acts of the Ten" = /obj/item/book/rogue/bibble,
 	)
 
 /datum/outfit/job/roguetown/templar/monk/pre_equip(mob/living/carbon/human/H)
@@ -222,6 +217,9 @@
 		/datum/skill/magic/holy = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/medicine = SKILL_LEVEL_NOVICE,
 		/datum/skill/combat/shields = SKILL_LEVEL_JOURNEYMAN,	//May tone down to 2; seems OK.
+	)
+	subclass_stashed_items = list(
+		"The Verses and Acts of the Ten" = /obj/item/book/rogue/bibble,
 	)
 	extra_context = "This subclass gains Expert skill in their weapon of choice."
 

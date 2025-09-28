@@ -6,7 +6,7 @@
 	total_positions = 6
 	spawn_positions = 6
 
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	allowed_patrons = ALL_DIVINE_PATRONS 
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/job/roguetown/monk
@@ -25,14 +25,6 @@
 	job_subclasses = list(
 		/datum/advclass/acolyte
 	)
-
-/datum/job/roguetown/monk/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/advclass/acolyte
 	name = "Acolyte"
@@ -56,6 +48,9 @@
 		/datum/skill/misc/sewing = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/labor/farming = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/magic/holy = SKILL_LEVEL_MASTER,
+	)
+	subclass_stashed_items = list(
+		"The Verses and Acts of the Ten" = /obj/item/book/rogue/bibble,
 	)
 
 /datum/outfit/job/roguetown/monk

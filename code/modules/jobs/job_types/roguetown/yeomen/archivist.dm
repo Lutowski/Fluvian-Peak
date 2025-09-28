@@ -7,7 +7,7 @@
 	total_positions = 1
 	spawn_positions = 1
 	spells = list(/obj/effect/proc_holder/spell/targeted/touch/prestidigitation)
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	allowed_ages = ALL_AGES_LIST
 	cmode_music = 'sound/music/cmode/towner/combat_towner3.ogg'
 	
@@ -23,14 +23,6 @@
 	job_subclasses = list(
 		/datum/advclass/archivist
 	)
-
-/datum/job/roguetown/archivist/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/advclass/archivist
 	name = "Archivist"

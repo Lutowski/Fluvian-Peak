@@ -9,7 +9,7 @@
 	spawn_positions = 4
 	advclass_cat_rolls = list(CTAG_GUILDSMEN = 20)
 
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 
 	tutorial = "You are a member of the Azure Peak Guild of Crafts, a massive guild formed to represent the interests of all craftsmen in the township of Azure Peak.\
 	As a Guildsman, you hail from the three most important constituent guilds: The Smith's Guild, the Artificer's Guild, and the Architect's Guild. The Guildsmaster has sway over you, but it is not absolute."
@@ -28,14 +28,6 @@
 		/datum/advclass/guildsman/blacksmith,
 		/datum/advclass/guildsman/architect
 	)
-
-/datum/job/roguetown/guildsman/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	. = ..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/advclass/guildsman/blacksmith
 	name = "Guild Blacksmith"

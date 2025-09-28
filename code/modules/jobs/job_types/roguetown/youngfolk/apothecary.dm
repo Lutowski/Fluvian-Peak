@@ -6,7 +6,7 @@
 	total_positions = 2
 	spawn_positions = 2
 
-	allowed_races = RACES_ALL_KINDS
+	allowed_races = ACCEPTED_RACES
 	allowed_ages = list(AGE_ADULT)
 
 	tutorial = "Working under the tutelage of the court physician, you still remain a mere apprentice in the medical arts. Woe is the one who has to suffer your hand holding the scalpel when your master is out."
@@ -27,14 +27,6 @@
 	job_subclasses = list(
 		/datum/advclass/apothecary
 	)
-
-/datum/job/roguetown/apothecary/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
-	..()
-	if(ishuman(L))
-		var/mob/living/carbon/human/H = L
-		H.advsetup = 1
-		H.invisibility = INVISIBILITY_MAXIMUM
-		H.become_blind("advsetup")
 
 /datum/advclass/apothecary
 	name = "Apothecary"
