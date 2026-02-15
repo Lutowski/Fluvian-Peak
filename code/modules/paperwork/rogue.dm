@@ -7,7 +7,7 @@
 	firefuel = 30 SECONDS
 	sellprice = 2
 	textper = 108
-	maxlen = 5000
+	maxlen = 2000
 	throw_range = 3
 
 
@@ -67,13 +67,11 @@
 	if(in_range(user, src) || isobserver(user))
 		user.hud_used.reads.icon_state = "scroll"
 		user.hud_used.reads.show()
-		var/dat = {"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
-			<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><style type=\"text/css\">
-					body { background-image:url('book.png');background-repeat: repeat; }</style></head><body scroll=yes>"}
-		dat += "[info]<br>"
-		dat += "<a href='?src=[REF(src)];close=1' style='position:absolute;right:50px'>Close</a>"
-		dat += "</body></html>"
-		user << browse(dat, "window=reading;size=460x300;can_close=0;can_minimize=0;can_maximize=0;can_resize=0;titlebar=0")
+		user.hud_used.reads.maptext = MAPTEXT_LEGIBLE(info)
+		user.hud_used.reads.maptext_width = 230
+		user.hud_used.reads.maptext_height = 200
+		user.hud_used.reads.maptext_y = 150
+		user.hud_used.reads.maptext_x = 120
 		onclose(user, "reading", src)
 	else
 		return span_warning("I'm too far away to read it.")
@@ -225,7 +223,7 @@
 /obj/item/paper/inqslip
 	name = "inquisition slip"
 	var/base_icon_state = "slip"
-	dropshrink = 0.75		
+	dropshrink = 0.75
 	icon_state = "slip"
 	obj_flags = CAN_BE_HIT
 	var/signed
@@ -252,23 +250,49 @@
 			to_chat(user, span_notice("This writ is intended to be signed by [signee.real_name]."))
 		else
 			to_chat(user, span_notice("This writ has not yet been signed."))
-		
+
 /obj/item/paper/inqslip/accusation
 	name = "accusation"
-	desc = "A writ of religious suspicion, printed on Otavan parchment: one signed not in ink, but blood. Press the accusation against your own bleeding wound in order to obtain a signature. Then pair it with an INDEXER full of the accused's blood. Once done, it is ready to be mailed back to Otava. Fold and seal it, it's only proper."
+	desc = "A writ of religious suspicion, printed on Otavan parchment: one signed not in ink, but blood. Contrary to the name, these writs - while primarly used to request haemological investigations - can also be used to simply catalogue the blood of others. </br>Fold and seal it, it's only proper."
 	marquevalue = 4
 	sliptype = 0
+
+/obj/item/paper/inqslip/accusation/get_mechanics_examine(mob/user)
+    . = ..()
+    . += span_info("ACCUSATIONS are used by the Holy Psydonic Inquisition to mail INDEXERS back to Otava, either for cataloguing or for further haemological faith-testing.")
+    . += span_info("Left click yourself, while bleeding from anywhere on the body, to sign the ACCUSATION.")
+    . += span_info("Once signed, left-clicking the ACCUSATION with a filled INDEXER will combine them into a foldable package.")
+    . += span_info("Activate in your hand, once packaged together, to fold the ACCUSATION-INDEXER into a letter. This letter can then be mailed to Otava through the HERMES.")
+    . += span_info("Stamping a folded letter with redtallow will increase the amount of MARQUES that're rewarded upon mailage.")
+    . += span_info("The amount of rewarded MARQUES are determined by whether the INDEXEE is revealed to be a PANTHEONIST, ASCENDANT, or NITEBEASTE.")
 
 /obj/item/paper/inqslip/confession
 	name = "confession"
 	base_icon_state = "confession"
 	marquevalue = 6
-	desc = "A writ of religious guilt, printed on Otavan parchment: one signed not in ink, but blood. Press the confession against a suspect's bleeding wound, in order to obtain their signature. Once done, it is ready to be mailed back to Otava. Fold and seal it, it's only proper."
+	desc = "A writ of religious guilt, printed on Otavan parchment: one signed not in ink, but blood. To sign it is to confess your indulgence in whatever sins've been levied your way; whether it is done willingly or not, however, is a completely different question. </br>Fold and seal it, it's only proper."
 	sliptype = 2
 
+/obj/item/paper/inqslip/confession/get_mechanics_examine(mob/user)
+    . = ..()
+    . += span_info("CONFESSIONS are used by the Holy Psydonic Inquisition to confirm the SIGNEE's acknowledgement of guilt, in whatever religious crime they've been accused of committing.")
+    . += span_info("Left click yourself, while bleeding from anywhere on the body, to sign the CONFESSION. Note that unlike an ACCUSATION, a CONFESSION can only be signed by whoever's been accused of a religious crime.")
+    . += span_info("Activate in your hand, once signed, to fold the CONFESSION into a letter. This letter can then be mailed to Otava through the HERMES.")
+    . += span_info("Stamping a folded letter with redtallow will increase the amount of MARQUES that're rewarded upon mailage.")
+    . += span_info("Optionally, a CONFESSION can also be paired with an INDEXER that's been filled with the SIGNEE's blood. Packing a filled INDEXER into the CONFESSION, before folding it, will increase the amount of rewarded MARQUES.")
+    . += span_info("The amount of rewarded MARQUES are determined by whether the SIGNEE is a PANTHEONIST, ASCENDANT, or NITEBEASTE.")
+
 /obj/item/paper/inqslip/arrival
-	name = "arrival slip"	
-	desc = "A writ of arrival, printed on Otavan parchment: one signed not in ink, but blood. Intended for one person and one person only. Press the slip against one's own weeping wounds in order to obtain a fitting signature. Once done, it is ready to be mailed back to Otava."
+	name = "arrival slip"
+	desc = "A writ of arrival, printed on Otavan parchment: one signed not in ink, but blood. Intended for one person and one person only. </br>Fold and seal it, it's only proper."
+
+/obj/item/paper/inqslip/arrival/get_mechanics_examine(mob/user)
+    . = ..()
+    . += span_info("SLIPS are used by the Holy Psydonic Inquisition to ascertain how many members of a SECT are present, and - in turn - how much funding the SECT should receive.")
+    . += span_info("Left click yourself, while bleeding fron anywhere on the body, to sign the SLIP.")
+    . += span_info("Once signed, left-clicking the SLIP will fold it into a letter. This letter can then be mailed to Otava through the HERMES.")
+    . += span_info("Stamping a folded letter with redtallow will increase the amount of MARQUES that're rewarded upon mailage.")
+    . += span_info("Successfully mailing a SLIP will reward the sender with MARQUES. The amount of rewarded MARQUES increases, depending on whether you're an Orthodoxist, Absolver, or Inquisitor.")
 
 /obj/item/paper/inqslip/arrival/ortho
 	marquevalue = 4
@@ -302,13 +326,13 @@
 	else
 		return
 
-/obj/item/paper/inqslip/attack(mob/living/carbon/human/M, mob/user)	
+/obj/item/paper/inqslip/attack(mob/living/carbon/human/M, mob/user)
 	if(sealed)
 		return
 	if(signed)
 		to_chat(user, span_warning("It's already been signed."))
 		return
-	if(paired && !paired.full)	
+	if(paired && !paired.full)
 		to_chat(user, span_warning("I should seperate [paired] from [src] before signing it."))
 		return
 	if(sliptype != 2)
@@ -321,13 +345,13 @@
 	if(sliptype == 1)
 		if(signee == M)
 			attemptsign(user)
-		else	
+		else
 			to_chat(user, span_warning("This slip isn't meant for me."))
 	else if(!sliptype)
 		attemptsign(user)
 	else
 		attemptsign(M, user)
-	
+
 /obj/item/paper/inqslip/attack_self(mob/user)
 	if(!signed)
 		to_chat(user, span_warning("It hasn't been signed yet. Why would I seal it?"))
@@ -336,18 +360,18 @@
 		to_chat(user, span_notice("It's been sealed. It's ready to send back to Otava."))
 		return
 	else if(!sealed)
-		sealed = TRUE	
+		sealed = TRUE
 		update_icon()
-	else		
+	else
 		sealed = FALSE
 		update_icon()
-		
+
 /obj/item/paper/inqslip/attack_right(mob/user)
 	. = ..()
-	if(paired)	
+	if(paired)
 		if(!user.get_active_held_item())
 			user.put_in_active_hand(paired, user.active_hand_index)
-			paired = null	
+			paired = null
 			update_icon()
 		return TRUE
 
@@ -368,17 +392,20 @@
 		if(!waxed)
 			icon_state = "[base_icon_state]_unsealed"
 		else
-			icon_state = "[base_icon_state]_sealed"	
-	return		
+			icon_state = "[base_icon_state]_sealed"
+	return
 
 /obj/item/paper/inqslip/arrival/equipped(mob/user, slot, initial)
 	. = ..()
 	if(!signee)
 		signee = user
 
-/obj/item/paper/inqslip/attacked_by(obj/item/I, mob/living/user)	
+/obj/item/paper/inqslip/attacked_by(obj/item/I, mob/living/user)
 	if(istype(I, /obj/item/clothing/ring/signet))
 		var/obj/item/clothing/ring/signet/S = I
+		if(waxed)
+			to_chat(user,  span_warning("It's already wax-sealed."))
+			return
 		if(S.tallowed && sealed)
 			waxed = TRUE
 			update_icon()
@@ -396,7 +423,7 @@
 			var/obj/item/inqarticles/indexer/Q = I
 			if(paired)
 				return
-			if(!Q.subject)
+			if(!Q.hasSubject)
 				if(signed)
 					to_chat(user, span_warning("I should fill [Q] before pairing it with [src]."))
 					return
@@ -404,7 +431,7 @@
 					paired = Q
 					user.transferItemToLoc(Q, src, TRUE)
 					update_icon()
-			else if(Q.subject && Q.full)
+			else if(Q.full)
 				if(sliptype == 2)
 					if(Q.subject == signee)
 						paired = Q
@@ -421,7 +448,7 @@
 					user.transferItemToLoc(Q, src, TRUE)
 					update_icon()
 			else
-				to_chat(user,  span_warning("[Q] isn't completely full."))		
+				to_chat(user,  span_warning("[Q] isn't completely full."))
 
 /obj/item/paper/inqslip/attack_right(mob/user)
 	. = ..()

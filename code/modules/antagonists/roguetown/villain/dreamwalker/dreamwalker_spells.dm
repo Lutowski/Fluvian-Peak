@@ -20,7 +20,6 @@
 		"Orthodoxist",
 		"Absolver",
 		"Templar",
-		"Dungeoneer",
 		"Sergeant",
 		"Men-at-arms",
 		"Knight",
@@ -174,7 +173,7 @@
 	desc = "Teleports you to a random coastal area after a short channel, leaving a temporary portal behind. You may be followed."
 	chargedrain = 0
 	chargetime = 2 SECONDS
-	recharge_time = 20 MINUTES
+	recharge_time = 15 MINUTES
 	invocation_type = "whisper"
 	invocations = list("Whisper of the dream...")
 	movement_interrupt = FALSE

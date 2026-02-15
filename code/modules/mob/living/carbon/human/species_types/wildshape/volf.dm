@@ -4,7 +4,8 @@
 	footstep_type = FOOTSTEP_MOB_CLAW
 	ambushable = FALSE
 	skin_armor = new /obj/item/clothing/suit/roguetown/armor/skin_armor/wolf_skin
-	// Someone else balance this, I am here for code, not numbers
+	wildshape_icon = 'icons/roguetown/mob/monster/vol.dmi'
+	wildshape_icon_state = "vv"
 
 /mob/living/carbon/human/species/wildshape/volf/gain_inherent_skills()
 	. = ..()
@@ -22,7 +23,7 @@
 		src.STASPD = 13
 
 		AddSpell(new /obj/effect/proc_holder/spell/self/wolfclaws)
-		real_name = "Volf ([stored_mob.real_name])" //So we don't get a random name
+		real_name = "volf" //So we don't get a random name
 		faction += "wolfs" // It IS a wolf
 
 // WOLF SPECIES DATUM //
@@ -92,7 +93,7 @@
 	body_parts_covered = FULL_BODY
 	body_parts_inherent = FULL_BODY
 	armor = ARMOR_LEATHER //It's literally a wolf, shouldn't be more than this
-	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
+	prevent_crits = PREVENT_CRITS_NONE
 	blocksound = SOFTHIT
 	blade_dulling = DULLING_BASHCHOP
 	sewrepair = FALSE

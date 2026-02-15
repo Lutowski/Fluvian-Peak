@@ -1,8 +1,3 @@
-// Catalyst. This reagent combined with normal potion reagent makes the strong potion reagent. Reactions defined by the end of this doccument
-/datum/reagent/additive
-	name = "additive"
-	reagent_state = LIQUID
-
 //Potions
 /datum/reagent/medicine/healthpot
 	name = "Health Potion"
@@ -10,6 +5,7 @@
 	reagent_state = LIQUID
 	color = "#ff0000"
 	taste_description = "lifeblood"
+	scent_description = "metal"
 	overdose_threshold = 0
 	metabolization_rate = REAGENTS_METABOLISM
 	alpha = 173
@@ -23,11 +19,12 @@
 	if(wCount.len > 0)
 		M.heal_wounds(3) //at a motabalism of .5 U a tick this translates to 120WHP healing with 20 U Most wounds are unsewn 15-100. This is powerful on single wounds but rapidly weakens at multi wounds.
 	if(volume > 0.99)
-		M.adjustBruteLoss(-1.75*REM, 0)
-		M.adjustFireLoss(-1.75*REM, 0)
+		M.adjustBruteLoss(-1.75  * REAGENTS_EFFECT_MULTIPLIER, 0)
+		M.adjustFireLoss(-1.75  * REAGENTS_EFFECT_MULTIPLIER, 0)
 		M.adjustOxyLoss(-1.25, 0)
-		M.adjustOrganLoss(ORGAN_SLOT_BRAIN, -5*REM)
-		M.adjustCloneLoss(-1.75*REM, 0)
+		M.adjustOrganLoss(ORGAN_SLOT_BRAIN, -5  * REAGENTS_EFFECT_MULTIPLIER)
+		M.adjustCloneLoss(-1.75  * REAGENTS_EFFECT_MULTIPLIER, 0)
+		M.adjustOrganLoss(ORGAN_SLOT_EYES, -1 * REAGENTS_EFFECT_MULTIPLIER)
 	..()
 
 /datum/reagent/medicine/stronghealth
@@ -35,6 +32,7 @@
 	description = "Quickly regenerates all types of damage."
 	color = "#820000be"
 	taste_description = "rich lifeblood"
+	scent_description = "metal"
 	metabolization_rate = REAGENTS_METABOLISM * 3
 
 /datum/reagent/medicine/stronghealth/on_mob_life(mob/living/carbon/M)
@@ -46,11 +44,12 @@
 	if(wCount.len > 0)
 		M.heal_wounds(6) //at a motabalism of .5 U a tick this translates to 240WHP healing with 20 U Most wounds are unsewn 15-100.
 	if(volume > 0.99)
-		M.adjustBruteLoss(-7*REM, 0)
-		M.adjustFireLoss(-7*REM, 0)
+		M.adjustBruteLoss(-7  * REAGENTS_EFFECT_MULTIPLIER, 0)
+		M.adjustFireLoss(-7  * REAGENTS_EFFECT_MULTIPLIER, 0)
 		M.adjustOxyLoss(-5, 0)
-		M.adjustOrganLoss(ORGAN_SLOT_BRAIN, -5*REM)
-		M.adjustCloneLoss(-7*REM, 0)
+		M.adjustOrganLoss(ORGAN_SLOT_BRAIN, -5  * REAGENTS_EFFECT_MULTIPLIER)
+		M.adjustCloneLoss(-7  * REAGENTS_EFFECT_MULTIPLIER, 0)
+		M.adjustOrganLoss(ORGAN_SLOT_EYES, -2.5 * REAGENTS_EFFECT_MULTIPLIER)
 	..()
 	. = 1
 
@@ -60,6 +59,7 @@
 	reagent_state = LIQUID
 	color = "#000042"
 	taste_description = "sweet mana"
+	scent_description = "berries"
 	overdose_threshold = 0
 	metabolization_rate = REAGENTS_METABOLISM
 	alpha = 173
@@ -74,6 +74,7 @@
 	description = "Rapidly regenerates energy."
 	color = "#0000ff"
 	taste_description = "raw power"
+	scent_description = "berries"
 	metabolization_rate = REAGENTS_METABOLISM * 3
 
 /datum/reagent/medicine/strongmana/on_mob_life(mob/living/carbon/M)
@@ -87,6 +88,7 @@
 	reagent_state = LIQUID
 	color = "#129c00"
 	taste_description = "sweet tea"
+	scent_description = "grass"
 	overdose_threshold = 0
 	metabolization_rate = REAGENTS_METABOLISM
 	alpha = 173
@@ -102,6 +104,7 @@
 	description = "Rapidly regenerates stamina."
 	color = "#13df00"
 	taste_description = "sparkly static"
+	scent_description = "grass"
 	metabolization_rate = REAGENTS_METABOLISM
 
 /datum/reagent/medicine/strongstam/on_mob_life(mob/living/carbon/M)
@@ -122,6 +125,7 @@
 	reagent_state = LIQUID
 	color = "#00ff00"
 	taste_description = "sickly sweet"
+	scent_description = "medicine"
 	metabolization_rate = 0.1 * REAGENTS_METABOLISM
 
 /datum/reagent/medicine/antidote/on_mob_life(mob/living/carbon/M)
@@ -141,6 +145,7 @@
 	reagent_state = LIQUID
 	color = "#004200"
 	taste_description = "dirt"
+	scent_description = "medicine"
 	metabolization_rate = 0.1 * REAGENTS_METABOLISM
 
 /datum/reagent/medicine/strong_antidote/on_mob_life(mob/living/carbon/M)
@@ -156,7 +161,7 @@
 	Previously, it would apply a status effect to the mob lasting for 93 / 300 seconds and remove everything
 	However it meant that putting it in an alchemical vial was a trap as it sipped 9 units instead of 5 units that is the required minimum.
 	And removed any excessive potion inside the body. This has been changed to apply a 3 seconds buff to the mob, but have much lower
-	metabolization rate, so that the duration of the buff depends on how long you last. 
+	metabolization rate, so that the duration of the buff depends on how long you last.
 	Roughly tested. At Metabolization Rate 1. 10 units sip (1/3 of a vial) last 20 seconds.
 	To make this somewhat equal to the old system, base metabolization rate is 0.1 - making it last 200 seconds - 600 seconds if you sip an entire vial.
 	This is 2x on weaker potions (Intelligence, Fortune). However, overdose threshold is now 30 units so you can only drink one vial at once.
@@ -185,6 +190,7 @@
 	name = STATKEY_STR
 	color = "#ff9000"
 	taste_description = "old meat"
+	scent_description = "meat"
 
 /datum/reagent/buff/strength/on_mob_life(mob/living/carbon/M)
 	M.apply_status_effect(/datum/status_effect/buff/alch/strengthpot)
@@ -194,6 +200,7 @@
 	name = STATKEY_PER
 	color = "#ffff00"
 	taste_description = "cat piss"
+	scent_description = "urine"
 	metabolization_rate = REAGENTS_METABOLISM * 0.05
 
 /datum/reagent/buff/perception/on_mob_life(mob/living/carbon/M)
@@ -204,6 +211,7 @@
 	name = STATKEY_INT
 	color = "#438127"
 	taste_description = "bog water"
+	scent_description = "moss"
 	metabolization_rate = REAGENTS_METABOLISM * 0.05
 
 /datum/reagent/buff/intelligence/on_mob_life(mob/living/carbon/M)
@@ -214,6 +222,7 @@
 	name = STATKEY_CON
 	color = "#130604"
 	taste_description = "bile"
+	scent_description = "vomit"
 
 /datum/reagent/buff/constitution/on_mob_life(mob/living/carbon/M)
 	M.apply_status_effect(/datum/status_effect/buff/alch/constitutionpot)
@@ -232,6 +241,7 @@
 	name = STATKEY_SPD
 	color = "#ffff00"
 	taste_description = "raw egg yolk"
+	scent_description = "sweat"
 
 /datum/reagent/buff/speed/on_mob_life(mob/living/carbon/M)
 	M.apply_status_effect(/datum/status_effect/buff/alch/speedpot)
@@ -241,12 +251,22 @@
 	name = STATKEY_LCK
 	color = "#ffff00"
 	taste_description = "sour lemons"
+	scent_description = "citrus"
 	metabolization_rate = REAGENTS_METABOLISM * 0.05
 
 /datum/reagent/buff/fortune/on_mob_life(mob/living/carbon/M)
 	M.apply_status_effect(/datum/status_effect/buff/alch/fortunepot)
 	return ..()
 
+/datum/reagent/buff/tri //Keep this restricted to the TRI-locked alchemic reward.
+	name = "Distilled Triumphance"
+	color = "#74cde0"
+	taste_description = "sweet victory"
+	scent_description = "memories of a former triumph"
+
+/datum/reagent/buff/tri/on_mob_life(mob/living/carbon/M)
+	M.apply_status_effect(/datum/status_effect/buff/alch/tripot)
+	return ..()
 
 //Poisons
 /* Tested this quite a bit. Heres the deal. Metabolism REAGENTS_SLOW_METABOLISM is 0.1 and needs to be that so poison isnt too fast working but
@@ -260,6 +280,7 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 	reagent_state = LIQUID
 	color = "#47b2e0"
 	taste_description = "bitterness"
+	scent_description = "berries"
 	metabolization_rate = 0.1 * REAGENTS_METABOLISM
 	harmful = TRUE
 
@@ -280,11 +301,12 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 	reagent_state = LIQUID
 	color = "#1a1616"
 	taste_description = "burning"
+	scent_description = "something spicy"
 	metabolization_rate = 0.1 * REAGENTS_METABOLISM
 	harmful = TRUE
 
 /datum/reagent/strongpoison/on_mob_life(mob/living/carbon/M)
-	testing("Someone was poisoned")
+
 	if(volume > 0.09)
 		if(isdwarf(M))
 			M.add_nausea(1)
@@ -294,12 +316,37 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 			M.adjustToxLoss(4.5) // just enough so 5u will kill you dead with no help
 	return ..()
 
+/datum/reagent/bloodacid // Quietus Poison for Vampires
+	name = "Vitae Acid"
+	description = ""
+	reagent_state = LIQUID
+	color = "#ff3300"
+	taste_description = "burning"
+	scent_description = "something spicy"
+	metabolization_rate = 0.5 * REAGENTS_METABOLISM
+	harmful = TRUE
+
+/datum/reagent/bloodacid/on_mob_life(mob/living/carbon/M)
+	if(volume > 0.09)
+		if(isdwarf(M))
+			M.add_nausea(5.5)
+			M.adjustToxLoss(7.5)
+			to_chat(M, span_userdanger("MY HEART! I'VE BEEN POISONED."))
+			M.playsound_local('sound/magic/heartbeat.ogg', 50)
+		else
+			M.add_nausea(6.5)
+			M.adjustToxLoss(8.5)
+			to_chat(M, span_userdanger("MY HEART! I'VE BEEN POISONED."))
+			M.playsound_local('sound/magic/heartbeat.ogg', 50)
+	return ..()
+
 /datum/reagent/organpoison
 	name = "Organ Poison"
 	description = ""
 	reagent_state = LIQUID
 	color = "#2c1818"
 	taste_description = "sour meat"
+	scent_description = "rancid meat"
 	metabolization_rate = 0.1 * REAGENTS_METABOLISM
 	harmful = TRUE
 
@@ -316,6 +363,7 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 	reagent_state = LIQUID
 	color = "#083b1c"
 	taste_description = "breathlessness"
+	scent_description = "dust"
 	metabolization_rate = 0.1 * REAGENTS_METABOLISM * 3
 	harmful = TRUE
 
@@ -331,6 +379,7 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 	reagent_state = LIQUID
 	color = "#041d0e"
 	taste_description = "frozen air"
+	scent_description = "mint"
 	metabolization_rate = 0.1 * REAGENTS_METABOLISM * 9
 	harmful = TRUE
 
@@ -345,6 +394,8 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 	description = "c8c9e9"
 	reagent_state = LIQUID
 	color = "#FFFFFF"
+	taste_description = "cold needles"
+	scent_description = "mint"
 	metabolization_rate = 0.1
 	toxpwr = 0
 	harmful = TRUE
@@ -352,42 +403,6 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 /datum/reagent/toxin/killersice/on_mob_life(mob/living/carbon/M)
 	M.adjustToxLoss(10, 0)
 	return ..()
-
-//Potion reactions
-/datum/chemical_reaction/alch/stronghealth
-	name = "Strong Health Potion"
-	id = /datum/reagent/medicine/stronghealth
-	results = list(/datum/reagent/medicine/stronghealth = 1)
-	required_reagents = list(/datum/reagent/medicine/healthpot = 1, /datum/reagent/additive = 1)
-	mix_message = "The cauldron glows for a moment."
-
-/datum/chemical_reaction/alch/strongmana
-	name = "Strong Mana Potion"
-	id = /datum/reagent/medicine/strongmana
-	results = list(/datum/reagent/medicine/strongmana = 1)
-	required_reagents = list(/datum/reagent/medicine/manapot = 1, /datum/reagent/additive = 1)
-	mix_message = "The cauldron glows for a moment."
-
-/datum/chemical_reaction/alch/strongstam
-	name = "Strong Stamina Potion"
-	id = /datum/reagent/medicine/strongstam
-	results = list(/datum/reagent/medicine/strongstam = 1)
-	required_reagents = list(/datum/reagent/medicine/stampot = 1, /datum/reagent/additive = 1)
-	mix_message = "The cauldron glows for a moment."
-
-/datum/chemical_reaction/alch/strongpoison
-	name = "Strong Health Poison"
-	id = /datum/reagent/strongpoison
-	results = list(/datum/reagent/strongpoison = 1)
-	required_reagents = list(/datum/reagent/berrypoison = 1, /datum/reagent/additive = 1)
-	mix_message = "The cauldron glows for a moment."
-
-/datum/chemical_reaction/alch/strongstampoison
-	name = "Strong Stamina Leech Potion"
-	id = /datum/reagent/strongstampoison
-	results = list(/datum/reagent/strongstampoison = 1)
-	required_reagents = list(/datum/reagent/stampoison = 1, /datum/reagent/additive = 1)
-	mix_message = "The cauldron glows for a moment."
 
 /datum/chemical_reaction/alch/vitae_essence
 	name = "Vitae Decoction"
@@ -465,7 +480,7 @@ If you want to expand on poisons theres tons of fun effects TG chemistry has tha
 		M.reagents.add_reagent(src, rand(1,3))
 		to_chat(M, span_small("I feel even worse..."))
 	return ..()
-	
+
 
 /datum/reagent/medicine/vitae_essence
 	name = "Vitae Decoction"

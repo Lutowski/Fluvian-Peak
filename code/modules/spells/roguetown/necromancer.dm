@@ -1,6 +1,8 @@
 /obj/effect/proc_holder/spell/invoked/bonechill
 	name = "Bone Chill"
-	overlay_state = "raiseskele"
+	desc = "Chill the target with necrotic energy. Severely reduces speed and weakens physical prowess."
+	cost = 3
+	overlay_state = "profane"
 	releasedrain = 30
 	chargetime = 5
 	range = 7
@@ -8,11 +10,14 @@
 	movement_interrupt = FALSE
 	chargedloop = null
 	sound = 'sound/magic/whiteflame.ogg'
+	spell_tier = 2
+	chargedloop = /datum/looping_sound/invokegen
 	associated_skill = /datum/skill/magic/arcane
 	gesture_required = TRUE // Potential offensive use, need a target
 	antimagic_allowed = TRUE
 	recharge_time = 15 SECONDS
 	miracle = FALSE
+	zizo_spell = TRUE
 
 /obj/effect/proc_holder/spell/invoked/bonechill/cast(list/targets, mob/living/user)
 	..()
@@ -87,6 +92,11 @@
 /obj/effect/proc_holder/spell/invoked/raise_undead_formation/cast(list/targets, mob/living/user)
 	..()
 
+	if(istype(get_area(user), /area/rogue/indoors/ravoxarena))
+		to_chat(user, span_userdanger("I reach for outer help, but something rebukes me! This challenge is only for me to overcome!"))
+		revert_cast()
+		return FALSE
+	
 	var/turf/T = get_turf(targets[1])
 	if(!isopenturf(T))
 		to_chat(user, span_warning("The targeted location is blocked. My summon fails to come forth."))
@@ -154,6 +164,11 @@
 /obj/effect/proc_holder/spell/invoked/raise_undead_guard/cast(list/targets, mob/living/user)
 	..()
 
+	if(istype(get_area(user), /area/rogue/indoors/ravoxarena))
+		to_chat(user, span_userdanger("I reach for outer help, but something rebukes me! This challenge is only for me to overcome!"))
+		revert_cast()
+		return FALSE
+		
 	var/turf/T = get_turf(targets[1])
 	if(!isopenturf(T))
 		to_chat(user, span_warning("The targeted location is blocked. My summon fails to come forth."))
@@ -251,12 +266,13 @@
 			to_chat(user, span_warning("It would be unwise to make an enemy of your own skeletons."))
 			return FALSE
 		if(target.mind && target.mind.current)
-			if (faction_tag in target.mind.current.faction)
-				target.mind.current.faction -= faction_tag
+			if (faction_tag in target.mind?.current.faction)
+				target.mind?.current.faction -= faction_tag
 				user.say("Hostis declaratus es.")
 			else
-				target.mind.current.faction += faction_tag
+				target.mind?.current.faction += faction_tag
 				user.say("Amicus declaratus es.")
+				target.notify_faction_change()
 		else if(istype(target, /mob/living/simple_animal))
 			if (faction_tag in target.faction)
 				target.faction -= faction_tag
@@ -264,5 +280,9 @@
 			else
 				target.faction |= faction_tag
 				user.say("Amicus declaratus es.")
+				target.notify_faction_change()
 		return TRUE
 	return FALSE
+
+/obj/effect/proc_holder/spell/invoked/gravemark/no_sprite
+	overlay_state = ""

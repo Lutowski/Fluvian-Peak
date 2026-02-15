@@ -45,6 +45,7 @@
 
 /obj/item/paper
 	name = "parchment"
+	desc = "Animal skin dried under tension to create a robust medium for writing."
 	gender = NEUTER
 	icon = 'icons/roguetown/items/misc.dmi'
 	icon_state = "paper"
@@ -123,9 +124,9 @@
 	update_icon_state()
 	updateinfolinks()
 	var/static/list/slapcraft_recipe_list = list(
-		/datum/crafting_recipe/roguetown/survival/sigsweet,
-		/datum/crafting_recipe/roguetown/survival/sigdry,
-		/datum/crafting_recipe/roguetown/survival/rocknutdry,
+		/datum/crafting_recipe/roguetown/cooking/sigsweet,
+		/datum/crafting_recipe/roguetown/cooking/sigdry,
+		/datum/crafting_recipe/roguetown/cooking/rocknutdry,
 		)
 
 	AddElement(
@@ -410,8 +411,6 @@
 				addtofield(text2num(id), t) // He wants to edit a field, let him.
 			else
 				info += t // Oh, he wants to edit to the end of the file, let him.
-				testing("[length(info)]")
-				testing("[findtext(info, "\n")]")
 				updateinfolinks()
 			playsound(src, 'sound/items/write.ogg', 100, FALSE)
 			format_browse(info_links, usr)
@@ -445,7 +444,7 @@
 		else
 			to_chat(user, "<span class='warning'>I can't write.</span>")
 			return
-	
+
 	if(istype(P, /obj/item/paper))
 		var/obj/item/paper/p = P
 		if(info && p.info)
@@ -490,7 +489,7 @@
 		add_fingerprint(user)
 		return ..()
 	else
-		return ..()	
+		return ..()
 
 /obj/item/paper/fire_act(added, maxstacks)
 	..()

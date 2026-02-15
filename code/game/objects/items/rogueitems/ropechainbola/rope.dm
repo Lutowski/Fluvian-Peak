@@ -1,6 +1,6 @@
 /obj/item/rope
 	name = "rope"
-	desc = "A woven hemp rope."
+	desc = "A woven hemp rope. Useful for countless crafts, or to tie someone up in a pinch."
 	gender = PLURAL
 	icon = 'icons/roguetown/items/misc.dmi'
 	icon_state = "rope"
@@ -89,6 +89,9 @@
 	if(C.handcuffed)
 		return
 
+	if(!user.Adjacent(C))
+		return
+
 	if(!(C.get_num_arms(FALSE) || C.get_arm_ignore()))
 		to_chat(user, span_warning("[C] has no arms to tie up."))
 		return
@@ -105,8 +108,11 @@
 						span_userdanger("[user] is trying to tie my arms with [src.name]!"))
 	playsound(loc, cuffsound, 100, TRUE, -2)
 
-	if(!(do_mob(user, C, 60 * surrender_mod, double_progress = TRUE) && C.get_num_arms(FALSE)))
+	if(!(do_mob(user, C, 60 * surrender_mod, double_progress = TRUE, can_move = FALSE) && C.get_num_arms(FALSE)))
 		to_chat(user, span_warning("I fail to tie up [C]!"))
+		return
+
+	if(!user.Adjacent(C))
 		return
 
 	apply_cuffs(C, user)
@@ -117,6 +123,9 @@
 
 /obj/item/rope/proc/try_cuff_legs(mob/living/carbon/C, mob/living/user)
 	if(C.legcuffed)
+		return
+
+	if(!user.Adjacent(C))
 		return
 
 	if(C.get_num_legs(FALSE) < 2)
@@ -138,6 +147,9 @@
 
 	if(!do_mob(user, C, 60 * surrender_mod) || C.get_num_legs(FALSE) < 2)
 		to_chat(user, span_warning("I fail to tie up [C]!"))
+		return
+
+	if(!user.Adjacent(C))
 		return
 
 	apply_cuffs(C, user, TRUE)

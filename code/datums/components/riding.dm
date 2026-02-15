@@ -1,8 +1,9 @@
 /datum/component/riding
 	var/last_vehicle_move = 0 //used for move delays
 	var/last_move_diagonal = FALSE
-	var/vehicle_move_delay = 2 //tick delay between movements, lower = faster, higher = slower
+	var/vehicle_move_delay = 4 //tick delay between movements, lower = faster, higher = slower
 	var/keytype
+	var/riding_xp_move_counter = 0 //Plays with the new EXP-obtaining mechanic, courtesy of PR #768 from Ophaq.
 
 	var/slowed = FALSE
 	var/slowvalue = 1
@@ -19,6 +20,10 @@
 	var/ride_check_ridden_incapacitated = FALSE
 
 	var/del_on_unbuckle_all = FALSE
+
+/datum/component/riding/no_ocean/Initialize()//no copy paste
+	. = ..()
+	forbid_turf_typecache = typecacheof(/turf/open/water/ocean/deep)
 
 /datum/component/riding/Initialize()
 	if(!ismovableatom(parent))
@@ -58,8 +63,19 @@
 	var/atom/movable/AM = parent
 	AM.set_glide_size(DELAY_TO_GLIDE_SIZE(vehicle_move_delay))
 	for(var/mob/M in AM.buckled_mobs)
+		if(!istype(M, /mob/living))
+			continue
+		var/mob/living/rider = M
 		ride_check(M)
 		M.set_glide_size(AM.glide_size)
+		if(rider.m_intent == MOVE_INTENT_RUN)
+			riding_xp_move_counter++
+			if(riding_xp_move_counter >= 5) 			 	// Determines how many steps are needed before Riding-type EXP is rewarded. In this case, you obtain EXP every time you travel five tiles while riding a mount.
+				var/xp_amt = rider.STAINT * 0.1 		 	// Scales the amount of Riding-type EXP that's rewarded, based on your character's INT. Same as every other skill.
+				rider.mind && rider.mind.add_sleep_experience(/datum/skill/misc/riding, xp_amt)
+				riding_xp_move_counter = 0
+		else
+			riding_xp_move_counter = 0					 	// Resets the counter if you're not running while riding.
 	handle_vehicle_offsets()
 	handle_vehicle_layer()
 
@@ -254,11 +270,14 @@
 		AM.layer = MOB_LAYER
 
 /datum/component/riding/human/get_offsets(pass_index)
-	var/mob/living/carbon/human/H = parent
-	if(H.buckle_lying)
+	var/mob/living/carbon/human/human = parent
+	var/obj/item/bodypart/taur/taur = human.get_taur_tail()
+	if(human.buckle_lying)
 		return list(TEXT_NORTH = list(0, 6), TEXT_SOUTH = list(0, 6), TEXT_EAST = list(0, 6), TEXT_WEST = list(0, 6))
 	else if(istype(parent, /mob/living/carbon/human/species/wildshape)) //Snowflake druid travel
 		return list(TEXT_NORTH = list(8, 6), TEXT_SOUTH = list(8, 6), TEXT_EAST = list(8, 6), TEXT_WEST = list(8, 6))
+	else if(taur)
+		return list(TEXT_NORTH = list(0, 6), TEXT_SOUTH = list(0, 6), TEXT_EAST = list(-12, 4), TEXT_WEST = list(12, 4))
 	else
 		return list(TEXT_NORTH = list(0, 6), TEXT_SOUTH = list(0, 6), TEXT_EAST = list(-6, 4), TEXT_WEST = list(6, 4))
 

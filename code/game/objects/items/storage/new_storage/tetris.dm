@@ -24,7 +24,7 @@
 	var/grid_height
 
 /obj/item/proc/inventory_flip(mob/user, force = FALSE)
-	if(!force && (user && ((!user.Adjacent(src) && !user.DirectAccess(src)) || !isliving(user))))
+	if(!force && (user && ((!user.Adjacent(src) && !user.IsDirectlyAccessible(src)) || !isliving(user))))
 		return
 	var/old_width = grid_width
 	var/old_height = grid_height
@@ -290,7 +290,7 @@
 	if(isitem(host))
 		var/obj/item/host_item = host
 		var/datum/component/storage/storage_internal = storing.GetComponent(/datum/component/storage)
-		if((storing.w_class >= host_item.w_class) && storage_internal && !allow_big_nesting)
+		if(!allow_big_nesting && (storing.w_class >= host_item.w_class) && storage_internal && !storage_internal.allow_nesting)
 			if(!stop_messages)
 				to_chat(user, span_warning("[host_item] cannot hold [storing] as it's a storage item of the same size!"))
 			return FALSE //To prevent the stacking of same sized storage items
@@ -535,14 +535,11 @@
 			final_y = screen_y+current_y
 			final_coordinates = "[final_x],[final_y]"
 			if(final_x >= (screen_max_columns*grid_box_ratio))
-				testing("validate_grid_coordinates FAILED, final_x >= screen_max_columns, final_coordinates: ([final_coordinates])")
 				return FALSE
 			if(final_y >= (screen_max_rows*grid_box_ratio))
-				testing("validate_grid_coordinates FAILED, final_y >= screen_max_rows, final_coordinates: ([final_coordinates])")
 				return FALSE
 			var/existing_item = LAZYACCESS(grid_coordinates_to_item, final_coordinates)
 			if(existing_item && (!dragged_item || (existing_item != dragged_item)))
-				testing("validate_grid_coordinates FAILED, coordinates already occupied, final_coordinates: ([final_coordinates])")
 				return FALSE
 	return TRUE
 /datum/component/storage/proc/get_bound_underlay(grid_width = world.icon_size, grid_height = world.icon_size, enchanted)
@@ -626,7 +623,6 @@
 			final_x = coordinate_x+current_x
 			final_y = coordinate_y+current_y
 			calculated_coordinates = "[final_x],[final_y]"
-			testing("handle_item_insertion SUCCESS calculated_coordinates: ([calculated_coordinates])")
 			LAZYADDASSOC(grid_coordinates_to_item, calculated_coordinates, storing)
 			LAZYINITLIST(item_to_grid_coordinates)
 			LAZYINITLIST(item_to_grid_coordinates[storing])
@@ -760,6 +756,7 @@
 		else
 			coordinates = screen_loc_to_grid_coordinates(coordinates)
 		grid_add_item(storing, coordinates)
+	SEND_SIGNAL(storing, COMSIG_AFTER_STORAGE_INSERT, parent, user, src)
 	update_icon()
 	refresh_mob_views()
 	return TRUE
@@ -774,6 +771,7 @@
 	grid_remove_item(removed)
 	//Cache this as it should be reusable down the bottom, will not apply if anyone adds a sleep to dropped or moving objects, things that should never happen
 	var/atom/parent = src.parent
+	var/mob/carrying_mob
 	var/list/seeing_mobs = can_see_contents()
 	for(var/mob/seeing_mob as anything in seeing_mobs)
 		seeing_mob.client.screen -= removed
@@ -781,7 +779,7 @@
 		var/obj/item/removed_item = removed
 		removed_item.item_flags &= ~IN_STORAGE
 		if(ismob(parent.loc))
-			var/mob/carrying_mob = parent.loc
+			carrying_mob = parent.loc
 			removed_item.dropped(carrying_mob, TRUE)
 	if(new_location)
 		//Reset the items values
@@ -793,6 +791,7 @@
 		//Being destroyed, just move to nullspace now (so it's not in contents for the icon update)
 		removed.moveToNullspace()
 	removed.update_icon()
+	SEND_SIGNAL(removed, COMSIG_AFTER_STORAGE_REMOVE, parent, carrying_mob, src)
 	update_icon()
 	refresh_mob_views()
 	return TRUE
@@ -815,7 +814,7 @@
 		storage_master.screen_pixel_y = initial(storage_master.screen_pixel_y)
 		storage_master.orient2hud()
 		storage_master.show_to(usr)
-		testing("storage screen variables reset.")
+
 		to_chat(usr, span_notice("Storage window position has been reset."))
 	else if(LAZYACCESS(modifiers, "ctrl"))
 		locked = !locked
@@ -841,7 +840,6 @@
 	var/minimum_y_pixels = (16 - storage_master.screen_max_rows) * world.icon_size
 
 	var/screen_loc = LAZYACCESS(modifiers, "screen-loc")
-	testing("storage close button MouseDrop() screen_loc: ([screen_loc])")
 
 	var/screen_x = copytext(screen_loc, 1, findtext(screen_loc, ","))
 	var/screen_pixel_x = text2num(copytext(screen_x, findtext(screen_x, ":") + 1))
@@ -864,7 +862,7 @@
 	storage_master.screen_start_y = screen_y
 	storage_master.screen_pixel_y = screen_pixel_y
 	storage_master.orient2hud()
-	testing("[screen_x]:[screen_pixel_x],[screen_y]:[screen_pixel_y]")
+
 
 /atom/movable/screen/storage
 	icon = 'icons/hud/storage.dmi'
@@ -972,3 +970,7 @@
 	layer = HUD_LAYER
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	alpha = 96
+
+#undef STORAGE_NO_WORN_ACCESS
+#undef STORAGE_NO_EQUIPPED_ACCESS
+#undef COMSIG_STORAGE_BLOCK_USER_TAKE

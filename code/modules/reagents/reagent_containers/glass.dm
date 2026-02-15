@@ -9,6 +9,28 @@
 	spillable = TRUE
 	possible_item_intents = list(INTENT_POUR, /datum/intent/fill, INTENT_SPLASH, INTENT_GENERIC)
 	resistance_flags = ACID_PROOF
+	var/is_infinite = FALSE
+
+/obj/item/reagent_containers/glass/examine(mob/user)
+	. = ..()
+	if(user.mind && ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(!H.patron || !istype(H.patron, /datum/patron/inhumen/baotha))
+			return
+		if(is_infinite)
+			. += span_notice("It's been touched by the Lady... it won't run dry, for now.")
+/obj/item/reagent_containers/glass/proc/reset_infinite()
+	is_infinite = FALSE
+
+/obj/item/reagent_containers/glass/proc/set_infinite(mob/user, delay)
+	if(is_infinite)
+		to_chat(user, span_info("It's already blessed to never run out!"))
+		return FALSE
+	else
+		is_infinite = TRUE
+		var/timer = (delay ? delay : 60 SECONDS)
+		addtimer(CALLBACK(src, PROC_REF(reset_infinite)), timer)
+		return TRUE
 
 /datum/intent/fill
 	name = "fill"
@@ -59,7 +81,7 @@
 		if(M != user)
 			M.visible_message(span_danger("[user] attempts to feed [M] something."), \
 						span_danger("[user] attempts to feed you something."))
-			if(!do_mob(user, M, double_progress = TRUE))
+			if(!do_mob(user, M, double_progress = TRUE, can_move = FALSE))
 				return
 			if(!reagents || !reagents.total_volume)
 				return // The drink might be empty after the delay, such as by spam-feeding
@@ -75,7 +97,7 @@
 					if (prob(25))
 						to_chat(human_user, span_red("I've got better manners than this..."))
 			to_chat(user, span_notice("I swallow a gulp of [src]."))
-		addtimer(CALLBACK(reagents, TYPE_PROC_REF(/datum/reagents, trans_to), M, amount_per_gulp, TRUE, TRUE, FALSE, user, FALSE, INGEST), 5)
+		addtimer(CALLBACK(reagents, TYPE_PROC_REF(/datum/reagents, trans_to), M, amount_per_gulp, TRUE, TRUE, FALSE, user, FALSE, INGEST, TRUE, FALSE, (is_infinite ? FALSE : TRUE)), 5)
 		playsound(M.loc,pick(drinksounds), 100, TRUE)
 		if(user.client?.prefs.autoconsume)
 			if(M == user && do_after(user, CLICK_CD_MELEE))
@@ -90,14 +112,15 @@
 	if(user.used_intent.type == INTENT_GENERIC)
 		return ..()
 
-	testing("attackobj1")
+
 
 	if(!spillable)
+		to_chat(user, span_warning("[src] is closed!"))
 		return
 
 
 	if(target.is_refillable() && (user.used_intent.type == INTENT_POUR)) //Something like a glass. Player probably wants to transfer TO it.
-		testing("attackobj2")
+
 		if(!reagents.total_volume)
 			to_chat(user, span_warning("[src] is empty!"))
 			return
@@ -123,7 +146,7 @@
 		return
 
 	if(target.is_drainable() && (user.used_intent.type == /datum/intent/fill)) //A dispenser. Transfer FROM it TO us.
-		testing("attackobj3")
+
 		if(!target.reagents.total_volume)
 			to_chat(user, span_warning("[target] is empty!"))
 			return
@@ -200,7 +223,7 @@
 
 /obj/item/reagent_containers/glass/bucket
 	name = "bucket"
-	desc = ""
+	desc = "The means by which Abyssor is said to have taught early man to manipulate water. This one is wooden."
 	icon = 'icons/roguetown/items/misc.dmi'
 	lefthand_file = 'modular/Neu_Food/icons/food_lefthand.dmi'
 	righthand_file = 'modular/Neu_Food/icons/food_righthand.dmi'
@@ -243,7 +266,7 @@
 
 /obj/item/reagent_containers/glass/bucket/update_icon(dont_fill=FALSE)
 	if(dont_fill)
-		testing("dontfull")
+
 		return ..()
 
 	cut_overlays()

@@ -39,10 +39,19 @@
 	/// Icon for sheathing. Only null for weapons that are unsheathable.
 	var/sheathe_icon = null
 
+	var/datum/special_intent/special
+
+	var/malumblessed_w = FALSE
+
+	var/cast_time_reduction = null
+
 /obj/item/rogueweapon/Initialize()
 	. = ..()
 	if(!destroy_message)
 		destroy_message = span_warning("\The [src] shatters!")
+	
+	if(ispath(special))
+		special = new special()
 
 /obj/item/rogueweapon/ComponentInitialize()
 	if(is_silver) // By default, silver weapons are supposed to be blesseable.

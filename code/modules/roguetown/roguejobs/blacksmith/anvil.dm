@@ -29,15 +29,15 @@
 			// Handle adding items to forging with tongs
 			var/datum/component/forging/forging_comp = current_workpiece.GetComponent(/datum/component/forging)
 			if(forging_comp?.needed_item && T.hingot && istype(T.hingot, forging_comp.needed_item))
-				SEND_SIGNAL(current_workpiece, COMSIG_ITEM_ADDED_TO_FORGING, T.hingot, user)
-				if(istype(T.hingot, /obj/item/ingot))
-					var/obj/item/ingot/I = T.hingot
+				var/obj/item/consumed = T.hingot
+				SEND_SIGNAL(current_workpiece, COMSIG_ITEM_ADDED_TO_FORGING, consumed, user)
+				if(istype(consumed, /obj/item/ingot))
+					var/obj/item/ingot/I = consumed
 					forging_comp.material_quality += I.quality
 					previous_material_quality = I.quality
 				else
 					forging_comp.material_quality += previous_material_quality
 				forging_comp.current_recipe.num_of_materials += 1
-				qdel(T.hingot)
 				T.hingot = null
 				T.update_icon()
 				update_icon()
@@ -45,6 +45,9 @@
 
 			// Pick up ingot with tongs
 			if(istype(current_workpiece, /obj/item/ingot))
+				if(T.hingot)
+					to_chat(user, span_warning("You're already holding something with your tongs!"))
+					return
 				current_workpiece.forceMove(T)
 				T.hingot = current_workpiece
 				T.hott = hott // Transfer heat state
@@ -146,7 +149,8 @@
 			else
 				forging_comp.material_quality += previous_material_quality
 			forging_comp.current_recipe.num_of_materials += 1
-			qdel(W)
+			if(user?.is_holding(W))
+				user.temporarilyRemoveItemFromInventory(W, TRUE)
 			return
 
 	if(W.anvilrepair)
@@ -177,6 +181,8 @@
 	var/datum/asset/spritesheet/spritesheet = get_asset_datum(/datum/asset/spritesheet/anvil_recipes)
 
 	for(var/datum/anvil_recipe/R in GLOB.anvil_recipes)
+		if(R.required_tech_node && !R.tech_unlocked)
+			continue
 		var/valid_recipe = FALSE
 
 		if(current_workpiece)
@@ -207,7 +213,7 @@
 			if(!istype(recipe))
 				return TRUE
 			var/has_required_item = FALSE
-			
+
 			// Check both bar and blade requirements
 			if(recipe.req_bar && istype(current_workpiece, recipe.req_bar))
 				has_required_item = TRUE
@@ -257,6 +263,12 @@
 				previous_material_quality = quality_value
 
 			ui.close()
+
+			// if we have a hammer in our hand, start working immediately
+			var/obj/item/rogueweapon/hammer/hammer = usr.get_active_held_item()
+			if(istype(hammer))
+				attackby(hammer, user)
+
 			return TRUE
 
 /obj/machinery/anvil/attack_hand(mob/user, params)
@@ -280,7 +292,7 @@
 
 /obj/machinery/anvil/process()
 	if(hott)
-		if(world.time > hott + 10 SECONDS)
+		if(world.time > hott + 20 SECONDS)
 			hott = null
 			STOP_PROCESSING(SSmachines, src)
 	else
@@ -300,3 +312,9 @@
 		M.pixel_y = 5
 		M.pixel_x = 3
 		add_overlay(M)
+
+/obj/machinery/anvil/bronze
+	name = "bronze anvil"
+	desc = "Elevating humenity from its primordial stupor since the earliest daes of Psydonia."
+	icon_state = "broanvil"
+	max_integrity = 400

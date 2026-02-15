@@ -11,11 +11,13 @@
 #define ROLE_VAMPIRE			"Vampire"
 #define ROLE_NBEAST				"Vampire Lord"
 #define ROLE_BANDIT				"Bandit"
+#define ROLE_ASSASSIN			"Assassin"
 #define ROLE_DELF				"Dark Elf"
 #define ROLE_PREBEL				"Peasant Rebel"
 #define ROLE_ASPIRANT			"Aspirant"
 #define ROLE_LICH				"Lich"
 #define ROLE_DREAMWALKER		"Dreamwalker"
+#define ROLE_GNOLL				"Gnoll"
 #define ROLE_ASCENDANT			"Ascendant"
 #define ROLE_WRETCH				"Wretch"
 #define ROLE_UNBOUND_DEATHKNIGHT "Unbound Death Knight"
@@ -63,7 +65,9 @@ GLOBAL_LIST_INIT(special_roles_rogue, list(
 	ROLE_NBEAST = /datum/antagonist/vampire/lord,
 	ROLE_VAMPIRE = /datum/antagonist/vampire,
 	ROLE_LICH = /datum/antagonist/lich,
-	ROLE_DREAMWALKER = /datum/antagonist/dreamwalker
+	ROLE_DREAMWALKER = /datum/antagonist/dreamwalker,
+	ROLE_GNOLL = /datum/antagonist/gnoll,
+	ROLE_ASSASSIN = /datum/antagonist/assassin,
 ))
 
 //Job defines for what happens when you fail to qualify for any job during job selection

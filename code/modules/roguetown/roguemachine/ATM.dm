@@ -1,6 +1,6 @@
 /obj/structure/roguemachine/atm
 	name = "MEISTER"
-	desc = "Stores and withdraws currency for accounts managed by the Grand Duchy of Azuria."
+	desc = "A magitech apparatus with a mouth that stores and withdraws currency for accounts managed by the Grand Duchy of Azuria."
 	icon = 'icons/roguetown/misc/machines.dmi'
 	icon_state = "atm"
 	density = FALSE
@@ -81,7 +81,8 @@
 		to_chat(user, span_warning("The machine bites my finger."))
 		if(!drilled)
 			icon_state = "atm-b"
-		H.flash_fullscreen("redflash3")
+		if(H.show_redflash())
+			H.flash_fullscreen("redflash3")
 		playsound(H, 'sound/combat/hits/bladed/genstab (1).ogg', 100, FALSE, -1)
 		SStreasury.create_bank_account(H)
 		if(H.mind)
@@ -157,8 +158,13 @@
 	return ..()
 
 /obj/structure/roguemachine/atm/examine(mob/user)
-	. += ..()
-	. += span_info("The current tax rate on deposits is [SStreasury.tax_value * 100] percent. Nobles exempt.")
+	. = ..()
+	. += span_notice("Current rates:")
+	. += span_smallnotice("Interest rate: [(SStreasury.bank_interest_rate) * 100]% per day.")
+	. += span_smallnotice("Nobility tax: [SStreasury.taxation_cat_settings[TAX_CAT_NOBLE]["taxAmount"] ? "[SStreasury.taxation_cat_settings[TAX_CAT_NOBLE]["taxAmount"]]%." : "EXEMPT."]")
+	. += span_smallnotice("Church tax: [SStreasury.taxation_cat_settings[TAX_CAT_CHURCH]["taxAmount"] ? "[SStreasury.taxation_cat_settings[TAX_CAT_CHURCH]["taxAmount"]]%." : "EXEMPT."]")
+	. += span_smallnotice("Burghers tax: [SStreasury.taxation_cat_settings[TAX_CAT_BURGHERS]["taxAmount"] ? "[SStreasury.taxation_cat_settings[TAX_CAT_BURGHERS]["taxAmount"]]%." : "EXEMPT."]")
+	. += span_smallnotice("Peasantry tax: [SStreasury.taxation_cat_settings[TAX_CAT_PEASANTS]["taxAmount"] ? "[SStreasury.taxation_cat_settings[TAX_CAT_PEASANTS]["taxAmount"]]%." : "EXEMPT."]")
 
 
 /obj/structure/roguemachine/atm/proc/drill(obj/structure/roguemachine/atm)

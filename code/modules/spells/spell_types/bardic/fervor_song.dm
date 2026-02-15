@@ -3,24 +3,11 @@
 	desc = "Inspire the rhythm of battle, your allies strike and parry 20% better!"
 	song_tier = 2
 	warnie = "spellwarning"
-	invocations = list("To my tune, strike and move thy feet!") 
-	invocation_type = "shout"
+	invocations = list("plays a bombastic, rhythmic march! The world feels grounded!") 
+	invocation_type = "emote"
 	overlay_state = "bardsong_t2_base"
 	action_icon_state = "bardsong_t2_base"
-
-
-/obj/effect/proc_holder/spell/invoked/song/fervor_song/cast(mob/living/user = usr)
-	if(user.has_status_effect(/datum/status_effect/buff/playing_music))
-		for(var/datum/status_effect/buff/playing_melody/melodies in user.status_effects)
-			user.remove_status_effect(melodies)
-		for(var/datum/status_effect/buff/playing_dirge/dirges in user.status_effects)
-			user.remove_status_effect(dirges)
-		user.apply_status_effect(/datum/status_effect/buff/playing_melody/fervor)
-		return TRUE
-	else
-		revert_cast()
-		to_chat(user, span_warning("I must be playing something to inspire my audience!"))
-		return
+	song_effect = /datum/status_effect/buff/playing_melody/fervor
 
 /datum/status_effect/buff/playing_melody/fervor
 	effect = /obj/effect/temp_visual/songs/inspiration_bardsongt2
@@ -45,12 +32,12 @@
 	var/filter = owner.get_filter(FERVOR_FILTER)
 	if (!filter)
 		owner.add_filter(FERVOR_FILTER, 2, list("type" = "outline", "color" = outline_colour, "alpha" = 50, "size" = 1))
-	to_chat(owner, span_warning("The tune aides me in battle."))
+	to_chat(owner, span_warning("I feel as if I truly understand combat! This is a tune worth fighting for!"))
 	ADD_TRAIT(owner, TRAIT_GUIDANCE, MAGIC_TRAIT)
 
 /datum/status_effect/buff/song/fervor/on_remove()
 	. = ..()
-	to_chat(owner, span_warning("My feeble mind muddies my warcraft once more."))
+	to_chat(owner, span_warning("The buzzing in my head softens, as does my adrenaline."))
 	owner.remove_filter(FERVOR_FILTER)
 	REMOVE_TRAIT(owner, TRAIT_GUIDANCE, MAGIC_TRAIT)
 

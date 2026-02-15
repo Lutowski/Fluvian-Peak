@@ -1,11 +1,4 @@
-#define RURAL_TAX 50 // Free money. A small safety pool for lowpop mostly
-#define TREASURY_TICK_AMOUNT 6 MINUTES
-#define EXPORT_ANNOUNCE_THRESHOLD 100
-
-#define TAX_CAT_NOBLE "Nobility"
-#define TAX_CAT_CHURCH "Church"
-#define TAX_CAT_YEOMEN "Yeomanry"
-#define TAX_CAT_PEASANTS "Peasantry"
+// SEE treasury.dm in __DEFINES for definitions
 
 /proc/send_ooc_note(msg, name, job)
 	var/list/names_to = list()
@@ -35,11 +28,13 @@ SUBSYSTEM_DEF(treasury)
 	var/list/taxation_cat_settings = list(
 		TAX_CAT_NOBLE = list("taxAmount" = 0, "fineExemption" = TRUE),
 		TAX_CAT_CHURCH = list("taxAmount" = 6, "fineExemption" = TRUE),
-		TAX_CAT_YEOMEN = list("taxAmount" = 12, "fineExemption" = FALSE),
+		TAX_CAT_BURGHERS = list("taxAmount" = 12, "fineExemption" = FALSE),
 		TAX_CAT_PEASANTS = list("taxAmount" = 12, "fineExemption" = FALSE)
 	)
 	var/tax_value = 0.11
 	var/queens_tax = 0.10
+	var/bank_interest_rate = 0.035 // 3.5% per day; changeable at steward
+	var/bank_interest_cap = 50
 	var/treasury_value = 0
 	var/mint_multiplier = 0.8 // 1x is meant to leave a margin after standard 80% collectable. Less than Bathmatron.
 	var/minted = 0
@@ -55,6 +50,8 @@ SUBSYSTEM_DEF(treasury)
 	var/total_noble_income = 0
 	var/total_import = 0
 	var/total_export = 0
+	var/obj/structure/roguemachine/steward/steward_machine // Reference to the nerve master
+	var/initial_payment_done = FALSE // Flag to track if initial round-start payment has been distributed
 
 /datum/controller/subsystem/treasury/Initialize()
 	treasury_value = rand(1000, 2000)
@@ -75,6 +72,9 @@ SUBSYSTEM_DEF(treasury)
 	if(world.time > next_treasury_check)
 		next_treasury_check = world.time + TREASURY_TICK_AMOUNT
 		if(SSticker.current_state == GAME_STATE_PLAYING)
+			if(!initial_payment_done) // Distribute initial payments once at round start
+				initial_payment_done = TRUE
+				distribute_daily_payments()
 			for(var/datum/roguestock/X in stockpile_datums)
 				if(!X.stable_price && !X.mint_item)
 					if(X.demand < initial(X.demand))
@@ -91,6 +91,7 @@ SUBSYSTEM_DEF(treasury)
 		give_money_treasury(RURAL_TAX, "Rural Tax Collection") //Give the King's purse to the treasury
 		record_round_statistic(STATS_RURAL_TAXES_COLLECTED, RURAL_TAX)
 		total_rural_tax += RURAL_TAX
+	
 		auto_export()
 
 /datum/controller/subsystem/treasury/proc/create_bank_account(name, initial_deposit)
@@ -229,6 +230,52 @@ SUBSYSTEM_DEF(treasury)
 		else
 			give_money_account(how_much, welfare_dependant, "Noble Estate")
 
+/datum/controller/subsystem/treasury/proc/distribute_daily_payments()
+	if(!steward_machine || !steward_machine.daily_payments || !steward_machine.daily_payments.len)
+		return
+
+	var/total_paid = 0
+	for(var/job_name in steward_machine.daily_payments)
+		var/payment_amount = steward_machine.daily_payments[job_name]
+		for(var/mob/living/carbon/human/H in GLOB.human_list)
+			if(H.job == job_name)
+				// Skip payment if wages are suspended
+				if(HAS_TRAIT(H, TRAIT_WAGES_SUSPENDED))
+					continue
+				if(give_money_account(payment_amount, H, "Daily Wage"))
+					total_paid += payment_amount
+					record_round_statistic(STATS_WAGES_PAID)
+
+	if(total_paid > 0)
+		log_to_steward("Daily wages distributed: [total_paid]m total")
+
+/datum/controller/subsystem/treasury/proc/distribute_interest()
+	var/total_interest_created = 0
+	var/interest_cap = 50 // Maximum interest per account per day
+
+	for(var/account in bank_accounts)
+		var/balance = bank_accounts[account]
+		if(balance <= 0)
+			continue
+
+		var/interest = round(balance * bank_interest_rate)
+		if(interest <= 0)
+			continue
+
+		interest = min(interest, interest_cap)
+
+		bank_accounts[account] += interest
+		total_interest_created += interest
+
+		// Notify real characters only
+		if(istype(account, /mob/living/carbon/human))
+			var/mob/living/carbon/human/H = account
+			send_ooc_note("<b>MEISTER:</b> You received [interest]m in interest.", H.real_name)
+
+	if(total_interest_created > 0)
+		log_to_steward("-[total_interest_created] from treasury (interest issued)")
+		record_round_statistic(STATS_BANK_INTEREST_CREATED, total_interest_created)
+
 /datum/controller/subsystem/treasury/proc/do_export(var/datum/roguestock/D, silent = FALSE)
 	if((D.held_items[1] < D.importexport_amt))
 		return FALSE
@@ -297,8 +344,8 @@ SUBSYSTEM_DEF(treasury)
 /datum/controller/subsystem/treasury/proc/get_tax_value_for(mob/living/person)
 	if(HAS_TRAIT(person, TRAIT_NOBLE))
 		return taxation_cat_settings[TAX_CAT_NOBLE]["taxAmount"] / 100
-	else if(HAS_TRAIT(person, TRAIT_RESIDENT) || (person.job in GLOB.yeoman_positions))
-		return taxation_cat_settings[TAX_CAT_YEOMEN]["taxAmount"] / 100
+	else if(HAS_TRAIT(person, TRAIT_RESIDENT) || (person.job in GLOB.burgher_positions))
+		return taxation_cat_settings[TAX_CAT_BURGHERS]["taxAmount"] / 100
 	else if(person.job in GLOB.church_positions)
 		return taxation_cat_settings[TAX_CAT_CHURCH]["taxAmount"] / 100
 	else
@@ -308,8 +355,8 @@ SUBSYSTEM_DEF(treasury)
 /datum/controller/subsystem/treasury/proc/check_fine_exemption(mob/living/person)
 	if(HAS_TRAIT(person, TRAIT_NOBLE))
 		return taxation_cat_settings[TAX_CAT_NOBLE]["fineExemption"]
-	else if(HAS_TRAIT(person, TRAIT_RESIDENT) || (person.job in GLOB.yeoman_positions))
-		return taxation_cat_settings[TAX_CAT_YEOMEN]["fineExemption"]
+	else if(HAS_TRAIT(person, TRAIT_RESIDENT) || (person.job in GLOB.burgher_positions))
+		return taxation_cat_settings[TAX_CAT_BURGHERS]["fineExemption"]
 	else if(person.job in GLOB.church_positions)
 		return taxation_cat_settings[TAX_CAT_CHURCH]["fineExemption"]
 	else
@@ -324,3 +371,4 @@ SUBSYSTEM_DEF(treasury)
 	treasury_value -= amt
 	log_to_steward("-[amt] withdrawn from treasury by [target]")
 	return TRUE
+	

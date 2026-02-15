@@ -1,6 +1,6 @@
 /obj/item/heart_canister
 	name = "alchemical canister"
-	desc = ""
+	desc = "A stout glass vial formed of unusually thick glass."
 	icon = 'icons/obj/structures/heart_items.dmi'
 	icon_state = "canister_empty"
 	w_class = WEIGHT_CLASS_TINY
@@ -28,11 +28,29 @@
 		to_chat(user, span_warning("This canister is already filled!"))
 		return
 
-	if(attuned)
-		to_chat(user, span_warning("This canister is already attuned to [current_aspect_name]!"))
+	if(attuned && !filled)
+		var/reset_choice = alert(user, "This canister is already attuned to [current_aspect_name]. Do you want to reset it?", "Canister Reset", "Reset", "Keep")
+		if(reset_choice == "Reset")
+			reset_canister(user)
 		return
 
 	show_aspect_menu(user)
+
+/obj/item/heart_canister/proc/reset_canister(mob/user)
+	attuned = FALSE
+	filled = FALSE
+	current_aspect_name = ""
+	current_aspect_type = null
+	required_item_type = null
+	expected_color = "#ffffff"
+	aspect_datum_ref = null
+	calibrated = FALSE
+	calibration_progress = 0
+	calibration_required = 0
+	name = initial(name)
+	desc = initial(desc)
+	update_icon()
+	to_chat(user, span_notice("You reset the canister, clearing its attunement."))
 
 /obj/item/heart_canister/proc/show_aspect_menu(mob/user)
 	var/list/categories = list(
@@ -127,7 +145,7 @@
 		var/mutable_appearance/fluid = mutable_appearance(icon, "canister_fluid")
 		fluid.color = current_color
 		add_overlay(fluid)
-	else
+	else if (!broken)
 		icon_state = "canister_empty"
 
 /obj/item/heart_canister/attackby(obj/item/I, mob/user)
@@ -165,6 +183,8 @@
 		. += span_notice("Use in-hand to attune this canister to an aspect.")
 	else if (filled)
 		. += span_notice("It is attuned to [current_aspect_name]")
+	ui_interact(user)
+	return .
 
 /obj/item/heart_canister/proc/attune_to_aspect(mob/user, datum/A)
 	var/datum/flesh_archetype/archetype
@@ -252,7 +272,6 @@
 	broken = TRUE
 	calibrated = FALSE
 	filled = FALSE
-	name = "Broken canister"
 	desc = "It's irreversibly damaged."
 	icon_state = "canister_broken"
 	playsound(src, 'sound/foley/glassbreak.ogg', 75, TRUE)
@@ -264,6 +283,7 @@
 	icon = 'icons/obj/structures/heart_items.dmi'
 	icon_state = "blood_canister_empty"
 	w_class = WEIGHT_CLASS_TINY
+	max_integrity = 50
 
 /obj/item/heart_blood_canister/filled
 	name = "Full heartblood canister"
@@ -276,8 +296,170 @@
 	icon = 'icons/obj/structures/heart_items.dmi'
 	icon_state = "blood_vial_empty"
 	w_class = WEIGHT_CLASS_TINY
+	max_integrity = 10
 
 /obj/item/heart_blood_vial/filled
 	name = "Full heartblood vial"
 	desc = "A vial full of viscous blood, despite being closed it somehow still exudes a putrid smell. Highly valued, due to their ability to purify lux."
 	icon_state = "blood_vial_filled"
+
+/obj/item/heart_canister/ui_interact(mob/user, datum/tgui/ui)
+	if(!isliving(user))
+		return
+
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "HeartCanister", "Aspect Canister Examination")
+		ui.open()
+
+/obj/item/heart_canister/ui_data(mob/user)
+	. = ..()
+	.["filled"] = filled
+	.["aspect_data"] = list()
+
+	if(aspect_datum_ref)
+		var/list/aspect_data = list(
+			"name" = current_aspect_name,
+			"color" = expected_color,
+		)
+		if(istype(aspect_datum_ref, /datum/flesh_quirk))
+			var/datum/flesh_quirk/Q = aspect_datum_ref
+			aspect_data["type"] = "Quirk"
+			aspect_data["desc"] = Q.description
+
+			var/list/conflicting_names = list()
+			for(var/conflicting_path in Q.conflicting_quirks)
+				var/datum/flesh_quirk/conflicting_quirk = conflicting_path
+				if(conflicting_quirk)
+					UNTYPED_LIST_ADD(conflicting_names, conflicting_quirk.name)
+			aspect_data["conflicting_quirks"] = conflicting_names
+
+		else if(istype(aspect_datum_ref, /datum/flesh_trait))
+			var/datum/flesh_trait/T = aspect_datum_ref
+			aspect_data["type"] = "Trait"
+			aspect_data["desc"] = T.description
+
+			var/list/concept_names = list()
+			for(var/concept_path in T.liked_concepts)
+				var/datum/flesh_concept/concept_datum = concept_path
+				if(concept_datum)
+					UNTYPED_LIST_ADD(concept_names, concept_datum.name)
+				else
+					UNTYPED_LIST_ADD(concept_names, "[concept_path]") 
+			aspect_data["liked_concepts"] = concept_names
+
+			var/list/approach_summaries = list()
+			if(islist(T.preferred_approaches))
+				var/list/approach_map = T.preferred_approaches
+				for(var/key in approach_map)
+					UNTYPED_LIST_ADD(approach_summaries, "[key]: [approach_map[key]]")
+			aspect_data["preferred_approaches_summary"] = approach_summaries.Join(", ")
+
+			var/list/conflicting_names = list()
+			for(var/conflicting_path in T.conflicting_traits)
+				var/datum/flesh_trait/conflicting_trait = conflicting_path
+				if(conflicting_trait)
+					UNTYPED_LIST_ADD(conflicting_names, conflicting_trait.name)
+			aspect_data["conflicting_traits"] = conflicting_names
+
+		else if(istype(aspect_datum_ref, /datum/flesh_archetype))
+			var/datum/flesh_archetype/A = aspect_datum_ref
+			aspect_data["type"] = "Archetype"
+			aspect_data["desc"] = A.description
+
+			var/list/trait_names = list()
+			for(var/trait_path in A.possible_traits)
+				var/datum/flesh_trait/trait_datum = trait_path
+				if(trait_datum)
+					UNTYPED_LIST_ADD(trait_names, trait_datum.name)
+			aspect_data["possible_traits"] = trait_names
+
+			var/list/quirk_names = list()
+			for(var/quirk_path in A.possible_quirks)
+				var/datum/flesh_quirk/quirk_datum = quirk_path
+				if(quirk_datum)
+					UNTYPED_LIST_ADD(quirk_names, quirk_datum.name)
+			aspect_data["possible_quirks"] = quirk_names
+			aspect_data["discharge_colors"] = A.discharge_colors
+
+		// Add the compiled data to the UI data
+		.["aspect_data"] = aspect_data
+	return .
+
+/obj/item/proc/break_fancy_container(obj/item/container)
+	if(!container)
+		return
+	var/turf/T = get_turf(container)
+	playsound(T, 'sound/foley/glassbreak.ogg', 75, TRUE)
+	new /obj/effect/decal/cleanable/heart_shards(T)
+	if(istype(container, /obj/item/heart_blood_canister/filled) || istype(container, /obj/item/heart_blood_vial/filled))
+		if(istype(container, /obj/item/heart_blood_canister/filled))
+			new /obj/effect/decal/cleanable/heart_blood(T)
+		else if(istype(container, /obj/item/heart_blood_vial/filled))
+			new /obj/effect/decal/cleanable/heart_blood/small(T)
+	qdel(container)
+	return TRUE
+
+/obj/effect/decal/cleanable/heart_blood
+	name = "heart blood"
+	desc = ""
+	icon = 'icons/obj/structures/heart_items.dmi'
+	icon_state = "blood"
+
+/obj/effect/decal/cleanable/heart_blood/small
+	name = "heart blood"
+	icon_state = "blood_small"
+
+/obj/effect/decal/cleanable/heart_shards
+	name = "heart shards"
+	desc = ""
+	icon = 'icons/obj/structures/heart_items.dmi'
+	icon_state = "shards"
+
+/obj/item/heart_blood_canister/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
+	. = ..()
+	break_fancy_container(src)
+
+/obj/item/heart_blood_vial/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
+	. = ..()
+	break_fancy_container(src)
+
+/obj/item/heart_blood_canister/obj_destruction(damage_flag)
+	break_fancy_container(src)
+
+/obj/item/heart_blood_vial/obj_destruction(damage_flag)
+	break_fancy_container(src)
+
+/obj/item/heart_blood_canister/filled/attack(mob/living/target, mob/living/user)
+	if(istype(target))
+		var/datum/status_effect/black_rot/rot = target.has_status_effect(/datum/status_effect/black_rot)
+		if(!rot)
+			to_chat(user, span_infection("[target] isn't infected with black rot currently."))
+			return
+		if(!do_mob(user, target, 0.6 SECONDS, FALSE))
+			return
+		if(target == user)
+			target.visible_message(span_notice("[user] drinks some heartblood."), span_notice("I drink the heartblood, feeling it fight the rot within."))
+		else
+			target.visible_message(span_notice("[user] feeds [target] some heartblood."), span_notice("[user] feeds you some heartblood."))
+		rot.remove_stack(2)
+		qdel(src)
+		return TRUE
+	return ..()
+
+/obj/item/heart_blood_vial/filled/attack(mob/living/target, mob/living/user)
+	if(istype(target))
+		var/datum/status_effect/black_rot/rot = target.has_status_effect(/datum/status_effect/black_rot)
+		if(!rot)
+			to_chat(user, span_infection("[target] isn't infected with black rot currently."))
+			return
+		if(!do_mob(user, target, 0.6 SECONDS, FALSE))
+			return
+		if(target == user)
+			target.visible_message(span_notice("[user] drinks some heartblood."), span_notice("I drink the heartblood, feeling it fight the rot within."))
+		else
+			target.visible_message(span_notice("[user] feeds [target] some heartblood."), span_notice("[user] feeds you some heartblood."))
+		rot.remove_stack(1)
+		qdel(src)
+		return TRUE
+	return ..()

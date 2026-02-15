@@ -1,6 +1,6 @@
 //GLOBAL_LIST_INIT(militia_aggro, world.file2list("strings/rt/militiaaggrolines.txt")) //this doesn't exit but feel free to make it
 
-/mob/living/carbon/human/species/human/northern/militia //weak peasant infantry. Neutral but can be given factions for events. doesn't attack players. 
+/mob/living/carbon/human/species/human/northern/militia //weak peasant infantry. Neutral but can be given factions for events. doesn't attack players.
 	aggressive=1 //they attack things. INCLUDING SAIGAS (THIS MEANS THEY WILL AGGRO ON PEOPLES MOUNTS)
 	rude = TRUE
 	mode = NPC_AI_IDLE
@@ -19,7 +19,7 @@
 		wander = TRUE
 		if(!is_silent && target != newtarg)
 			say(pick(GLOB.militia_aggro))
-			linepoint(target) */
+			pointed(target) */
 
 /mob/living/carbon/human/species/human/northern/militia/should_target(mob/living/L)
 	if(L.stat != CONSCIOUS)
@@ -72,9 +72,9 @@
 
 /datum/outfit/job/roguetown/human/species/human/northern/militia/pre_equip(mob/living/carbon/human/H)
 	if(H.faction && ("viking" in H.faction))
-		cloak = /obj/item/clothing/cloak/stabard/dungeon
+		cloak = /obj/item/clothing/cloak/tabard/stabard/dungeon
 	else
-		cloak = /obj/item/clothing/cloak/stabard/guard
+		cloak = /obj/item/clothing/cloak/tabard/stabard/guard
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/light
 	if(prob(50))

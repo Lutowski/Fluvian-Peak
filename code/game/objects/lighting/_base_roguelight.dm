@@ -43,7 +43,7 @@
 				minsleft = "less than a minute"
 			else
 				minsleft = "[round(minsleft)] minutes"
-			. += span_info("The fire will last for [minsleft].")
+			. += span_info("The fire will last for <b>[minsleft]</b>.")
 		else
 			if(initial(fueluse) > 0)
 				. += span_warning("The fire is burned out and hungry...")
@@ -110,7 +110,7 @@
 /obj/machinery/light/rogue/attackby(obj/item/W, mob/living/user, params)
 	var/datum/skill/craft/cooking/cs = user?.get_skill_level(/datum/skill/craft/cooking)
 	var/cooktime_divisor = get_cooktime_divisor(cs)
-	if(cookonme)
+	if(cookonme && on)
 		if(istype(W, /obj/item/reagent_containers/food/snacks))
 			if(istype(W, /obj/item/reagent_containers/food/snacks/egg))
 				to_chat(user, "<span class='warning'>I wouldn't be able to cook this over the fire...</span>")
@@ -120,7 +120,7 @@
 				var/foundstab = FALSE
 				for(var/X in A.possible_item_intents)
 					var/datum/intent/D = new X
-					if(D.blade_class == BCLASS_STAB)
+					if(D.blade_class in GLOB.stab_bclasses)
 						foundstab = TRUE
 						break
 				if(foundstab)

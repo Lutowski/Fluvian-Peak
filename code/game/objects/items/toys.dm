@@ -84,6 +84,7 @@
 	qdel(src)
 
 /obj/item/toy/cards
+	desc = "A source of moral decay, says the church."
 	resistance_flags = FLAMMABLE
 	max_integrity = 50
 	no_use_cd = TRUE
@@ -107,7 +108,8 @@
 
 /obj/item/toy/cards/deck
 	name = "deck of cards"
-	desc = ""
+	desc = "A deck of simple printing cards, belted out in immense quantities from a \
+	printing press somewhere. An esteemed method to kill time."
 	icon = 'icons/obj/toy.dmi'
 	deckstyle = "syndicate"
 	icon_state = "deck_syndicate_full"
@@ -338,7 +340,7 @@
 		if(cardUser.is_holding(src))
 			cardUser.visible_message("<span class='notice'>[cardUser] checks [cardUser.p_their()] card.</span>", "<span class='notice'>The card reads: [cardname].</span>")
 		else
-			. += "<span class='warning'>I need to have the card in your hand to check it!</span>"
+			. += "<span class='warning'>You need to have the card in your hand to check it!</span>"
 
 
 /obj/item/toy/cards/singlecard/verb/Flip()

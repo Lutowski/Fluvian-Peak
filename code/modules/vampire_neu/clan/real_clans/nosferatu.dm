@@ -9,9 +9,9 @@
 	lord_verbs = list(
 		/mob/living/carbon/human/proc/punish_spawn
 	)
-	lord_traits = list(TRAIT_HEAVYARMOR, TRAIT_INFINITE_ENERGY)
 	lord_title = "Nosferatu"
-
+	lord_traits = list(TRAIT_HEAVYARMOR, TRAIT_INFINITE_ENERGY, TRAIT_STRENGTH_UNCAPPED)
+	vitae_bonus = 500
 
 /datum/clan/nosferatu
 	name = "Nosferatu"
@@ -21,12 +21,12 @@
 	leader = /datum/clan_leader/nosferatu
 	clane_covens = list(
 		/datum/coven/potence,
-		/datum/coven/obfuscate,
-		/datum/coven/bloodheal
+		/datum/coven/obfuscate
 	)
 	blood_preference = BLOOD_PREFERENCE_RATS | BLOOD_PREFERENCE_DEAD | BLOOD_PREFERENCE_KIN
 	clane_traits = list(
 		TRAIT_STRONGBITE,
+		TRAIT_VAMPBITE,
 		TRAIT_NOHUNGER,
 		TRAIT_NOBREATH,
 		TRAIT_NOPAIN,
@@ -57,10 +57,10 @@
 		H.ventcrawler = VENTCRAWLER_ALWAYS //I don't think this does anything because we have no vents
 
 /datum/clan/nosferatu/apply_clan_components(mob/living/carbon/human/H)
-	pass()
+	. = ..()
 	H.AddComponent(/datum/component/sunlight_vulnerability, damage = 2, drain = 2)
 	H.AddComponent(/datum/component/vampire_disguise/nosferatu)
-	H.AddComponent(/datum/component/hideous_face, CALLBACK(TYPE_PROC_REF(/datum/clan/nosferatu, face_seen)))
+	H.AddComponent(/datum/component/hideous_face, CALLBACK(src, TYPE_PROC_REF(/datum/clan/nosferatu, face_seen)))
 
 /datum/clan/nosferatu/apply_vampire_look(mob/living/carbon/human/H)
 	. = ..()

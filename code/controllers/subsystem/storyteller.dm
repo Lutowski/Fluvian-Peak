@@ -9,6 +9,8 @@
 #define DESC_POPUP_WIDTH 400
 /// Height of a popup window that opens when user presses (?) and contains storyteller description
 #define DESC_POPUP_HEIGHT 250
+/// A town combatant role counts as 1 + this value towards effective population
+#define TOWN_COMBATANT_ADDITIONAL_WEIGHT 2
 
 SUBSYSTEM_DEF(gamemode)
 	name = "Gamemode"
@@ -167,7 +169,9 @@ SUBSYSTEM_DEF(gamemode)
 	var/royalty = 0
 	var/constructor = 0
 	var/garrison = 0
-	var/church = 0
+	var/holy_warrior = 0
+	/// Calculated effective pop after weighing garrison & holy warriors at 2x
+	var/effective_pop = 0 
 
 	/// Is storyteller secret or not
 	var/secret_storyteller = FALSE
@@ -233,7 +237,7 @@ SUBSYSTEM_DEF(gamemode)
 /datum/controller/subsystem/gamemode/fire(resumed = FALSE)
 	if(last_devotion_check < world.time)
 		pick_most_influential()
-		last_devotion_check = world.time + 90 MINUTES
+		last_devotion_check = world.time + 45 MINUTES
 
 	if(SSticker.HasRoundStarted() && (world.time - SSticker.round_start_time) >= ROUNDSTART_VALID_TIMEFRAME)
 		can_run_roundstart = FALSE
@@ -279,7 +283,8 @@ SUBSYSTEM_DEF(gamemode)
 
 /// Gets the number of antagonists the antagonist injection events will stop rolling after.
 /datum/controller/subsystem/gamemode/proc/get_antag_cap()
-	var/total_number = get_correct_popcount() + (garrison * 2)
+	var/total_number = get_correct_popcount() + (garrison * TOWN_COMBATANT_ADDITIONAL_WEIGHT) + (holy_warrior * TOWN_COMBATANT_ADDITIONAL_WEIGHT)
+	effective_pop = total_number // For panel tracking
 	var/cap = FLOOR((total_number / ANTAG_CAP_DENOMINATOR), 1) + ANTAG_CAP_FLAT
 	return cap
 
@@ -287,7 +292,7 @@ SUBSYSTEM_DEF(gamemode)
 	. = 0
 	var/list/already_counted = list() // Never count the same mind twice
 	for(var/datum/antagonist/antag as anything in GLOB.antagonists)
-		if(QDELETED(antag) || QDELETED(antag.owner) || already_counted[antag.owner])
+		if(QDELETED(antag) || QDELETED(antag.owner))
 			continue
 		if((antag.antag_flags & (FLAG_FAKE_ANTAG | FLAG_ANTAG_CAP_IGNORE)))
 			continue
@@ -300,8 +305,14 @@ SUBSYSTEM_DEF(gamemode)
 		var/mob/antag_mob = antag.owner.current
 		if(QDELETED(antag_mob) || !antag_mob.key || antag_mob.stat == DEAD || antag_mob.client?.is_afk())
 			continue
-		already_counted[antag.owner] = TRUE
-		.++
+		var/weight = antag.get_antag_cap_weight()
+		// If we have already counted this mind, and the new weight is higher, add the difference only (Strongest antag datum)
+		if(weight && already_counted[antag.owner] && weight > already_counted[antag.owner])
+			. += (weight - already_counted[antag.owner])
+			already_counted[antag.owner] = weight
+		else if(weight && !already_counted[antag.owner])
+			already_counted[antag.owner] = weight
+			. += weight // Just add normally
 
 /// Whether events can inject more antagonists into the round
 /datum/controller/subsystem/gamemode/proc/can_inject_antags()
@@ -476,7 +487,7 @@ SUBSYSTEM_DEF(gamemode)
 	active_players = 0
 	royalty = 0
 	constructor = 0
-	church = 0
+	holy_warrior = 0
 	garrison = 0
 	for(var/mob/player_mob as anything in GLOB.player_list)
 		if(!player_mob.client)
@@ -493,8 +504,8 @@ SUBSYSTEM_DEF(gamemode)
 				royalty++
 			if(player_mob.mind.job_bitflag & BITFLAG_CONSTRUCTOR)
 				constructor++
-			if(player_mob.mind.job_bitflag & BITFLAG_CHURCH)
-				church++
+			if(player_mob.mind.job_bitflag & BITFLAG_HOLY_WARRIOR)
+				holy_warrior++
 			if(player_mob.mind.job_bitflag & BITFLAG_GARRISON)
 				garrison++
 	update_pop_scaling()
@@ -593,7 +604,8 @@ SUBSYSTEM_DEF(gamemode)
 		else
 			if(!SSvote.mode)
 				SSvote.initiate_vote("endround", pick("Zlod", "Sun King", "Gaia", "Moon Queen", "Aeon", "Gemini", "Aries"))
-
+	else if(roundvoteend && world.time >= round_ends_at)
+		return TRUE
 	if(SSmapping.retainer.head_rebel_decree)
 		if(reb_end_time == 0)
 			to_chat(world, span_boldannounce("The peasant rebels took control of the throne, hail the new community!"))
@@ -719,6 +731,7 @@ SUBSYSTEM_DEF(gamemode)
 		var/datum/storyteller/storyboy = storytellers[storyteller_type]
 		if(findtext(html_contaminated, storyboy.name))
 			selected_storyteller = storyboy.type
+			get_gnoll_scaling() // Calling this here as to make sure scaling holds true as per the roundstart vote, not a latejoin hunted character joining.
 			break
 
 	var/datum/storyteller/storytypecasted = selected_storyteller
@@ -761,7 +774,8 @@ SUBSYSTEM_DEF(gamemode)
 	dat += "Storyteller: [current_storyteller ? "[current_storyteller.name]" : "None"] "
 	dat += " <a href='byond://?src=[REF(src)];panel=main;action=halt_storyteller' [halted_storyteller ? "class='linkOn'" : ""]>HALT Storyteller</a> <a href='byond://?src=[REF(src)];panel=main;action=open_stats'>Event Panel</a> <a href='byond://?src=[REF(src)];panel=main;action=set_storyteller'>Set Storyteller</a> <a href='byond://?src=[REF(user.client)];panel=main;viewinfluences=1'>View Influences</a> <a href='byond://?src=[REF(src)];panel=main'>Refresh</a>"
 	dat += "<BR><font color='#888888'><i>Storyteller determines points gained, event chances, and is the entity responsible for rolling events.</i></font>"
-	dat += "<BR>Active Players: [active_players]   (Royalty: [royalty], Garrison: [garrison], Town Workers: [constructor], Church: [church])"
+	dat += "<BR>Active Players: [active_players]   (Royalty: [royalty], Garrison: [garrison], Town Workers: [constructor], Holy Warriors: [holy_warrior])"
+	dat += "<BR>Effective Population: [effective_pop] (Total: [active_players] + Garrison Bonus: [garrison * 2] + Holy Warrior Bonus: [holy_warrior * 2])"
 	dat += "<BR>Antagonist Count vs Maximum: [get_antag_count()] / [get_antag_cap()]"
 	dat += "<HR>"
 	dat += "<a href='byond://?src=[REF(src)];panel=main;action=tab;tab=[GAMEMODE_PANEL_MAIN]' [panel_page == GAMEMODE_PANEL_MAIN ? "class='linkOn'" : ""]>Main</a>"
@@ -1149,8 +1163,14 @@ SUBSYSTEM_DEF(gamemode)
         STATS_VAMPIRES,
         STATS_DEADITES_ALIVE,
         STATS_CLINGY_PEOPLE,
+		STATS_BEAUTIFUL_PEOPLE,
+		STATS_MARRIAGES_MADE,
         STATS_ALCOHOLICS,
         STATS_JUNKIES,
+		STATS_VOYEURS,
+		STATS_NYMPHOMANIACS,
+		STATS_INDEBTED,
+		STATS_THRILLSEEKERS,
         STATS_GREEDY_PEOPLE,
         STATS_PLEASURES,
         STATS_MALE_POPULATION,
@@ -1248,20 +1268,30 @@ SUBSYSTEM_DEF(gamemode)
 					record_round_statistic(STATS_ELDERLY_POPULATION)
 			if(human_mob.is_noble())
 				record_round_statistic(STATS_ALIVE_NOBLES)
-			if(human_mob.mind.assigned_role in GLOB.garrison_positions)
+			if((human_mob.mind.assigned_role in GLOB.garrison_positions) || (human_mob.mind.assigned_role in GLOB.retinue_positions))
 				record_round_statistic(STATS_ALIVE_GARRISON)
 			if(human_mob.mind.assigned_role in GLOB.church_positions)
 				record_round_statistic(STATS_ALIVE_CLERGY)
-			if((human_mob.mind.assigned_role in GLOB.yeoman_positions) || (human_mob.mind.assigned_role in GLOB.peasant_positions) || (human_mob.mind.assigned_role in GLOB.mercenary_positions))
+			if((human_mob.mind.assigned_role in GLOB.burgher_positions) || (human_mob.mind.assigned_role in GLOB.peasant_positions))
 				record_round_statistic(STATS_ALIVE_TRADESMEN)
-			if(human_mob.has_flaw(/datum/charflaw/clingy))
-				record_round_statistic(STATS_CLINGY_PEOPLE)
 			if(human_mob.has_flaw(/datum/charflaw/addiction/alcoholic))
 				record_round_statistic(STATS_ALCOHOLICS)
 			if(human_mob.has_flaw(/datum/charflaw/addiction/junkie))
 				record_round_statistic(STATS_JUNKIES)
+			if(human_mob.has_flaw(/datum/charflaw/addiction/lovefiend))
+				record_round_statistic(STATS_NYMPHOMANIACS)
+			if(human_mob.has_flaw(/datum/charflaw/indebted))
+				record_round_statistic(STATS_INDEBTED)
 			if(human_mob.has_flaw(/datum/charflaw/greedy))
 				record_round_statistic(STATS_GREEDY_PEOPLE)
+			if(human_mob.has_flaw(/datum/charflaw/clingy))
+				record_round_statistic(STATS_CLINGY_PEOPLE)
+			if(human_mob.has_flaw(/datum/charflaw/addiction/thrillseeker))
+				record_round_statistic(STATS_THRILLSEEKERS)
+			if(human_mob.has_flaw(/datum/charflaw/addiction/voyeur))
+				record_round_statistic(STATS_VOYEURS)
+			if(HAS_TRAIT(human_mob, TRAIT_BEAUTIFUL))
+				record_round_statistic(STATS_BEAUTIFUL_PEOPLE)
 
 			// Races - proper alive checking (We have so fucking many, kill me..)
 			if(ishumannorthern(human_mob))
@@ -1432,3 +1462,6 @@ SUBSYSTEM_DEF(gamemode)
 #undef ROUNDSTART_VALID_TIMEFRAME
 #undef DESC_POPUP_WIDTH
 #undef DESC_POPUP_HEIGHT
+#undef TOWN_COMBATANT_ADDITIONAL_WEIGHT
+
+#undef INIT_ORDER_GAMEMODE

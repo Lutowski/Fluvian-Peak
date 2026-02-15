@@ -38,17 +38,43 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	apply_prefs_special(character, player)
 	apply_prefs_virtue(character, player)
 	apply_prefs_race_bonus(character, player)
+	apply_voicepacks(character, player)
 	if(player.prefs.dnr_pref)
 		apply_dnr_trait(character, player)
-	if(player.prefs.loadout)
-		character.mind.special_items[player.prefs.loadout::name] += player.prefs.loadout::path
-	if(player.prefs.loadout2)
-		character.mind.special_items[player.prefs.loadout2::name] += player.prefs.loadout2::path
-	if(player.prefs.loadout3)
-		character.mind.special_items[player.prefs.loadout3::name] += player.prefs.loadout3::path
+	if(player.prefs.qsr_pref)
+		apply_qsr_trait(character, player)
+	if(player.prefs.loadout && character.get_triumphs() >= player.prefs.loadout.triumph_cost)
+		character.adjust_triumphs(-player.prefs.loadout.triumph_cost)
+		character.mind.special_items[player.prefs.loadout.name] += player.prefs.loadout.path
+	if(player.prefs.loadout2 && character.get_triumphs() >= player.prefs.loadout2.triumph_cost)
+		character.adjust_triumphs(-player.prefs.loadout2.triumph_cost)
+		character.mind.special_items[player.prefs.loadout2::name] += player.prefs.loadout2.path
+	if(player.prefs.loadout3 && character.get_triumphs() >= player.prefs.loadout3.triumph_cost)
+		character.adjust_triumphs(-player.prefs.loadout3.triumph_cost)
+		character.mind.special_items[player.prefs.loadout3::name] += player.prefs.loadout3.path
 	var/datum/job/assigned_job = SSjob.GetJob(character.mind?.assigned_role)
 	if(assigned_job)
 		assigned_job.clamp_stats(character)
+	check_trait_incompatibilities(character)
+	character.calculate_energy()
+	character.calculate_stamina()
+	character.energy = character.max_energy
+
+/// Check for incompatible traits and remove one of them
+/proc/check_trait_incompatibilities(mob/living/carbon/human/H)
+	// Easy Dismemberment & Critical Resistance get both cancelled out
+	if(HAS_TRAIT(H, TRAIT_EASYDISMEMBER) && HAS_TRAIT(H, TRAIT_CRITICAL_RESISTANCE))
+		REMOVE_TRAIT(H, TRAIT_EASYDISMEMBER, null) // Doesn't care for source, they ARE getting canceled
+		REMOVE_TRAIT(H, TRAIT_CRITICAL_RESISTANCE, null)
+		to_chat(H, span_warning("My limbs are too frail and my body too tough... the contradiction leaves me unable to resist critical wounds."))
+	return TRUE
+
+/proc/apply_voicepacks(mob/living/carbon/human/character, client/player)
+	if(player.prefs.voice_pack != "Default")
+		var/datum/voicepack/VP = GLOB.voice_packs_list[player.prefs.voice_pack]
+		character.dna.species.soundpack_m = new VP()
+		character.dna.species.soundpack_f = new VP()
+
 
 /proc/apply_prefs_virtue(mob/living/carbon/human/character, client/player)
 	if (!player)
@@ -63,7 +89,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	if(istype(player.prefs.selected_patron, /datum/patron/inhumen))
 		heretic = TRUE
 
-	if(player.prefs.statpack.name == "Virtuous")
+	if(player.prefs.statpack.virtuous)
 		virtuous = TRUE
 
 	var/datum/virtue/virtue_type = player.prefs.virtue
@@ -112,6 +138,9 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 
 /proc/apply_dnr_trait(mob/living/carbon/human/character, client/player)
 	ADD_TRAIT(player.mob, TRAIT_DNR, TRAIT_GENERIC)
+
+/proc/apply_qsr_trait(mob/living/carbon/human/character, client/player)
+	ADD_TRAIT(player.mob, TRAIT_QUICKSILVERRESISTANT, TRAIT_GENERIC)
 
 /proc/apply_prefs_special(mob/living/carbon/human/character, client/player)
 	if(!player)

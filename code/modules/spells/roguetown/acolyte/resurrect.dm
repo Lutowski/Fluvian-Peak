@@ -27,7 +27,11 @@
 	priest_excluded = TRUE
 
 /obj/effect/proc_holder/spell/invoked/resurrect/start_recharge()
+	var/old_recharge = recharge_time
 	recharge_time = initial(recharge_time) * SSchimeric_tech.get_resurrection_multiplier()
+	// If the spell was fully charged, keep it fully charged after adjusting recharge_time
+	if(charge_counter >= old_recharge && old_recharge > 0)
+		charge_counter = recharge_time
 	. = ..()
 
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/get_current_required_items()
@@ -42,7 +46,7 @@
 
 		var/validation_result = validate_items(target)
 		if(validation_result != "")
-			to_chat(user, span_warning("[validation_result] on the floor next to or on top of [target]"))
+			to_chat(user, span_warning("[validation_result] on the floor next to or on top of [target]."))
 			revert_cast()
 			return FALSE
 
@@ -103,7 +107,8 @@
 			ADD_TRAIT(target, TRAIT_IWASREVIVED, "[type]")
 		target.mind.remove_antag_datum(/datum/antagonist/zombie)
 		target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)	//Removes the rotted-zombie debuff if they have it - Failsafe for it.
-		target.apply_status_effect(debuff_type)	//Temp debuff on revive, your stats get hit temporarily. Doubly so if having rotted.
+		if(debuff_type)
+			target.apply_status_effect(debuff_type)	//Temp debuff on revive, your stats get hit temporarily. Doubly so if having rotted.
 		//Due to an increased cost and cooldown, these revival types heal quite a bit.
 		target.apply_status_effect(/datum/status_effect/buff/healing, 14)
 		consume_items(target)
@@ -111,7 +116,7 @@
 	revert_cast()
 	return FALSE
 
-/obj/effect/proc_holder/spell/invoked/resurrect/cast_check(skipcharge = 0,mob/user = usr)
+/obj/effect/proc_holder/spell/invoked/resurrect/cast_check(skipcharge, mob/user = usr)
 	if(!..())
 		to_chat(user, span_warning("The miracle fizzles."))
 		return FALSE
@@ -124,7 +129,7 @@
 
 	// Scan for items in radius
 	for(var/obj/item/I in range(item_radius, center))
-		if(I.type in required_items)
+		if(I.type in current_required_items)
 			available_items[I.type] += 1
 
 	// Check quantities and compile missing list
@@ -135,19 +140,20 @@
 		if(have < needed) {
 			var/obj/item/I = item_type
 			var/amount_needed = needed - have
-			missing_items += "[amount_needed] [initial(I.name)][amount_needed > 1 ? "s" : ""] "
+			missing_items += "[amount_needed] [initial(I.name)][amount_needed > 1 ? "s" : ""]"
 		}
 
 	if(length(missing_items))
 		var/string = ""
 		for(var/item in missing_items)
-			string += item 
-		return "Missing components: [string]."
+			string += item
+		return "Missing components: [string]"
 	return ""
 
 /obj/effect/proc_holder/spell/invoked/resurrect/proc/consume_items(atom/center)
-	for(var/item_type in required_items)
-		var/needed = required_items[item_type]
+	var/list/current_required_items = get_current_required_items()
+	for(var/item_type in current_required_items)
+		var/needed = current_required_items[item_type]
 
 		for(var/obj/item/I in range(item_radius, center))
 			if(needed <= 0)
@@ -233,7 +239,7 @@
 	chargetime = 0
 	invocations = list(span_danger("begins to smell of saltwater. You can hear waves crashing nearby..."))
 	invocation_type = "emote"
-	sound = 'modular_azurepeak/sound/mobs/abyssal/abyssal_teleport.ogg'
+	sound = 'sound/mobs/abyssal/abyssal_teleport.ogg'
 	/// Type of dreamfiend to summon
 	var/dreamfiend_type
 	recharge_time = 600 SECONDS

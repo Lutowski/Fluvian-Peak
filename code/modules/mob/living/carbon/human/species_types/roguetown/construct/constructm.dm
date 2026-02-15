@@ -15,7 +15,7 @@
 	default_color = "FFFFFF"
 	species_traits = list(EYECOLOR,HAIR,FACEHAIR,LIPS,STUBBLE,OLDGREY,NOBLOOD)
 	default_features = MANDATORY_FEATURE_LIST
-	use_skintones = 1
+	use_skintones = TRUE
 	possible_ages = ALL_AGES_LIST
 	skinned_type = /obj/item/ingot/steel
 	disliked_food = NONE
@@ -24,7 +24,6 @@
 		TRAIT_NOHUNGER,
 		TRAIT_BLOODLOSS_IMMUNE,
 		TRAIT_NOBREATH,
-		TRAIT_EASYDISMEMBER,
 		TRAIT_ZOMBIE_IMMUNE
 		)
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_MAGIC | MIRROR_PRIDE | RACE_SWAP | SLIME_EXTRACT
@@ -60,11 +59,14 @@
 		)
 	customizers = list(
 		/datum/customizer/organ/eyes/humanoid,
+		/datum/customizer/bodypart_feature/hair/head/humanoid,
+		/datum/customizer/bodypart_feature/hair/facial/humanoid,
 		/datum/customizer/bodypart_feature/crest,
 		/datum/customizer/bodypart_feature/accessory,
 		/datum/customizer/bodypart_feature/face_detail,
 		/datum/customizer/bodypart_feature/underwear,
 		/datum/customizer/bodypart_feature/legwear,
+		/datum/customizer/bodypart_feature/piercing,
 		/datum/customizer/organ/penis/anthro,
 		/datum/customizer/organ/breasts/human,
 		/datum/customizer/organ/vagina/human_anthro,
@@ -100,6 +102,9 @@
 		"IRON" = "525352",
 		"STEEL" = "babbb9",
 		"BRONZE" = "e2a670",
+		"GOLD" = "bf9b30",
+		"WOOD" = "8B4513",
+		"PORCELAIN" = "FFF5EE",
 	)
 
 /datum/species/construct/metal/get_hairc_list()

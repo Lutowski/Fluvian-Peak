@@ -1,16 +1,18 @@
 /obj/effect/proc_holder/spell/invoked/meteor_storm
-	name = "Meteor storm"
+	name = "Meteor Storm"
 	desc = "Summons forth dangerous meteors from the sky to scatter and smash foes."
 	overlay_state = "meteor_storm"
 	cost = 9
 	spell_tier = 4 // Highest tier AOE
-	releasedrain = 50
+	releasedrain = 90
 	chargedrain = 1
 	chargetime = 50
-	recharge_time =  100 SECONDS
+	recharge_time = 300 SECONDS
 	warnie = "spellwarning"
 	no_early_release = TRUE
 	movement_interrupt = TRUE
+	gesture_required = TRUE // Offensive spell
+	human_req = TRUE // Combat spell
 	charging_slowdown = 2
 	chargedloop = /datum/looping_sound/invokegen
 	associated_skill = /datum/skill/magic/arcane

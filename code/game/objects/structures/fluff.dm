@@ -324,7 +324,7 @@
 
 /obj/structure/bars
 	name = "bars"
-	desc = ""
+	desc = "Rigid metal bars, intended to impair access to somewhere."
 	icon = 'icons/roguetown/misc/structure.dmi'
 	icon_state = "bars"
 	density = TRUE
@@ -389,6 +389,7 @@
 
 /obj/structure/bars/passage
 	icon_state = "passage0"
+	desc = "This looks like it can open and close!"
 	density = TRUE
 	max_integrity = 1500
 	redstone_structure = TRUE
@@ -479,11 +480,11 @@
 /obj/structure/bars/grille/redstone_triggered()
 	if(obj_broken)
 		return
-	testing("togge")
+
 	togg = !togg
 	playsound(src, 'sound/foley/trap_arm.ogg', 100)
 	if(togg)
-		testing("togge1")
+
 		icon_state = "floorgrilleopen"
 		obj_flags = CAN_BE_HIT
 		var/turf/T = loc
@@ -491,7 +492,7 @@
 			for(var/mob/living/M in loc)
 				T.Entered(M)
 	else
-		testing("togge2")
+
 		icon_state = "floorgrille"
 		obj_flags = CAN_BE_HIT | BLOCK_Z_OUT_DOWN | BLOCK_Z_IN_UP
 
@@ -520,7 +521,7 @@
 
 /obj/structure/bars/pipe
 	name = "bronze pipe"
-	desc = ""
+	desc = "Bronze pipework. Plumbing was once a more ubiquitous technology than it is now."
 	icon_state = "pipe"
 	density = FALSE
 	layer = TABLE_LAYER
@@ -533,7 +534,6 @@
 
 /obj/structure/bars/pipe/left
 	name = "bronze pipe"
-	desc = ""
 	icon_state = "pipe2"
 	dir = WEST
 	pixel_x = 19
@@ -542,7 +542,7 @@
 
 /obj/structure/fluff/clock
 	name = "clock"
-	desc = ""
+	desc = "A large grandfather clock; the cutting edge of modern technology."
 	icon = 'icons/roguetown/misc/tallstructure.dmi'
 	icon_state = "clock"
 	density = FALSE
@@ -579,17 +579,8 @@
 	..()
 
 /obj/structure/fluff/clock/attack_right(mob/user)
-	if(user.mind && isliving(user))
-		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
-			if(item)
-				if(user.Adjacent(src))
-					if(user.mind.special_items[item])
-						var/path2item = user.mind.special_items[item]
-						user.mind.special_items -= item
-						var/obj/item/I = new path2item(user.loc)
-						user.put_in_hands(I)
-			return
+	handle_special_items_retrieval(user, src)
+	return
 
 /obj/structure/fluff/clock/examine(mob/user)
 	. = ..()
@@ -600,15 +591,15 @@
 		if(1)
 			day = "Moon's dae."
 		if(2)
-			day = "Tiw's dae."
+			day = "Truce's dae."
 		if(3)
 			day = "Wedding's dae."
 		if(4)
-			day = "Thule's dae."
+			day = "Thunder's dae."
 		if(5)
-			day = "Freyja's dae."
+			day = "Feast's dae."
 		if(6)
-			day = "Saturn's dae."
+			day = "Psydon's dae."
 		if(7)
 			day = "Sun's dae."
 	. += "Oh no, it's [station_time_timestamp("hh:mm")] on a [day]"
@@ -634,7 +625,7 @@
 
 /obj/structure/fluff/wallclock
 	name = "clock"
-	desc = ""
+	desc = "Second greatest of all tyrants."
 	icon = 'icons/roguetown/misc/structure.dmi'
 	icon_state = "wallclock"
 	density = FALSE
@@ -650,17 +641,8 @@
 	pixel_y = 32
 
 /obj/structure/fluff/wallclock/attack_right(mob/user)
-	if(user.mind && isliving(user))
-		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
-			if(item)
-				if(user.Adjacent(src))
-					if(user.mind.special_items[item])
-						var/path2item = user.mind.special_items[item]
-						user.mind.special_items -= item
-						var/obj/item/I = new path2item(user.loc)
-						user.put_in_hands(I)
-			return
+	handle_special_items_retrieval(user, src)
+	return
 
 /obj/structure/fluff/wallclock/Destroy()
 	if(soundloop)
@@ -676,22 +658,18 @@
 		if(1)
 			day = "Moon's dae."
 		if(2)
-			day = "Tiw's dae."
+			day = "Truce's dae."
 		if(3)
 			day = "Wedding's dae."
 		if(4)
-			day = "Thule's dae."
+			day = "Thunder's dae."
 		if(5)
-			day = "Freyja's dae."
+			day = "Feast's dae."
 		if(6)
-			day = "Saturn's dae."
+			day = "Psydon's dae."
 		if(7)
 			day = "Sun's dae."
 	. += "Oh no, it's [station_time_timestamp("hh:mm")] on a [day]"
-//		testing("mode is [SSshuttle.emergency.mode] should be [SHUTTLE_DOCKED]")
-//		if(SSshuttle.emergency.mode == SHUTTLE_DOCKED)
-//			if(SSshuttle.emergency.timeLeft() < 30 MINUTES)
-//				. += span_warning("The last boat will leave in [round(SSshuttle.emergency.timeLeft()/600)] minutes.")
 
 /obj/structure/fluff/wallclock/Initialize()
 	soundloop = new(src, FALSE)
@@ -816,7 +794,8 @@
 
 /obj/structure/fluff/alch
 	name = "alchemical lab"
-	desc = ""
+	desc = "A stout workstation arrayed with alchemical parahenalia and equipment. Some say the truest heights of the \
+	Art were reached in times immemorial, and shall never be again."
 	icon = 'icons/roguetown/misc/structure.dmi'
 	icon_state = "alch"
 	density = TRUE
@@ -827,10 +806,30 @@
 	destroy_sound = 'sound/combat/hits/onwood/destroyfurniture.ogg'
 	attacked_sound = list("sound/combat/hits/onmetal/metalimpact (1).ogg", "sound/combat/hits/onmetal/metalimpact (2).ogg")
 
+/obj/structure/fluff/alch/folding
+	name = "folding alchemical lab"
+	desc = "A compact laboratory. Laid out and ready to work."
+	icon = 'icons/roguetown/misc/gadgets.dmi'
+	icon_state = "foldingAlchstationDeployed"
+	max_integrity = 350
+	debris = list(/obj/item/grown/log/tree/small = 2)
+	climbable = TRUE
+	climb_offset = 10
+
+/obj/structure/fluff/alch/folding/examine()
+	. = ..()
+	. += span_blue("Right-Click to fold the lab.")
+
+/obj/structure/fluff/alch/folding/attack_right(mob/user)
+	if(do_after(user, 5 SECONDS, target = src))
+		user.visible_message(span_notice("[user] folds [src]."), span_notice("You fold [src]."))
+		new /obj/item/folding_alchstation_stored(drop_location())
+		qdel(src)
+		return ..()
 
 /obj/structure/fluff/statue
 	name = "statue"
-	desc = ""
+	desc = "Dead stone designed to compel living minds."
 	icon = 'icons/roguetown/misc/tallstructure.dmi'
 	icon_state = "bstatue"
 	density = FALSE
@@ -851,18 +850,7 @@
 	. = ..()
 
 /obj/structure/fluff/statue/attack_right(mob/user)
-	if(user.mind && isliving(user))
-		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
-			if(item)
-				if(user.Adjacent(src))
-					if(user.mind.special_items[item])
-						var/path2item = user.mind.special_items[item]
-						user.mind.special_items -= item
-						var/obj/item/I = new path2item(user.loc)
-						user.put_in_hands(I)
-			return
-
+	handle_special_items_retrieval(user, src)
 
 /obj/structure/fluff/statue/CanPass(atom/movable/mover, turf/target)
 	if(get_dir(loc, mover) == dir)
@@ -881,9 +869,14 @@
 		return COMPONENT_ATOM_BLOCK_EXIT
 
 /obj/structure/fluff/statue/gargoyle
+	name = "gargoyle"
+	desc = "Designed to make the common-folk feel watched, even when they are not."
 	icon_state = "gargoyle"
 
 /obj/structure/fluff/statue/aasimar
+	name = "aasimar statue"
+	desc = "Stone wrought to resemble an Aasimar, the living artifice of the Gods. No life inhabits its eyes, nor \
+	strength in its limbs; mortal hands may only imitate divine crafts."
 	icon_state = "aasimar"
 
 /obj/structure/fluff/statue/gargoyle/candles
@@ -896,6 +889,8 @@
 	icon_state = "mgargoyle_candles"
 
 /obj/structure/fluff/statue/knight
+	name = "knightly statue"
+	desc = "No eyes are visible behind its visor."
 	icon_state = "knightstatue_l"
 
 /obj/structure/fluff/statue/astrata
@@ -912,14 +907,14 @@
 //Why are all of these in one giant file.
 /obj/structure/fluff/statue/abyssor
 	name = "abyssor statue"
-	desc = "A slate statue of the ancient god abyssor. One of many depictions drawn from a dream no doubt. This particular one is horrifying to look at."
+	desc = "A slate statue of the ancient god Abyssor. One of many depictions drawn from a dream no doubt. This particular one is horrifying to look at."
 	icon_state = "abyssor"
 	icon = 'icons/roguetown/misc/tallandwide.dmi'
 	pixel_x = -16
 
 /obj/structure/fluff/statue/abyssor/dolomite
 	name = "abyssor statue"
-	desc = "A rare dolomite statue of the ancient god abyssor. Hewn from bleached rock as if the shimmer makes his faceless gaze any less terrifying."
+	desc = "A rare dolomite statue of the ancient god Abyssor. Hewn from bleached rock as if the shimmer makes his faceless gaze any less terrifying."
 	icon_state = "abyssor_dolomite"
 
 /obj/structure/fluff/statue/knight/r
@@ -935,6 +930,8 @@
 	color = "#ff9c1a"
 
 /obj/structure/fluff/statue/knightalt
+	name = "knightly statue"
+	desc = "Ever-watchful, faceless, and without independent will. An ideal of chivalry."
 	icon_state = "knightstatue2_l"
 
 /obj/structure/fluff/statue/knightalt/r
@@ -943,10 +940,13 @@
 
 /obj/structure/fluff/statue/myth
 	icon_state = "myth"
+	desc = "A statue with wildly exaggerated proportions."
 	density = TRUE
 
 /obj/structure/fluff/statue/psy
 	icon_state = "psy"
+	desc = "A statue styled in the manner of an ancient Legionnaire of times long past. One assumes, anyway - \
+	such things are no longer seen in the flesh."
 	icon = 'icons/roguetown/misc/96x96.dmi'
 	pixel_x = -32
 
@@ -957,6 +957,7 @@
 
 
 /obj/structure/fluff/statue/small
+	desc = "A small statue depicting an elven woman bearing a harp."
 	icon = 'icons/roguetown/misc/structure.dmi'
 	icon_state = "elfs"
 
@@ -966,70 +967,85 @@
 
 /obj/structure/fluff/statue/femalestatue
 	icon = 'icons/roguetown/misc/ay.dmi'
+	desc = "Beauty fades in all but stone."
 	icon_state = "1"
 	pixel_x = -32
 	pixel_y = -16
 
 /obj/structure/fluff/statue/femalestatue1
 	icon = 'icons/roguetown/misc/ay.dmi'
+	desc = "Beauty fades in all but stone."
 	icon_state = "2"
 	pixel_x = -32
 	pixel_y = -16
 
 /obj/structure/fluff/statue/femalestatue2
 	icon = 'icons/roguetown/misc/ay.dmi'
+	desc = "Beauty fades in all but stone."
 	icon_state = "5"
 	pixel_x = -32
 	pixel_y = -16
 
 /obj/structure/fluff/statue/femalestatue/zizo
 	icon = 'icons/roguetown/misc/ay.dmi'
+	desc = "An ancient statue depicting an elven woman."
 	icon_state = "4"
 	pixel_x = -32
 	pixel_y = -16
 
 /obj/structure/fluff/statue/scare
+	desc = "An imitation of life to avert famine."
 	name = "scarecrow"
 	icon_state = "td"
 
 /obj/structure/fluff/statue/tdummy
 	name = "practice dummy"
+	desc = "Rough fabric wrapped around an interior of plant fibre. Used for practice, or for when one just has some \
+	feelings to vent out."
 	icon_state = "p_dummy"
 	icon = 'icons/roguetown/misc/structure.dmi'
 
-/obj/structure/fluff/statue/tdummy/attackby(obj/item/W, mob/user, params)
-	if(!user.cmode)
-		if(W.associated_skill)
-			if(user.mind)
-				if(isliving(user))
-					var/mob/living/L = user
-					var/probby = (L.STALUC / 10) * 100
-					probby = min(probby, 99)
-					user.changeNext_move(CLICK_CD_MELEE)
-					if(W.max_blade_int)
-						W.remove_bintegrity(5)
-					L.stamina_add(rand(4,6))
-					if(!(L.mobility_flags & MOBILITY_STAND))
-						probby = 0
-					if(L.STAINT < 3)
-						probby = 0
-					if(prob(probby) && !user.buckled)
-						user.visible_message(span_info("[user] trains on [src]!"))
-						var/amt2raise = L.STAINT * 0.35
-						if(!can_train_combat_skill(user, W.associated_skill, SKILL_LEVEL_APPRENTICE))
-							to_chat(user, span_warning("I've learned all I can from doing this, it's time for the real thing."))
-							amt2raise = 0
-						if(amt2raise > 0)
-							user.mind.add_sleep_experience(W.associated_skill, amt2raise, FALSE)
-						playsound(loc,pick('sound/combat/hits/onwood/education1.ogg','sound/combat/hits/onwood/education2.ogg','sound/combat/hits/onwood/education3.ogg'), rand(50,100), FALSE)
-					else
-						user.visible_message(span_danger("[user] trains on [src], but [src] ripostes!"))
-						L.AdjustKnockdown(1)
-						L.throw_at(get_step(L, get_dir(src,L)), 2, 2, L, spin = FALSE)
-						playsound(loc, 'sound/combat/hits/kick/stomp.ogg', 100, TRUE, -1)
-					flick(pick("p_dummy_smashed","p_dummy_smashedalt"),src)
-					return
-	..()
+/obj/structure/fluff/statue/tdummy/attack_hand(mob/user)
+	if(user.cmode || !user.mind || !isliving(user))
+		return ..()
+	practice(user, /datum/skill/combat/unarmed, ATTACK_EFFECT_PUNCH)
+
+/obj/structure/fluff/statue/tdummy/attackby(obj/item/attacking_weapon, mob/user, params)
+	if(user.cmode || !attacking_weapon.associated_skill || !user.mind || !isliving(user))
+		return ..()
+	if(attacking_weapon.max_blade_int)
+		attacking_weapon.remove_bintegrity(5)
+	if(!ispath(attacking_weapon.associated_skill, /datum/skill/combat))
+		to_chat(user, span_warning("I don't think this weapon's skill cannot be practiced on a dummy..."))
+		return
+	practice(user, attacking_weapon.associated_skill, user.used_intent.animname)
+
+/obj/structure/fluff/statue/tdummy/proc/practice(var/mob/living/living_mob, var/associated_skill, var/attack_animation)
+	living_mob.changeNext_move(CLICK_CD_MELEE)
+	living_mob.stamina_add(rand(4, 6))
+
+	var/probby = (living_mob.STALUC / 10) * 100
+	probby = min(probby, 99)
+	if(!(living_mob.mobility_flags & MOBILITY_STAND))
+		probby = 0
+	if(living_mob.STAINT < 3)
+		probby = 0
+	if(prob(probby) && !living_mob.buckled)
+		living_mob.do_attack_animation(src, attack_animation)
+		living_mob.visible_message(span_info("[living_mob] trains on [src]!"))
+		var/amt2raise = living_mob.STAINT * 0.35
+		if(!can_train_combat_skill(living_mob, associated_skill, SKILL_LEVEL_APPRENTICE))
+			to_chat(living_mob, span_warning("I've learned all I can from doing this, it's time for the real thing."))
+			amt2raise = 0
+		if(amt2raise > 0)
+			living_mob.mind.add_sleep_experience(associated_skill, amt2raise, FALSE)
+		playsound(loc, pick('sound/combat/hits/onwood/education1.ogg', 'sound/combat/hits/onwood/education2.ogg', 'sound/combat/hits/onwood/education3.ogg'), rand(50,100), FALSE)
+	else
+		living_mob.visible_message(span_danger("[living_mob] trains on [src], but [src] ripostes!"))
+		living_mob.AdjustKnockdown(1)
+		living_mob.throw_at(get_step(living_mob, get_dir(src,living_mob)), 2, 2, living_mob, spin = FALSE)
+		playsound(loc, 'sound/combat/hits/kick/stomp.ogg', 100, TRUE, -1)
+	flick(pick("p_dummy_smashed", "p_dummy_smashedalt"), src)
 
 /obj/structure/fluff/statue/spider
 	name = "mother"
@@ -1081,7 +1097,21 @@
 		/obj/item/clothing/head/roguetown/crown/serpcrown,
 		/obj/item/clothing/head/roguetown/vampire,
 		/obj/item/scomstone,
-		/obj/item/reagent_containers/lux
+		/obj/item/rogueweapon/greatsword/psygsword,
+		/obj/item/clothing/head/roguetown/circlet,
+		/obj/item/carvedgem,  //Some of these aren't particularly worth much, but it'd be REALLY unintuitive for "valuables" to not actually be offerings
+		/obj/item/rogueweapon/huntingknife/stoneknife/kukri,
+		/obj/item/rogueweapon/huntingknife/stoneknife/opalknife,
+		/obj/item/rogueweapon/mace/cudgel/shellrungu,
+		/obj/item/clothing/mask/rogue/facemask/carved,
+		/obj/item/clothing/neck/roguetown/carved,
+		/obj/item/kitchen/fork/carved,
+		/obj/item/kitchen/spoon/carved,
+		/obj/item/clothing/wrists/roguetown/gem,
+		/obj/item/reagent_containers/glass/bowl/carved,
+		/obj/item/reagent_containers/glass/bucket/pot/carved,
+		/obj/item/clothing/mask/rogue/facemask/carved,
+		/obj/item/cooking/platter/carved
 	)
 
 /obj/structure/fluff/statue/evil/attackby(obj/item/W, mob/user, params)
@@ -1103,12 +1133,13 @@
 					break
 			if(proceed_with_offer)
 				playsound(loc,'sound/items/carvty.ogg', 50, TRUE)
+				log_admin("[user] ([user?.ckey]) submitted [W] ([W.type]) to the Idol, worth [W.get_real_price()]")
 				qdel(W)
 				for(var/mob/player in GLOB.player_list)
 					if(player.mind)
 						if(player.mind.has_antag_datum(/datum/antagonist/bandit))
 							var/datum/antagonist/bandit/bandit_players = player.mind.has_antag_datum(/datum/antagonist/bandit)
-							record_round_statistic(STATS_SHRINE_VALUE, W.get_real_price()) 
+							record_round_statistic(STATS_SHRINE_VALUE, W.get_real_price())
 							bandit_players.favor += donatedamnt
 							bandit_players.totaldonated += donatedamnt
 							to_chat(player, ("<font color='yellow'>[user.name] donates [donatedamnt] to the shrine! You now have [bandit_players.favor] favor.</font>"))
@@ -1120,6 +1151,7 @@
 
 /obj/structure/fluff/psycross
 	name = "pantheon cross"
+	desc = "Symbol of the Divine Pantheon, the religion of ten - formerly eleven - deities which reigns throughout most of the known world. Their divine order must be maintained."
 	icon_state = "psycross"
 	icon = 'icons/roguetown/misc/tallstructure.dmi'
 	break_sound = 'sound/combat/hits/onwood/destroyfurniture.ogg'
@@ -1129,7 +1161,6 @@
 	blade_dulling = DULLING_BASHCHOP
 	layer = BELOW_MOB_LAYER
 	max_integrity = 100
-	sellprice = 40
 	var/chance2hear = 30
 	buckleverb = "crucifie"
 	can_buckle = 1
@@ -1236,7 +1267,7 @@
 						var/mob/living/carbon/human/thebride
 						//Did anyone get cold feet on the wedding?
 						for(var/mob/M in viewers(src, 7))
-							testing("check [M]")
+
 							if(thegroom && thebride)
 								break
 							if(!ishuman(M))
@@ -1270,12 +1301,12 @@
 											if(thebride)
 												continue
 											thebride = C
-									testing("foundbiter [C.real_name]")
+
 									name_placement++
 
 						//WE FOUND THEM LETS GET THIS SHOW ON THE ROAD!
 						if(!thegroom || !thebride)
-							testing("fail22")
+
 							return
 						//Alright now for the boring surname formatting.
 						var/surname2use
@@ -1310,6 +1341,7 @@
 						thebride.adjust_triumphs(1)
 						//Bite the apple first if you want to be the groom.
 						priority_announce("[thegroom.real_name] has married [bridefirst]!", title = "Holy Union!", sound = 'sound/misc/bell.ogg')
+						record_round_statistic(STATS_MARRIAGES_MADE)
 						marriage = TRUE
 						qdel(A)
 
@@ -1349,6 +1381,56 @@
 	if(M.flash_act())
 		var/diff = power - M.confused
 		M.confused += min(power, diff)
+
+/obj/structure/fluff/psycross/proc/summon_martyr_weapon_tgui(mob/user)
+	if(!user.mind)
+		return
+
+	var/list/weapon_choices = list(
+		"Sword" = CALLBACK(src, PROC_REF(summon_and_equip), user, /obj/item/rogueweapon/sword/long/martyr),
+		"Axe" = CALLBACK(src, PROC_REF(summon_and_equip), user, /obj/item/rogueweapon/greataxe/steel/doublehead/martyr),
+		"Mace" = CALLBACK(src, PROC_REF(summon_and_equip), user, /obj/item/rogueweapon/mace/goden/martyr),
+		"Trident" = CALLBACK(src, PROC_REF(summon_and_equip), user, /obj/item/rogueweapon/spear/partizan/martyr)
+	)
+
+	var/result = tgui_input_list(user, "Choose a martyr weapon to summon:", "Martyr Weapon", weapon_choices)
+
+	if(result && weapon_choices[result])
+		var/datum/callback/selected_callback = weapon_choices[result]
+		selected_callback.Invoke()
+	else
+		to_chat(user, span_warning("No weapon was chosen."))
+
+/obj/structure/fluff/psycross/proc/summon_and_equip(mob/user, var/obj/item/rogueweapon/weapontype)
+	var/obj/item/rogueweapon/old_weapon = SSroguemachine.martyrweapon
+	var/integrity
+
+	if(old_weapon)
+		integrity = old_weapon.obj_integrity
+		old_weapon.visible_message(span_danger("[old_weapon] dissolves into mere dust, and flitters away - unbound."))
+		SSroguemachine.martyrweapon = null
+		qdel(old_weapon)
+
+	var/obj/item/rogueweapon/new_weapon = new weapontype(src.loc)
+	new_weapon.obj_integrity = integrity
+	SSroguemachine.martyrweapon = new_weapon
+
+	if(user.put_in_hands(new_weapon))
+		to_chat(user, span_notice("[new_weapon] appears in your hand."))
+	else
+		to_chat(user, span_warning("Your hands are full! [new_weapon] falls to your feet."))
+
+	return new_weapon
+
+/obj/structure/fluff/psycross/attack_hand(mob/user)
+	. = ..()
+	if(.)
+		return
+	if(user.job != "Martyr")
+		return
+	if((HAS_TRAIT(user, TRAIT_NOPAIN) && HAS_TRAIT(user, TRAIT_STRENGTH_UNCAPPED) && HAS_TRAIT(user, TRAIT_BLOODLOSS_IMMUNE))) // So that the martyr could not change weapons during his special ability... I do not know how to make it smarter.
+		return
+	summon_martyr_weapon_tgui(user)
 
 /obj/structure/fluff/beach_umbrella/security
 	icon_state = "hos_brella"

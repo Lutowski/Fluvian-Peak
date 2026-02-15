@@ -1,3 +1,5 @@
+#define ATTACKS_UNTIL_SWITCHING_UP 3 // How many attack a NPC will use on the same place before switching it up
+
 /mob/living/carbon/human
 	var/aggressive=0 //0= retaliate only
 	var/frustration=0
@@ -45,6 +47,9 @@
 	var/npc_jump_distance = 4
 	/// When above this amount of stamina (Stamina is stamina damage), the NPC will not attempt to jump.
 	var/npc_max_jump_stamina = 50
+
+	/// Attack Selection
+	var/attack_on_zone = 1
 
 	///What distance should we be checking for interesting things when considering idling/deidling? Defaults to AI_DEFAULT_INTERESTING_DIST
 	var/interesting_dist = AI_DEFAULT_INTERESTING_DIST
@@ -535,10 +540,11 @@
 
 /mob/living/carbon/human/proc/npc_try_backstep()
 	// JUKE: backstep after attacking if you're fast and have movement left
-	var/const/base_juke_chance = 5
+	// Also made base chance 30% instead of 5% as per original
+	var/const/base_juke_chance = 15
 	// for every point of STASPD above 10 you get an extra 5% juke chance
 	var/const/min_spd_for_juke = 10
-	var/const/juke_per_overspd = 5
+	var/const/juke_per_overspd = 5 
 	if(mind?.has_antag_datum(/datum/antagonist/zombie)) // deadites cannot juke
 		return FALSE
 	if(!target)
@@ -556,7 +562,7 @@
 	var/list/newPath = list()
 	var/turf/lastTurf
 	// Use up to half your remaining distance, with a minimum of one tile.
-	var/juke_distance = rand(1, ceil((maxStepsTick - steps_moved_this_turn)/2))
+	var/juke_distance = 1 // Make it single step juke only.
 	for(var/i in 1 to juke_distance)
 		// pick random turfs to juke to until we're out of movement
 		var/list/turf/juke_candidates = get_dodge_destinations(target, lastTurf)
@@ -844,6 +850,11 @@
 		npc_choose_attack_zone(victim)
 
 /mob/living/carbon/human/proc/npc_choose_attack_zone(mob/living/victim)
+	if(attack_on_zone <= ATTACKS_UNTIL_SWITCHING_UP)
+		attack_on_zone++
+		return
+	else
+		attack_on_zone = 1
 	// My life for a better way to handle deadite AI.
 	if(mind?.has_antag_datum(/datum/antagonist/zombie))
 		aimheight_change(deadite_get_aimheight(victim))
@@ -980,7 +991,7 @@
 
 	for(var/datum/spatial_grid_cell/grid as anything in our_cells.member_cells)
 		if(length(grid.client_contents))
-			if(mode != NPC_AI_SLEEP || mode != NPC_AI_IDLE)
+			if(mode != NPC_AI_SLEEP && mode != NPC_AI_IDLE)
 				return TRUE
 			mode = NPC_AI_IDLE
 			return TRUE

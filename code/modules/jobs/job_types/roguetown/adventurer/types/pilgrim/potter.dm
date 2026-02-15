@@ -6,7 +6,7 @@
 	allowed_races = RACES_ALL_KINDS
 	outfit = /datum/outfit/job/roguetown/adventurer/potter
 	traits_applied = list(TRAIT_HOMESTEAD_EXPERT)
-	
+
 	category_tags = list(CTAG_PILGRIM, CTAG_TOWNER)
 	subclass_stats = list(
 		STATKEY_PER = 2,
@@ -26,6 +26,7 @@
 		/datum/skill/misc/reading = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/craft/ceramics = SKILL_LEVEL_MASTER,
 	)
+	maximum_possible_slots = 20 // Should not fill, just a hack to make it shows what types of towners are in round
 
 /datum/outfit/job/roguetown/adventurer/potter/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -46,7 +47,7 @@
 
 	backpack_contents = list(
 		/obj/item/natural/clay = 3,
-		/obj/item/natural/clay/glassbatch = 1, 
+		/obj/item/natural/clay/glassbatch = 1,
 		/obj/item/rogueore/coal = 1,
 		/obj/item/roguegear = 1,
 		/obj/item/dye_brush = 1,
@@ -56,3 +57,5 @@
 	// Coggers so he can build a potter's wheel.
 	if(H.mind)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/digclay)
+	if(H.mind)
+		SStreasury.give_money_account(ECONOMIC_LOWER_CLASS, H, "Savings.")

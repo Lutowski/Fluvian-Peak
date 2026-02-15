@@ -22,8 +22,8 @@
 	expert_name = "Climber"
 
 /datum/skill/misc/reading
-	name = "Reading"
-	desc = "Increases your chance to read a spellbook successfully by 2% per level. Minimum of 1 is required to be literate and read various things."
+	name = "Literacy"
+	desc = "Increases your chance to read a spellbook successfully by 2% per level. Also raises your ability to write and comprehend skillbooks. Minimum of 1 is required to be literate and read various things."
 	dreams = list(
 		"...amidst the void, strange symbols and glyphs make their way into your mind. They re-arrange themselves unceasingly, indecipherable truths speaking in silent voices. The clouds part, and they fall still within the moonlight. The meaning of the gift is revealed...",
 		"...you cut into your meal, juices leaking from the edges of the book. Your mind expands throughout your meal, and you are about halfway through the meal when an old, bearded chef asks you how you like his specialty..."
@@ -37,7 +37,7 @@
 		"...there is no light in the suffocating dark. You choose a direction and your arms and legs tear at the thick, oily waters in a desperate attempt to reach the surface. Your heart pounds, and your body yearns for another breath...",
 		"...a wave rocks to the side of the boat, and you tumble into the yawning abyss. Lightning splits the sky as the old captain hurls a buoy into the churning sea. Salt water burns your lungs as you thrash and claw, struggling towards your lifeline...",
 		"...the current  the beach draws you out further into the ocean, relentless and fast. Your muscles burn as you struggle, every stroke a battle. 'Across, not against!' a voice from your past chides, guiding you as you break free of the riptide's grasp..."
-		
+
 	)
 	expert_name = "Swimmer"
 
@@ -74,9 +74,13 @@
 	desc = "Increases the speed you ride a mount at, and the speed at which you can mount and dismount."
 	dreams = list(
 		"...the bog becomes more tolerable when it is not your foot that has to tread upon it. It took some coin, but your travels are much smoother atop your trustworthy steed...",
-		"...the landsknecht thrusts their pole-arm at your steed and it bucks wildly. Lurching forwards, you interpose your shield to the weapon and feel your balance shift. Flexing every muscle in your core and legs, you barely manage to remain mounted..."
+		"...the landsknecht thrusts their pole-arm at your steed and it bucks wildly. Lurching forwards, you interpose your shield to the weapon and feel your balance shift. Flexing every muscle in your core and legs, you barely manage to remain mounted...",
+		"...the tourney's onlookers cheer as you trot out onto the grounds, mounted atop a noble steed. A 'fogbeast', they call it - taller and thicker than the common saiga, draped in a caparison of your own design. Your opponent stares you down from across the circuit; a knight in blackened plate, who's steed is nothing more than bone-and-sinew...",
+		"...the forest behind you collapses into a raging inferno, just as your steed leaps forth. With choked lungs and burning eyes, you cling tightly to the reins and mutter a prayer; yet against all the odds, the saiga sticks the landing. Welting eyes unpucker, graced with the dawn's cool breeze and the sight of your steed's continued galloping..."
 	)
 	expert_name = "Rider"
+	max_untraited_level = SKILL_LEVEL_APPRENTICE
+	trait_uncap = list(TRAIT_NOBLE = SKILL_LEVEL_JOURNEYMAN, TRAIT_EQUESTRIAN = SKILL_LEVEL_MASTER)
 
 /datum/skill/misc/music
 	name = "Music"

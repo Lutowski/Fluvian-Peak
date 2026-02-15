@@ -26,17 +26,9 @@
 			update_icon()
 
 /obj/structure/flora/newtree/attack_right(mob/user)
-	if(user.mind && isliving(user))
-		if(user.mind.special_items && user.mind.special_items.len)
-			var/item = input(user, "What will I take?", "STASH") as null|anything in user.mind.special_items
-			if(item)
-				if(user.Adjacent(src))
-					if(user.mind.special_items[item])
-						var/path2item = user.mind.special_items[item]
-						user.mind.special_items -= item
-						var/obj/item/I = new path2item(user.loc)
-						user.put_in_hands(I)
-			return
+	if(user.cmode)
+		return
+	handle_special_items_retrieval(user, src)
 
 /obj/structure/flora/newtree/obj_destruction(damage_flag)//this proc is stupidly long for a destruction proc
 	var/turf/NT = get_turf(src)
@@ -204,7 +196,8 @@
 
 /obj/structure/flora/newbranch
 	name = "branch"
-	desc = "A stable branch, should be safe to walk on."
+	desc = "A branch of a tree. It looks stable enough to walk on, and could \
+	alternately make for good firewood."
 	icon = 'icons/roguetown/misc/tree.dmi'
 	icon_state = "branch-end1"
 	attacked_sound = 'sound/misc/woodhit.ogg'
@@ -275,6 +268,7 @@
 
 /obj/structure/flora/newleaf
 	name = "leaves"
+	desc = "You can see straight through this thicket of leaves to the ground. You'd have to possess a particular talent to walk over this without falling through."
 	icon = 'icons/roguetown/misc/tree.dmi'
 	icon_state = "center-leaf1"
 	density = FALSE

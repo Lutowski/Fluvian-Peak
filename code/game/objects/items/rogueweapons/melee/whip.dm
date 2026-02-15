@@ -2,7 +2,8 @@
 	force = 21
 	possible_item_intents = list(/datum/intent/whip/lash, /datum/intent/whip/crack, /datum/intent/whip/punish)
 	name = "whip"
-	desc = "A leather whip, tipped with a flintknapped stone. Though intended to shepherd unruly livestock, the tip's jagged points also suffice at leaving assailants with horrific lacerations."
+	desc = "A leather whip, tipped with a flintknapped stone. Though intended to shepherd \
+	unruly livestock, the tip's jagged points also suffice at leaving assailants with horrific lacerations."
 	icon_state = "whip"
 	icon = 'icons/roguetown/weapons/whips32.dmi'
 	sharpness = IS_BLUNT
@@ -19,6 +20,7 @@
 	minstr = 6
 	grid_width = 32
 	grid_height = 64
+	special = /datum/special_intent/whip_coil
 
 /obj/item/rogueweapon/whip/getonmobprop(tag)
 	. = ..()
@@ -109,7 +111,7 @@
 	force = 24
 
 /obj/item/rogueweapon/whip/antique
-	name = "Repenta En"
+	name = "\"Repenta En\""
 	desc = "A multi-tailed whip that's extremely well-maintained. The gilded handle first burdens the hand with its inordinate weight, and then the mind with an unsettling realization; this is not a tool of honor. </br>'Ravox stands for justice, not murder.'"
 	force = 25
 	minstr = 11
@@ -122,7 +124,7 @@
 	is_silver = TRUE
 	force = 25
 	possible_item_intents = list(/datum/intent/whip/lash/holy, /datum/intent/whip/crack, /datum/intent/whip/punish)
-	minstr = 12
+	minstr = 11
 	wdefense = 0
 	anvilrepair = /datum/skill/craft/weaponsmithing
 	smeltresult = /obj/item/ingot/silver
@@ -166,7 +168,7 @@
 	icon_state = "psywhip_lesser"
 	possible_item_intents = list(/datum/intent/whip/lash/holy, /datum/intent/whip/crack, /datum/intent/whip/punish)
 	force = 23
-	minstr = 12
+	minstr = 11
 	wdefense = 0
 	is_silver = TRUE
 	smeltresult = /obj/item/ingot/silverblessed
@@ -188,13 +190,14 @@
 	desc = "A dark whip with segmented, ashen spines for a base. Claimed to be hewn from dendrified prisoners of terror."
 	icon_state = "spiderwhip"
 	minstr = 6
+	smeltresult = /obj/item/ingot/drow
+	smelt_bar_num = 1
 
 /obj/item/rogueweapon/whip/bronze
 	name = "bronze whip"
 	desc = "A heavy whip, corded from thick leather and adorned with a razor-sharp bronzehead. In ancient tymes, this shepherd's weapon once repelled the gnashing teeth of bloodthirsty nitebeasts: now, it seperates limb-from-trunk with thunderous claps. </br>Holding this whip imbues you with determination.. and a rather odd hankering for turkey dinners."
-	icon_state = "silverwhip"
+	icon_state = "bronzewhip"
 	force = 21 //Same damage as the leathers.
-	color = "#f9d690"
 	minstr = 13 //Dodgemasters need-not apply. Intended for the 'Belmont'-esque archetype of Barbarians, and greatly punishes those who would try and take it for the sake of non-thematic cheesing.
 	wdefense = 0
 	possible_item_intents = list(/datum/intent/whip/lash/holy, /datum/intent/whip/crack, /datum/intent/whip/punish) //Able to dismember at range. 'Holy' is a catchall term, in this case.

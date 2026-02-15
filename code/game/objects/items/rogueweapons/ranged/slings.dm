@@ -2,15 +2,18 @@
 
 /datum/intent/swing/sling
 	chargetime = 1 //used for edge cases only, /datum/intent/shoot/sling/get_chargetime handles the actual number
-	chargedrain = 2
+	chargedrain = 1.5
 	charging_slowdown = 3
 
-/datum/intent/swing/sling/can_charge() //checks for arms and spare empty hand removed since it can fire with one hand
+/datum/intent/swing/sling/can_charge(atom/clicked_object)
+	if(istype(clicked_object, /obj/item/quiver) && istype(mastermob?.get_active_held_item(), /obj/item/gun/ballistic))
+		return FALSE
+
 	return TRUE
 
 /datum/intent/swing/sling/prewarning()
 	if(mastermob)
-		mastermob.visible_message(span_warning("[mastermob] swings the [masteritem]!"))
+		mastermob.visible_message(span_warning("[mastermob] swings [masteritem]!"))
 		playsound(mastermob, pick('sound/combat/Ranged/sling-draw-01.ogg'), 100, FALSE)
 
 /datum/intent/swing/sling/get_chargetime() //determines swing length. damage is in /obj/item/gun/ballistic/revolver/grenadelauncher/sling/process_fire
@@ -29,15 +32,18 @@
 
 /datum/intent/arc/sling
 	chargetime = 1
-	chargedrain = 2
+	chargedrain = 1.5
 	charging_slowdown = 3
 
-/datum/intent/arc/sling/can_charge() //checks for arms and spare empty hand removed since it can fire with one hand
+/datum/intent/arc/sling/can_charge(atom/clicked_object)
+	if(istype(clicked_object, /obj/item/quiver) && istype(mastermob?.get_active_held_item(), /obj/item/gun/ballistic))
+		return FALSE
+
 	return TRUE
 
 /datum/intent/arc/sling/prewarning()
 	if(mastermob)
-		mastermob.visible_message(span_warning("[mastermob] swings the [masteritem] in an arc!"))
+		mastermob.visible_message(span_warning("[mastermob] swings [masteritem] in an arc!"))
 		playsound(mastermob, pick('sound/combat/Ranged/sling-draw-01.ogg'), 100, FALSE)
 
 /datum/intent/arc/sling/get_chargetime() //same calculations as swing but with a greater base for throwing through teammates
@@ -71,7 +77,7 @@
 		)
 	mag_type = /obj/item/ammo_box/magazine/internal/shot/sling
 	fire_sound = 'sound/combat/Ranged/sling-shot-01.ogg'
-	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BELT
+	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BELT | ITEM_SLOT_WRISTS
 	w_class = WEIGHT_CLASS_SMALL
 	randomspread = 0
 	spread = 0
@@ -85,6 +91,10 @@
 	grid_height = 64
 	var/atom/movable/temp_stone = null //stones are not ammo so they aren't acceptable by ballistics. this var will keep the stone temporarily stored
 	var/bonus_stone_force = 0 //above comment is relevant. a magical stone's bonus force is kept on the sling itself and changed accordingly
+
+/obj/item/gun/ballistic/revolver/grenadelauncher/sling/get_mechanics_examine(mob/user)
+	. += span_info("Slings increase in damage and accuracy the higher your <b>PERCEPTION</b> and <b>STRENGTH</b>.")
+	. += span_info("Slings can be loaded directly from a pouch while your offhand is occupied by another item.")
 
 /obj/item/gun/ballistic/revolver/grenadelauncher/sling/getonmobprop(tag)
 	. = ..()
@@ -185,9 +195,6 @@
 		if (temp_stone != null) //reseting after stone ammo use
 			bonus_stone_force = 0 //stone is thrown, so the bonus is lost
 			temp_stone = null //stone is gone, forever.
-	if(user.has_status_effect(/datum/status_effect/buff/clash) && ishuman(user))
-		var/mob/living/carbon/human/H = user
-		H.bad_guard(span_warning("I can't focus on my Guard and sling rocks! This drains me!"), cheesy = TRUE)
 	. = ..()
 
 /obj/item/gun/ballistic/revolver/grenadelauncher/sling/update_icon()

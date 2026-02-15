@@ -1,6 +1,7 @@
 
 GLOBAL_LIST_INIT(character_flaws, list(
 	"Alcoholic"=/datum/charflaw/addiction/alcoholic,
+	"Averse"=/datum/charflaw/averse,
 	"Devout Follower"=/datum/charflaw/addiction/godfearing,
 	"Colorblind"=/datum/charflaw/colorblind,
 	"Smoker"=/datum/charflaw/addiction/smoker,
@@ -11,25 +12,49 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	"Nymphomaniac"=/datum/charflaw/addiction/lovefiend,
 	"Sadist"=/datum/charflaw/addiction/sadist,
 	"Masochist"=/datum/charflaw/addiction/masochist,
-	"Paranoid"=/datum/charflaw/paranoid,
 	"Clingy"=/datum/charflaw/clingy,
-	"Isolationist"=/datum/charflaw/isolationist,
+	"Finicky"=/datum/charflaw/finicky,
+	"Lonely"=/datum/charflaw/lonely,
+	"Paranoid"=/datum/charflaw/addiction/paranoid,
+	"Clamorous"=/datum/charflaw/addiction/clamorous,
+	"Thrillseeker"=/datum/charflaw/addiction/thrillseeker,
+	"Indebted"=/datum/charflaw/indebted,
+	"Voyeur"=/datum/charflaw/addiction/voyeur,
 	"Bad Sight"=/datum/charflaw/badsight,
 	"Cyclops (R)"=/datum/charflaw/noeyer,
 	"Cyclops (L)"=/datum/charflaw/noeyel,
+	"Blindness"=/datum/charflaw/noeyeall,
 	"Wood Arm (R)"=/datum/charflaw/limbloss/arm_r,
 	"Wood Arm (L)"=/datum/charflaw/limbloss/arm_l,
 	"Sleepless"=/datum/charflaw/sleepless,
 	"Mute"=/datum/charflaw/mute,
 	"Critical Weakness"=/datum/charflaw/critweakness,
+	"Hunted"=/datum/charflaw/hunted,
+	/datum/charflaw/mind_broken::name = /datum/charflaw/mind_broken,
 	"Random or No Flaw"=/datum/charflaw/randflaw,
-	"No Flaw (3 TRIUMPHS)"=/datum/charflaw/noflaw,
+	"No Flaw (-3 TRIUMPHS)"=/datum/charflaw/noflaw,
+	"Leper (+1 TRIUMPHS)"=/datum/charflaw/leprosy,
 	))
+
+GLOBAL_LIST_INIT(averse_factions, list(
+	"Courtiers & Nobility" = (COURTIERS | NOBLEMEN | COUNCILLOR),
+	"Inquisition" = INQUISITION,
+	"Burghers" = BURGHERS,
+	"Retinue" = RETINUE,
+	"Garrison" = GARRISON,
+	"Churchmen" = CHURCHMEN,
+	"Peasants" = PEASANTS,
+	"Wanderers" = WANDERERS,
+	"Everyone" = (COURTIERS | NOBLEMEN | INQUISITION | BURGHERS | RETINUE | GARRISON | CHURCHMEN | PEASANTS | WANDERERS | SIDEFOLK | ANTAGONIST | COUNCILLOR)
+))
 
 /datum/charflaw
 	var/name
 	var/desc
 	var/ephemeral = FALSE // This flaw is currently disabled and will not process
+	/// For voyeur vice examines only. Format is "[name] is " + this + "...", leave blank to use the flaw's name.
+	/// Intended for addiction types only.
+	var/voyeur_descriptor	
 
 /datum/charflaw/proc/on_mob_creation(mob/user)
 	return
@@ -49,43 +74,33 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	if(istype(charflaw, flaw))
 		return TRUE
 
-/mob/proc/get_flaw(flaw_type)
+/mob/proc/get_flaw()
 	return
 
-/mob/living/carbon/human/get_flaw(flaw_type)
-	if(!flaw_type)
-		return
-	if(charflaw != flaw_type)
-		return
+/mob/living/carbon/human/get_flaw()
 	return charflaw
 
 /datum/charflaw/randflaw
 	name = "Random or None"
 	desc = "A 50% chance to be given a random flaw, or a 50% chance to have NO flaw."
-	var/nochekk = TRUE
 
-/datum/charflaw/randflaw/flaw_on_life(mob/user)
-	if(!nochekk)
-		return
-	if(ishuman(user))
-		var/mob/living/carbon/human/H = user
-		if(H.ckey)
-			nochekk = FALSE
-			if(prob(50))
-				var/flawz = GLOB.character_flaws.Copy()
-				var/charflaw = pick_n_take(flawz)
-				charflaw = GLOB.character_flaws[charflaw]
-				if((charflaw == type) || (charflaw == /datum/charflaw/noflaw))
-					charflaw = pick_n_take(flawz)
-					charflaw = GLOB.character_flaws[charflaw]
-				if((charflaw == type) || (charflaw == /datum/charflaw/noflaw))
-					charflaw = pick_n_take(flawz)
-					charflaw = GLOB.character_flaws[charflaw]
-				H.charflaw = new charflaw()
-				H.charflaw.on_mob_creation(H)
-			else
-				H.charflaw = new /datum/charflaw/eznoflaw()
-				H.charflaw.on_mob_creation(H)
+/datum/charflaw/randflaw/apply_post_equipment(mob/user)
+	var/mob/living/carbon/human/H = user
+	if(prob(50))
+		var/flawz = GLOB.character_flaws.Copy()
+		var/charflaw = pick_n_take(flawz)
+		charflaw = GLOB.character_flaws[charflaw]
+		if((charflaw == type) || (charflaw == /datum/charflaw/noflaw))
+			charflaw = pick_n_take(flawz)
+			charflaw = GLOB.character_flaws[charflaw]
+		if((charflaw == type) || (charflaw == /datum/charflaw/noflaw))
+			charflaw = pick_n_take(flawz)
+			charflaw = GLOB.character_flaws[charflaw]
+		H.charflaw = new charflaw()
+		H.charflaw.on_mob_creation(H)
+	else
+		H.charflaw = new /datum/charflaw/eznoflaw()
+		H.charflaw.on_mob_creation(H)
 
 
 /datum/charflaw/eznoflaw
@@ -93,32 +108,25 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	desc = "I'm a normal person, how rare!"
 
 /datum/charflaw/noflaw
-	name = "No Flaw (3 TRI)"
+	name = "No Flaw (-3 TRI)"
 	desc = "I'm a normal person, how rare! (Consumes 3 triumphs or gives a random flaw.)"
-	var/nochekk = TRUE
 
-/datum/charflaw/noflaw/flaw_on_life(mob/user)
-	if(!nochekk)
-		return
-	if(ishuman(user))
-		var/mob/living/carbon/human/H = user
-		if(H.ckey)
-			if(H.get_triumphs() < 3)
-				nochekk = FALSE
-				var/flawz = GLOB.character_flaws.Copy()
-				var/charflaw = pick_n_take(flawz)
-				charflaw = GLOB.character_flaws[charflaw]
-				if((charflaw == type) || (charflaw == /datum/charflaw/randflaw))
-					charflaw = pick_n_take(flawz)
-					charflaw = GLOB.character_flaws[charflaw]
-				if((charflaw == type) || (charflaw == /datum/charflaw/randflaw))
-					charflaw = pick_n_take(flawz)
-					charflaw = GLOB.character_flaws[charflaw]
-				H.charflaw = new charflaw()
-				H.charflaw.on_mob_creation(H)
-			else
-				nochekk = FALSE
-				H.adjust_triumphs(-3)
+/datum/charflaw/noflaw/apply_post_equipment(mob/user)
+	var/mob/living/carbon/human/H = user
+	if(H.get_triumphs() < 3)
+		var/flawz = GLOB.character_flaws.Copy()
+		var/charflaw = pick_n_take(flawz)
+		charflaw = GLOB.character_flaws[charflaw]
+		if((charflaw == type) || (charflaw == /datum/charflaw/randflaw))
+			charflaw = pick_n_take(flawz)
+			charflaw = GLOB.character_flaws[charflaw]
+		if((charflaw == type) || (charflaw == /datum/charflaw/randflaw))
+			charflaw = pick_n_take(flawz)
+			charflaw = GLOB.character_flaws[charflaw]
+		H.charflaw = new charflaw()
+		H.charflaw.on_mob_creation(H)
+	else
+		H.adjust_triumphs(-3)
 
 /datum/charflaw/badsight
 	name = "Bad Eyesight"
@@ -193,57 +201,138 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	if(cnt > 6)
 		user.add_stress(/datum/stressevent/parablood)
 
-/datum/charflaw/isolationist
-	name = "Isolationist"
-	desc = "I don't like being near people. They might be trying to do something to me..."
-	var/last_check = 0
+/datum/charflaw/finicky
+	name = "Finicky"
+	desc = "I don't like crowds. I don't like being alone, neither. There's a middle, isn't there?"
+	var/interval = 1 MINUTES
+	var/is_active = FALSE
+	var/next_check = 0
 
-/datum/charflaw/isolationist/flaw_on_life(mob/user)
-	. = ..()
-	if(world.time < last_check + 10 SECONDS)
-		return
+/datum/charflaw/finicky/flaw_on_life(mob/user)
 	if(!user)
 		return
-	last_check = world.time
-	var/cnt = 0
-	for(var/mob/living/carbon/human/L in hearers(7, user))
-		if(L == user)
-			continue
-		if(L.stat)
-			continue
-		if(L.dna.species)
-			cnt++
-		if(cnt > 3)
-			break
-	var/mob/living/carbon/P = user
-	if(cnt > 3)
-		P.add_stress(/datum/stressevent/crowd)
+	if(is_active)
+		if(world.time > next_check)
+			next_check = world.time + interval
+			var/cnt = 0
+			for(var/mob/living/carbon/human/L in get_hearers_in_view(6, user, RECURSIVE_CONTENTS_CLIENT_MOBS))
+				if(L == user)
+					continue
+				if(L.stat)
+					continue
+				if(L.dna.species)
+					cnt++
+				if(cnt > 3)
+					break
+			var/mob/living/carbon/P = user
+			if(cnt > 3)
+				P.add_stress(/datum/stressevent/crowd)
+			else if(cnt == 0)
+				P.add_stress(/datum/stressevent/nocrowd)
+			else
+				next_check = world.time + (interval * 6)	//we procced it successfully, so the delay is longer
+
+/datum/charflaw/finicky/apply_post_equipment(mob/user)
+	if(user.mind)
+		is_active = TRUE
+
+/datum/charflaw/lonely
+	name = "Lonely"
+	desc = "I just don't like being alone."
+	var/interval = 1 MINUTES
+	var/severity_interval = 5 MINUTES
+	var/stacks = 0
+	var/is_active = FALSE
+	var/next_check = 0
+	var/next_severity = 0
+
+/datum/charflaw/lonely/flaw_on_life(mob/user)
+	if(!user)
+		return
+	if(is_active)
+		if(world.time > next_check)
+			next_check = world.time + interval
+			var/cnt = 0
+			for(var/mob/living/carbon/human/L in get_hearers_in_view(7, user, RECURSIVE_CONTENTS_CLIENT_MOBS))
+				if(L == user)
+					continue
+				if(L.stat)
+					continue
+				if(L.dna.species)
+					cnt++
+				if(cnt > 3)
+					break
+			var/mob/living/carbon/P = user
+			if(cnt <= 0)
+				handle_stacks(P)
+			else
+				reset_stacks(P)
+
+/datum/charflaw/lonely/apply_post_equipment(mob/user)
+	if(user.mind)
+		is_active = TRUE
+
+/datum/charflaw/lonely/proc/handle_stacks(mob/living/L)
+	if(world.time > next_severity)
+		stacks++
+		next_severity = world.time + severity_interval
+		switch(stacks)
+			if(1)
+				L.add_stress(/datum/stressevent/lonely_one)
+			if(2)
+				L.add_stress(/datum/stressevent/lonely_two)
+			if(3)
+				L.add_stress(/datum/stressevent/lonely_three)
+			if(4)
+				L.add_stress(/datum/stressevent/lonely_max)
+
+/datum/charflaw/lonely/proc/reset_stacks(mob/living/L)
+	if(stacks >= 2)
+		to_chat(L, span_info("Oh thank [L.patron?.name]! A person!"))
+	if(stacks > 1)
+		L.remove_stress_list(/datum/stressevent/lonely_one, /datum/stressevent/lonely_two, /datum/stressevent/lonely_three, /datum/stressevent/lonely_max)
+	stacks = 0
 
 /datum/charflaw/clingy
 	name = "Clingy"
-	desc = "I like being around people, it's just so lively..."
-	var/last_check = 0
+	desc = "I like being close to people. Real close."
+	var/next_check = 0
+	var/interval = 1 MINUTES
+	var/is_active = FALSE
 
 /datum/charflaw/clingy/flaw_on_life(mob/user)
-	. = ..()
-	if(world.time < last_check + 10 SECONDS)
-		return
 	if(!user)
 		return
-	last_check = world.time
-	var/cnt = 0
-	for(var/mob/living/carbon/human/L in hearers(7, user))
-		if(L == user)
-			continue
-		if(L.stat)
-			continue
-		if(L.dna.species)
-			cnt++
-		if(cnt > 1)
-			break
-	var/mob/living/carbon/P = user
-	if(cnt < 1)
-		P.add_stress(/datum/stressevent/nopeople)
+	if(is_active)
+		if(world.time > next_check)
+			next_check = world.time + interval
+			var/cnt = 0
+			var/distfound = FALSE
+			for(var/mob/living/carbon/human/L in get_hearers_in_view(2, user))
+				if(L == user)
+					continue
+				if(L.stat == DEAD)
+					continue
+				var/dist = get_dist(L, user)
+				if(dist <= 1)
+					distfound = TRUE
+					user.remove_stress(/datum/stressevent/nopeople)
+					break
+				if(L.dna.species)
+					cnt++
+				if(cnt >= 2)
+					user.remove_stress(/datum/stressevent/nopeople)
+					break
+			var/mob/living/carbon/P = user
+			if(cnt < 1 && !distfound)
+				P.add_stress(/datum/stressevent/nopeople)
+			else
+				next_check = world.time + (interval * 6) //we procced it successfully, so the delay is longer
+
+/datum/charflaw/clingy/apply_post_equipment(mob/user)
+	if(user.mind)
+		is_active = TRUE
+	
 
 /datum/charflaw/noeyer
 	name = "Cyclops (R)"
@@ -275,6 +364,19 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	head?.add_wound(/datum/wound/facial/eyes/left/permanent)
 	H.update_fov_angles()
 
+/datum/charflaw/noeyeall
+	name = "Blindness"
+	desc = "I lost both of my eyes long ago."
+
+/datum/charflaw/noeyeall/on_mob_creation(mob/user)
+	..()
+	if(!ishuman(user))
+		return
+	var/mob/living/carbon/human/H = user
+	if(!H.wear_mask)
+		H.equip_to_slot_or_del(new /obj/item/clothing/glasses/blindfold(H), SLOT_WEAR_MASK)
+	H.overlay_fullscreen("blind_flaw", /atom/movable/screen/fullscreen/impaired, 2)
+
 /datum/charflaw/colorblind
 	name = "Colorblind"
 	desc = "I was cursed with flawed eyesight from birth, and can't discern things others can. Incompatible with Night-eyed virtue."
@@ -283,17 +385,46 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	..()
 	user.add_client_colour(/datum/client_colour/monochrome)
 
+/datum/charflaw/hunted
+	name = "Hunted"
+	desc = "Something in my past has made me a target. I'm always looking over my shoulder.	\
+	\nTHIS IS A DIFFICULT FLAW, YOU WILL BE HUNTED BY ASSASSINS AND HAVE ASSASINATION ATTEMPTS MADE AGAINST YOU WITHOUT ANY ESCALATION. \
+	EXPECT A MORE DIFFICULT EXPERIENCE. PLAY AT YOUR OWN RISK."
+	var/logged = FALSE
+
+/datum/charflaw/hunted/flaw_on_life(mob/user)
+	if(!ishuman(user))
+		return
+	var/mob/living/carbon/human/H = user
+	if(logged == FALSE)
+		if(H.name) // If you don't check this, the log entry wont have a name as flaw_on_life is checked at least once before the name is set.
+			log_hunted("[H.ckey] playing as [H.name] had the hunted flaw by vice.")
+			logged = TRUE
+
+/datum/charflaw/hunted/apply_post_equipment(mob/user)
+	..()
+	if(!ishuman(user))
+		return
+	var/datum/job/gnoll_job = SSjob.GetJob("Gnoll")
+	var/total_gnoll_positions = gnoll_job.total_positions
+	var/gnoll_increase = get_gnoll_slot_increase(total_gnoll_positions)
+
+	if(gnoll_increase >= 1)
+		to_chat(user, span_notice("I have offended graggarite agents, and they may be tracking my scent."))
+		gnoll_job.total_positions = min(total_gnoll_positions + gnoll_increase, 10)
+		gnoll_job.spawn_positions = min(total_gnoll_positions + gnoll_increase, 10)
+
 /datum/charflaw/unintelligible
 	name = "Unintelligible"
 	desc = "I cannot speak the common tongue!"
 
 /datum/charflaw/unintelligible/on_mob_creation(mob/user)
 	var/mob/living/carbon/human/recipient = user
-	addtimer(CALLBACK(src, .proc/unintelligible_apply, recipient), 5 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(unintelligible_apply), recipient), 5 SECONDS)
 
 /datum/charflaw/unintelligible/proc/unintelligible_apply(mob/living/carbon/human/user)
 	if(user.advsetup)
-		addtimer(CALLBACK(src, .proc/unintelligible_apply, user), 5 SECONDS)
+		addtimer(CALLBACK(src, PROC_REF(unintelligible_apply), user), 5 SECONDS)
 		return
 	user.remove_language(/datum/language/common)
 	user.adjust_skillrank(/datum/skill/misc/reading, -6, TRUE)
@@ -418,15 +549,17 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	else
 		// Been conscious for ~10 minutes (whatever is the conscious timer)
 		if(last_unconsciousness + concious_timer < world.time)
-			drugged_up = FALSE
-			to_chat(user, span_blue("I'm getting drowsy..."))
+			do_sleep = TRUE
 			user.emote("yawn", forced = TRUE)
 			next_sleep = world.time + rand(7 SECONDS, 11 SECONDS)
-			do_sleep = TRUE
+			if(drugged_up)
+				to_chat(user, span_blue("The drugs keeps me awake, for now..."))
+			else
+				to_chat(user, span_blue("I'm getting drowsy..."))
 
 /proc/narcolepsy_drug_up(mob/living/living)
-	var/datum/charflaw/narcoleptic/narco = living.get_flaw(/datum/charflaw/narcoleptic)
-	if(!narco)
+	var/datum/charflaw/narcoleptic/narco = living.get_flaw()
+	if (!istype(narco, /datum/charflaw/narcoleptic))
 		return
 	narco.drugged_up = TRUE
 
@@ -441,11 +574,19 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	return mammons
 
 /datum/charflaw/sleepless
-	name = "Insomnia"
+	name = "Sleepless"
 	desc = "I do not sleep. I cannot sleep. I've tried everything."
+	var/drugged_up = FALSE
+	var/dream_prob = 1000
 
 /datum/charflaw/sleepless/on_mob_creation(mob/user)
 	ADD_TRAIT(user, TRAIT_NOSLEEP, TRAIT_GENERIC)
+
+/proc/sleepless_drug_up(mob/living/living)
+	var/datum/charflaw/sleepless/sleeper = living.get_flaw()
+	if (!istype(sleeper, /datum/charflaw/sleepless))
+		return
+	sleeper.drugged_up = TRUE
 
 /datum/charflaw/mute
 	name = "Mute"
@@ -460,3 +601,200 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /datum/charflaw/critweakness/on_mob_creation(mob/user)
 	ADD_TRAIT(user, TRAIT_CRITICAL_WEAKNESS, TRAIT_GENERIC)
+
+/datum/charflaw/leprosy
+	name = "Leper (+1 TRI)"
+	desc = "I am cursed with leprosy! Too poor to afford treatment, my skin now lays violated by lesions, my extremities are numb, and my presence disturbs even the most stalwart men."
+
+/datum/charflaw/leprosy/apply_post_equipment(mob/user)
+	var/mob/living/carbon/human/H = user
+	to_chat(user, "I am afflicted. I am outcast and weak. I am a pox on this world.")
+	ADD_TRAIT(user, TRAIT_LEPROSY, TRAIT_GENERIC)
+	H.change_stat(STATKEY_STR, -1)
+	H.change_stat(STATKEY_INT, -1)
+	H.change_stat(STATKEY_PER, -1)
+	H.change_stat(STATKEY_CON, -1)
+	H.change_stat(STATKEY_WIL, -1)
+	H.change_stat(STATKEY_SPD, -1)
+	H.change_stat(STATKEY_LCK, -1)
+	H.adjust_triumphs(1)
+
+/datum/charflaw/mind_broken
+	name = "Asundered Mind (+1 TRI)"
+	desc = "My mind is asundered, wether it was by own means or an unfortunate accident. Nothing seems real to me... \
+	\nWARNING: HALLUCINATIONS MAY JUMPSCARE YOU, AND PREVENT YOU FROM TELLING APART REALITY AND IMAGINATION. \
+	FURTHERMORE, THIS DOES NOT EXEMPT YOU FROM ANY RULES SET BY THE SERVER. ESCALATION STILL APPLIES."
+
+/datum/charflaw/mind_broken/apply_post_equipment(mob/living/carbon/human/insane_fool)
+	insane_fool.hallucination = INFINITY
+	ADD_TRAIT(insane_fool, TRAIT_PSYCHOSIS, TRAIT_GENERIC)
+	insane_fool.adjust_triumphs(1)
+	if(insane_fool.patron?.type == /datum/patron/divine/abyssor) 
+	 insane_fool.grant_language(/datum/language/abyssal)
+
+/datum/charflaw/indebted
+	name = "Indebted"
+	desc = "Whether by divorce, gambling debts, or wages due, I must pay a sum from my meister every dae. Not doing this will bring about great stress and potentially a bounty."
+	var/minimum = 30
+	var/relative = 0.2
+	var/interval = 30 MINUTES
+	var/next_alimony
+	var/is_active = FALSE
+	var/bounty_added = FALSE
+
+/datum/charflaw/indebted/apply_post_equipment(mob/living/carbon/human/alimony)
+	addtimer(CALLBACK(src, PROC_REF(setup_self), alimony), 5 SECONDS)
+
+/datum/charflaw/indebted/proc/setup_self(mob/living/carbon/human/user)
+	if(user.mind)
+		if(!SStreasury.bank_accounts[user.real_name])
+			SStreasury.create_bank_account(user.real_name, minimum)
+			is_active = TRUE
+			next_alimony = world.time + interval
+
+/datum/charflaw/indebted/flaw_on_life(mob/user)
+	. = ..()
+	if(is_active)
+		if(world.time > next_alimony)
+			calculate_childsupport(user)
+
+/datum/charflaw/indebted/proc/calculate_childsupport(mob/deadbeat)
+	var/bankamt = SStreasury.bank_accounts[deadbeat]
+	var/alimony = minimum
+	if(bankamt > minimum)
+		if((bankamt * relative) > minimum)
+			alimony = round(bankamt * relative)
+		SStreasury.give_money_account(-alimony, deadbeat, "Debts")
+		next_alimony = world.time + interval
+	else
+		SStreasury.give_money_account(-bankamt, deadbeat, "Defaulted Debts")
+		deadbeat.add_stress(/datum/stressevent/debt)
+		if(!bounty_added)
+			if(ishuman(deadbeat))
+				var/mob/living/carbon/human/H = deadbeat
+				var/list/d_list = H.get_mob_descriptors()
+				var/height = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_HEIGHT), "%DESC1%")
+				var/body = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_BODY), "%DESC1%")
+				var/voice = build_coalesce_description_nofluff(d_list, H, list(MOB_DESCRIPTOR_SLOT_VOICE), "%DESC1%")
+				add_bounty(H.real_name, H.dna.species, H.gender, height, body, voice, rand(100, 200), FALSE, "Failure to pay outstanding debts.", "The Justiciary of Azuria")
+			bounty_added = TRUE
+
+/datum/charflaw/averse
+	name = "Averse"
+	desc = "I hate being around a particular kind of group."
+	var/chosen_group
+	var/paid_triumphs = FALSE
+	var/is_active = FALSE
+	var/check_interval = 15 SECONDS
+	var/active_since
+	var/next_check = 0
+	var/check_range = 5
+
+/datum/charflaw/averse/flaw_on_life(mob/user)
+	if(is_active && world.time > next_check)
+		next_check = world.time + check_interval
+		if(user.has_stress_event(/datum/stressevent/averse))
+			return
+		var/count = 0
+		for(var/mob/living/L in get_hearers_in_LOS(check_range, user, RECURSIVE_CONTENTS_CLIENT_MOBS))
+			if(check_aversion(user, L))
+				count++
+				if(count >= 2)
+					user.add_stress(/datum/stressevent/averse)
+					break
+				if(paid_triumphs)
+					triumph_refund(user)
+
+
+/datum/charflaw/averse/proc/check_aversion(mob/user, mob/target)
+	if(target == user || target.stat == DEAD)
+		return FALSE
+
+	if(!ishuman(target))
+		return FALSE
+
+	var/datum/job/J = SSjob.GetJob(target.job)
+	if(!J || !J.department_flag)
+		return FALSE
+
+	if(!chosen_group)
+		return FALSE
+
+	if(chosen_group & J.department_flag)
+		return TRUE
+
+	return FALSE
+
+/datum/charflaw/averse/proc/triumph_refund(mob/user)
+	var/time_since = world.time - active_since
+	var/refund = 0
+	switch(time_since)
+		if(1 to 30 MINUTES)
+			refund = 3
+		if(31 MINUTES to 60 MINUTES)
+			refund = 2
+		if(61 MINUTES to 90 MINUTES)
+			refund = 1
+		if(91 to 9999 MINUTES)
+			refund = 0
+	if(refund)
+		to_chat(user, span_info("Refunding Triumphs due to vice."))
+		user.adjust_triumphs(refund)
+	paid_triumphs = FALSE
+
+/datum/charflaw/averse/proc/set_jobflag(faction)
+	if(!faction)
+		CRASH("Invalid set_jobflag called from Averse charflaw.")
+	if(faction in GLOB.averse_factions)
+		chosen_group = GLOB.averse_factions[faction]
+	else
+		CRASH("Invalid set_jobflag called from Averse charflaw using the faction:[faction].")
+
+/datum/charflaw/averse/proc/check_for_candidates(mob/user)
+	if(!user || QDELETED(user) || !user.mind)
+		return
+
+	var/averse_found = FALSE
+	for(var/mob/living/player in GLOB.player_list)
+		if(player == user)
+			continue
+		if(!ishuman(player))
+			continue
+
+		var/datum/job/J = SSjob.GetJob(player.job)
+		if(!J || !J.department_flag)
+			continue
+		if(!chosen_group)
+			return FALSE
+
+		if(chosen_group & J.department_flag)
+			averse_found = TRUE
+			break
+	if(!averse_found)
+		var/list/options = list("Pick a Random Aversion", "Keep Current (-3 TRI)")
+		var/choice = input(user, "There are no viable candidates for your Aversion. What do you do?", "AVERSION ALERT") as anything in options
+		if(choice == "Keep Current (-3 TRI)" || !choice)
+			user.adjust_triumphs(-3)
+			paid_triumphs = TRUE
+		else if(choice == "Pick a Random Aversion")
+			var/new_aversion
+			var/max_attempts = 10
+			for(var/i = 1 to max_attempts)
+				new_aversion = pick(GLOB.averse_factions)
+				if(new_aversion != chosen_group)
+					to_chat(user, span_info("New Aversion selected: [new_aversion]"))
+					set_jobflag(new_aversion)
+					break
+
+
+/datum/charflaw/averse/apply_post_equipment(mob/user)
+	if(user.mind)
+		if(user.client.prefs?.averse_chosen_faction)
+			set_jobflag(user.client.prefs?.averse_chosen_faction)
+			is_active = TRUE
+			active_since = world.time
+	if(is_active && user && !QDELETED(user))
+		addtimer(CALLBACK(src, PROC_REF(check_for_candidates), user), 5 SECONDS)
+
+
+

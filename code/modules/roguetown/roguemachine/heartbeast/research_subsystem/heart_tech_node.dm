@@ -18,7 +18,7 @@
 /// HEALING MIRACLE TECHS
 /datum/chimeric_tech_node/awaken_healing
 	name = "Awaken divine regeneration"
-	description = "Increases the healing of most healing miracles significantly."
+	description = "Clears the veil weakening healing miracles in this region, improving healing miracles greatly."
 	string_id = "HEAL_TIER1"
 	required_tier = 1
 	cost = 15
@@ -82,13 +82,21 @@
 
 /datum/chimeric_tech_node/black_rose
 	name = "Black Rose Synthesis"
-	description = "Allows crafting of black roses from corrupted flesh and beast blood. It is believe heartbeasts were in part created by Pestra herself to control the black rot that lingers withing these roses."
+	description = "Allows crafting of black roses from corrupted flesh and beast blood. It is believed heartbeasts were in part created by Pestra herself to control the black rot that lingers withing these roses."
 	string_id = "BLACK_ROSE"
 	required_tier = 4
 	cost = 100
 	selection_weight = 2
 	prerequisites = list("INFESTATION_TIER3")
 	is_recipe_node = TRUE
+
+/datum/chimeric_tech_node/corpse_ticks
+	name = "Corpse Ticks"
+	description = "Allows leechticks to attach to dead bodies to extract their lux"
+	string_id = "CORPSE_TICKS"
+	required_tier = 1
+	cost = 5
+	selection_weight = 1
 
 /// INFESTATION CHARGE CAPACITY TECHS
 /datum/chimeric_tech_node/infestation_capacity_1
@@ -150,3 +158,12 @@
 	required_tier = 1
 	cost = 5
 	selection_weight = 2
+
+// SPECIAL RESEARCH
+	name = "Sanctified lampterns"
+	description = "Allows fashioning fog repelling lampterns at anvils."
+	string_id = "SANCTIFIED_LAMPTERNS"
+	required_tier = 99
+	cost = 5
+	selection_weight = 1
+	is_recipe_node = TRUE

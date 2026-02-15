@@ -17,6 +17,7 @@
 	antimagic_allowed = TRUE
 	recharge_time = 5 SECONDS //very stupidly simple spell
 	miracle = TRUE
+	skipcharge = TRUE
 	devotion_cost = 0 //come on, this is very basic
 
 /obj/effect/proc_holder/spell/invoked/diagnose/cast(list/targets, mob/living/user)
@@ -55,6 +56,7 @@
 	associated_skill = /datum/skill/misc/medicine
 	miracle = FALSE
 	devotion_cost = 0 //Doctors are not clerics
+
 /obj/effect/proc_holder/spell/invoked/attach_bodypart
 	name = "Bodypart Miracle"
 	desc = "Attach all limbs and organs you or your target is holding, and near your target."
@@ -388,6 +390,11 @@
 		// Check if the user is holding a black rose and the target follows Pestra.
 		if(istype(rose) && target.patron?.type == /datum/patron/divine/pestra)
 			// If the target is a Pestran and we are holding the rose, implant the component.
+			var/time_elapsed = STATION_TIME_PASSED() / (1 MINUTES)
+			if(time_elapsed < 45)
+				var/time_left = 45 - time_elapsed
+				to_chat(user, span_smallred("Pestra's rot is still preparing to bloom. Wait another [round(time_left, 0.1)] minutes."))
+				revert_cast()
 			if(!target.GetComponent(/datum/component/infestation_black_rot))
 				target.AddComponent(/datum/component/infestation_black_rot)
 				ADD_TRAIT(target, TRAIT_PESTRAS_BLESSING, TRAIT_MIRACLE)
@@ -425,7 +432,7 @@
 	revert_cast()
 	return FALSE
 
-/obj/effect/proc_holder/spell/invoked/cure_rot/cast_check(skipcharge = 0,mob/user = usr)
+/obj/effect/proc_holder/spell/invoked/cure_rot/cast_check(skipcharge, mob/user = usr)
 	if(!..())
 		return FALSE
 	var/found = null
@@ -501,7 +508,7 @@
 	devotion_cost = 45
 	var/datum/component/infestation_charges/charge_component
 
-/obj/effect/proc_holder/spell/invoked/pestra_heal/cast_check(skipcharge = 0, mob/user = usr)
+/obj/effect/proc_holder/spell/invoked/pestra_heal/cast_check(skipcharge, mob/user = usr)
 	if(!..())
 		return FALSE
 	if(!charge_component)
@@ -616,7 +623,7 @@
 	devotion_cost = 25
 	var/datum/component/infestation_charges/charge_component
 
-/obj/effect/proc_holder/spell/invoked/pestilent_blade/cast_check(skipcharge = 0, mob/user = usr)
+/obj/effect/proc_holder/spell/invoked/pestilent_blade/cast_check(skipcharge, mob/user = usr)
 	if(!..())
 		return FALSE
 
