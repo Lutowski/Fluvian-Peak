@@ -13,6 +13,14 @@
 	if(damage_amount < DAMAGE_PRECISION)
 		return
 	. = damage_amount
+	if(obj_flags & CLAMP_BREAK)
+		var/break_threshold = (integrity_failure * max_integrity)
+		if(obj_integrity > break_threshold)
+			if((obj_integrity - damage_amount) <= break_threshold)
+				obj_integrity = break_threshold
+		if(obj_broken || (integrity_failure && obj_integrity == break_threshold))	// We're either broken or we will be broken
+			if(damage_type != BURN)
+				damage_amount = 1
 	obj_integrity = max(obj_integrity - damage_amount, 0)
 	if(animate_dmg)
 		var/oldx = pixel_x
@@ -26,6 +34,12 @@
 	if(!obj_destroyed && obj_integrity <= 0)
 
 		obj_destruction(damage_flag)
+
+//forces the object to reach the integrity failure and break if it has one
+/obj/proc/force_obj_break(damage_flag = "")
+	if(!obj_broken && integrity_failure)
+		obj_integrity = integrity_failure * max_integrity
+		obj_break(damage_flag)
 
 
 ///returns the damage value of the attack after processing the obj's various armor protections
@@ -44,9 +58,6 @@
 		armor_protection = CLAMP(armor_protection - armor_penetration, min(armor_protection, 0), 100)
 	return round(damage_amount * (100 - armor_protection)*0.01, DAMAGE_PRECISION)
 
-/obj
-	var/attacked_sound = 'sound/blank.ogg'
-
 ///the sound played when the obj is damaged.
 /obj/proc/play_attack_sound(damage_amount, damage_type = BRUTE, damage_flag = 0)
 	switch(damage_type)
@@ -63,10 +74,6 @@
 
 /obj/hitby(atom/movable/AM, skipcatch, hitpush, blocked, datum/thrownthing/throwingdatum, damage_flag = "blunt")
 	..()
-	var/damage_taken = AM.throwforce
-	if(isitem(AM))
-		var/obj/item/as_item = AM
-		damage_taken *= as_item.demolition_mod
 	take_damage(AM.throwforce*0.1, BRUTE, damage_flag, 1, get_dir(src, AM))
 
 /obj/ex_act(severity, target, epicenter, devastation_range, heavy_impact_range, light_impact_range, flame_range)

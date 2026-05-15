@@ -130,6 +130,7 @@ GLOBAL_LIST_EMPTY(cached_drink_flat_icons)
 		/obj/item/reagent_containers/food/snacks/crow,
 		/obj/item/reagent_containers/food/snacks/tallow,
 		/obj/item/reagent_containers/food/snacks/tallow/red,
+		/obj/item/reagent_containers/food/snacks/tallow/black,
 		/obj/item/reagent_containers/food/snacks/veg,
 		/obj/item/reagent_containers/food/snacks/butter,
 		/obj/item/reagent_containers/food/snacks/deadmouse,
@@ -140,6 +141,13 @@ GLOBAL_LIST_EMPTY(cached_drink_flat_icons)
 		/obj/item/reagent_containers/food/snacks/grown/potato,
 		/obj/item/reagent_containers/food/snacks/grown/garlick,
 		/obj/item/reagent_containers/food/snacks/fat,
+		/obj/item/reagent_containers/food/snacks/sugarstatue,
+		/obj/item/reagent_containers/food/snacks/grown/sugarshape,
+		/obj/item/reagent_containers/food/snacks/grown/fruit/blackberry/skysugarbase,
+		/obj/item/reagent_containers/food/snacks/grown/fruit/tangerine_sugared,
+		/obj/item/reagent_containers/food/snacks/grown/fruit/blackberry_sugared,
+		/obj/item/reagent_containers/food/snacks/grown/nut_sugared,
+		/obj/item/reagent_containers/food/snacks/grown/skysugarslab,
 	)
 
 	var/list/slice_paths = list()

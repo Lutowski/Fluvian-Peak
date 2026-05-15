@@ -1,6 +1,6 @@
 /obj/structure/roguemachine/mail
 	name = "HERMES"
-	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. Insert coins to access."
+	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. Feed it coinage to access a slice of modernity."
 	icon = 'icons/roguetown/misc/machines.dmi'
 	icon_state = "mail"
 	density = FALSE
@@ -96,7 +96,8 @@
 	. = ..()
 	. += span_info("Right click to access the terminal for writing letters or purchasing supplies.")
 	. += span_info("Insert coins to purchase supplies or send a letters.")
-	. += span_info("Left click with a paper to send a prewritten letter for free.")
+	. += span_info("Left click with a paper or package to send a prewritten letter for free.")
+	. += span_info("You can wrap an item in paper to create a mailable package.")
 	if(HAS_TRAIT(user, TRAIT_INQUISITION))
 		. += span_info("<br>The MARQUETTE can be accessed via a secret compartment fitted within the HERMES. Load a Marque to access it.")
 		. += span_info("You can send arrival slips, accusation slips, fully loaded INDEXERs or confessions here.")
@@ -131,6 +132,12 @@
 	var/list/data = list()
 	data["balance"] = coin_loaded
 	return data
+
+/obj/structure/roguemachine/mail/proc/log_mail_send(mob/user, sender_name, recipient_name)
+	if(!user)
+		return
+	user.log_message("sent mail via [name]/[(loc)] from [sender_name] to [recipient_name]", LOG_GAME)
+	message_admins("[key_name(user)] sent mail via [name]/[(loc)] from [sender_name] to [recipient_name]")
 
 /obj/structure/roguemachine/mail/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	if(..())
@@ -181,9 +188,10 @@
 							playsound(X, 'sound/misc/hiss.ogg', 100, FALSE, -1)
 							break
 					if(found)
+						log_mail_send(user, sentfrom, send2place)
 						visible_message(span_warning("[user] sends something."))
 						playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-						SStreasury.give_money_treasury(1, "Mail Income")
+						SStreasury.mint(SStreasury.discretionary_fund, 1, "Mail Income")
 						record_round_statistic(STATS_TAXES_COLLECTED, 1)
 						coin_loaded -= 1
 						if(coin_loaded <= 0)
@@ -204,9 +212,10 @@
 							if(H.real_name == send2place)
 								H.apply_status_effect(/datum/status_effect/ugotmail)
 								H.playsound_local(H, 'sound/misc/mail.ogg', 100, FALSE, -1)
+						log_mail_send(user, sentfrom, send2place)
 						visible_message(span_warning("[user] sends something."))
 						playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-						SStreasury.give_money_treasury(1, "Mail Income")
+						SStreasury.mint(SStreasury.discretionary_fund, 1, "Mail Income")
 						record_round_statistic(STATS_TAXES_COLLECTED, 1)
 						coin_loaded -= 1
 						if(coin_loaded <= 0)
@@ -335,7 +344,7 @@
 				var/correct
 				if(HAS_TRAIT(I.signee, TRAIT_INQUISITION))
 					selfreport = TRUE
-				if(HAS_TRAIT(I.signee, TRAIT_CABAL) || HAS_TRAIT(I.signee, TRAIT_HORDE) || HAS_TRAIT(I.signee, TRAIT_DEPRAVED) || HAS_TRAIT(I.signee, TRAIT_COMMIE))
+				if(HAS_TRAIT(I.signee, TRAIT_CABAL) || HAS_TRAIT(I.signee, TRAIT_HORDE) || HAS_TRAIT(I.signee, TRAIT_DEPRAVED) || HAS_TRAIT(I.signee, TRAIT_FREEMAN))
 					correct = TRUE
 				if(I.signee.name in GLOB.excommunicated_players)	
 					correct = TRUE
@@ -457,7 +466,7 @@
 					var/selfreport
 					if(HAS_TRAIT(I.paired.subject, TRAIT_INQUISITION))
 						selfreport = TRUE
-					if(HAS_TRAIT(I.paired.subject, TRAIT_CABAL) || HAS_TRAIT(I.paired.subject, TRAIT_HORDE) || HAS_TRAIT(I.paired.subject, TRAIT_DEPRAVED) || HAS_TRAIT(I.paired.subject, TRAIT_COMMIE))
+					if(HAS_TRAIT(I.paired.subject, TRAIT_CABAL) || HAS_TRAIT(I.paired.subject, TRAIT_HORDE) || HAS_TRAIT(I.paired.subject, TRAIT_DEPRAVED) || HAS_TRAIT(I.paired.subject, TRAIT_FREEMAN))
 						correct = TRUE
 					if(I.paired.subject.name in GLOB.excommunicated_players)	
 						correct = TRUE
@@ -568,6 +577,7 @@
 						playsound(X, 'sound/misc/hiss.ogg', 100, FALSE, -1)
 						break
 				if(found)
+					log_mail_send(user, sentfrom, send2place)
 					visible_message(span_warning("[user] sends something."))
 					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 					return
@@ -598,6 +608,7 @@
 				if(!findmaster)
 					to_chat(user, span_warning("The master of mails has perished?"))
 				else
+					log_mail_send(user, sentfrom, send2place)
 					visible_message(span_warning("[user] sends something."))
 					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 					send_ooc_note("New letter from <b>[sentfrom].</b>", name = send2place)

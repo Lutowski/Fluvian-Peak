@@ -4,10 +4,11 @@
 	tutorial = "You are a Knight of Heartfelt, part of a brotherhood in service to your Lord. \
 	Now, alone and committed to safeguarding the court, you ride to the Peaks, resolved to ensure their safe arrival."
 	allowed_sexes = list(MALE, FEMALE)
-	allowed_races = RACES_NO_CONSTRUCT
+	forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED)
 	total_positions = 1
 	spawn_positions = 1
 	job_traits = list(TRAIT_NOBLE, TRAIT_HEAVYARMOR, TRAIT_HEARTFELT)
+	noble_income = 15
 	advclass_cat_rolls = list(CTAG_HFT_KNIGHT)
 	job_subclasses = list(
 		/datum/advclass/heartfelt/knight
@@ -29,7 +30,7 @@
 	var/prev_real_name = H.real_name
 	var/prev_name = H.name
 	var/honorary = "Ser"
-	if(should_wear_femme_clothes(H))
+	if(H.titles_pref == TITLES_F)
 		honorary = "Dame"
 	// check if they already have it to avoid stacking titles
 	if(findtextEx(H.real_name, "[honorary] ") == 0)
@@ -47,7 +48,7 @@
 	tutorial = "You are a Knight of Heartfelt, once part of a brotherhood in service to your Lord. \
 	Now, alone and committed to safeguarding what remains of your court, you ride to the Peaks, resolved to ensure their safe arrival."
 	allowed_sexes = list(MALE, FEMALE)
-	allowed_races = RACES_NO_CONSTRUCT
+	forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED)
 	outfit = /datum/outfit/job/heartfelt/knight
 	maximum_possible_slots = 1
 	pickprob = 100

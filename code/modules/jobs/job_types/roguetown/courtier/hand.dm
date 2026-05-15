@@ -6,7 +6,7 @@
 	total_positions = 1
 	spawn_positions = 1
 
-	allowed_races = RACES_NO_CONSTRUCT	//No noble constructs.
+	forbidden_races = list(RACES_CONSTRUCT RACES_DESPISED)	//No noble constructs.
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/job/roguetown/hand
 	advclass_cat_rolls = list(CTAG_HAND = 20)
@@ -20,7 +20,7 @@
 	max_pq = null
 	round_contrib_points = 3
 	cmode_music = 'sound/music/cmode/nobility/combat_spymaster.ogg'
-	job_traits = list(TRAIT_NOBLE)
+	job_traits = list(TRAIT_NOBLE, TRAIT_EXPERT_HUNTER)
 	vice_restrictions = list(/datum/charflaw/mute, /datum/charflaw/unintelligible) //Needs to use the throat - sometimes
 	job_subclasses = list(
 		/datum/advclass/hand/blademaster,
@@ -31,8 +31,10 @@
 /datum/outfit/job/roguetown/hand
 	backr = /obj/item/storage/backpack/rogue/satchel/short
 	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
-	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather/heavy/hand
+	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/light //regular
+	wrists = /obj/item/clothing/wrists/roguetown/bracers/hand
 	belt = /obj/item/storage/belt/rogue/leather/steel
+	neck = /obj/item/storage/belt/rogue/pouch/coins/mid
 	id = /obj/item/scomstone/garrison/hand
 	job_bitflag = BITFLAG_ROYALTY
 
@@ -47,7 +49,6 @@
 		if(ishuman(L))
 			var/mob/living/carbon/human/H = L
 			GLOB.court_spymaster += H.real_name
-			..()
 
 ///////////
 //CLASSES//
@@ -60,12 +61,13 @@
 	outfit = /datum/outfit/job/roguetown/hand/blademaster
 
 	category_tags = list(CTAG_HAND)
-	traits_applied = list(TRAIT_STEELHEARTED, TRAIT_HEAVYARMOR)
+	traits_applied = list(TRAIT_STEELHEARTED, TRAIT_MEDIUMARMOR)
 	subclass_stats = list(
 		STATKEY_PER = 3,
 		STATKEY_INT = 3,
 		STATKEY_STR = 2,
-		STATKEY_LCK = 1,
+		STATKEY_CON = 1,
+		STATKEY_LCK = 1, //less lucky than the rest... go figure
 	)
 	age_mod = /datum/class_age_mod/hand_blademaster
 	subclass_skills = list(
@@ -82,26 +84,24 @@
 		/datum/skill/misc/reading = SKILL_LEVEL_EXPERT,
 		/datum/skill/misc/riding = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/tracking = SKILL_LEVEL_NOVICE,
+		/datum/skill/misc/hunting = SKILL_LEVEL_APPRENTICE,
 	)
 
 /datum/outfit/job/roguetown/hand/blademaster/pre_equip(mob/living/carbon/human/H)
-	r_hand = /obj/item/rogueweapon/sword/long/oathkeeper/hand
+	r_hand = /obj/item/rogueweapon/sword/long/hand
 	beltr = /obj/item/rogueweapon/scabbard/sword/royal
 	head = /obj/item/clothing/head/roguetown/chaperon/noble/hand
 	armor = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/hand
 	pants = /obj/item/clothing/under/roguetown/tights/black
-	if(should_wear_femme_clothes(H))
-		shirt = /obj/item/clothing/suit/roguetown/shirt/dress/royal/hand_f
-	else if(should_wear_masc_clothes(H))
-		shirt = /obj/item/clothing/suit/roguetown/shirt/dress/royal/hand_m
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/dtace = 1,
 		/obj/item/rogueweapon/scabbard/sheath/royal = 1,
 		/obj/item/storage/keyring/lord = 1,
-		/obj/item/roguekey/skeleton = 1
+		/obj/item/roguekey/skeleton = 1,
+		/obj/item/hunting_map/white_stag = 1,
 	)
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 
 
 //Spymaster start
@@ -118,7 +118,7 @@
 		STATKEY_SPD = 3,
 		STATKEY_PER = 2,
 		STATKEY_INT = 2,
-		STATKEY_STR = -1,
+		STATKEY_LCK = 2,
 	)
 	age_mod = /datum/class_age_mod/hand_spymaster
 	subclass_skills = list(
@@ -136,6 +136,7 @@
 		/datum/skill/misc/sneaking = SKILL_LEVEL_MASTER,
 		/datum/skill/misc/stealing = SKILL_LEVEL_MASTER,
 		/datum/skill/misc/lockpicking = SKILL_LEVEL_MASTER, // not like they're gonna break into the vault.
+		/datum/skill/misc/hunting = SKILL_LEVEL_APPRENTICE,
 	)
 
 /datum/outfit/job/roguetown/hand/spymaster
@@ -152,18 +153,16 @@
 		/obj/item/lockpickring/mundane = 1,
 	)
 	if(H.dna.species.type in NON_DWARVEN_RACE_TYPES)
-		shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/shadowrobe
 		cloak = /obj/item/clothing/cloak/half/shadowcloak
 		gloves = /obj/item/clothing/gloves/roguetown/fingerless/shadowgloves
 		mask = /obj/item/clothing/mask/rogue/shepherd/shadowmask
 		pants = /obj/item/clothing/under/roguetown/trou/shadowpants
 	else
 		cloak = /obj/item/clothing/cloak/raincloak/mortus //cool spymaster cloak
-		shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/guard
 		backr = /obj/item/storage/backpack/rogue/satchel/black
 		pants = /obj/item/clothing/under/roguetown/tights/black
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 
 //Advisor Start
 /datum/advclass/hand/advisor
@@ -172,19 +171,20 @@
 	outfit = /datum/outfit/job/roguetown/hand/advisor
 
 	category_tags = list(CTAG_HAND)
-	traits_applied = list(TRAIT_ALCHEMY_EXPERT, TRAIT_MAGEARMOR, TRAIT_ARCYNE_T2)
+	traits_applied = list(TRAIT_ALCHEMY_EXPERT, TRAIT_ARCYNE)
 	subclass_stats = list(
 		STATKEY_INT = 4,
 		STATKEY_PER = 3,
-		STATKEY_WIL = 2,
+		STATKEY_SPD = 1,
+		STATKEY_WIL = 1,
 		STATKEY_LCK = 2,
 	)
 	age_mod = /datum/class_age_mod/hand_advisor
-	subclass_spellpoints = 15
+	subclass_mage_aspects = list("mastery" = FALSE, "major" = 1, "minor" = 1, "utilities" = 2, "ward" = TRUE)
 	subclass_skills = list(
 		/datum/skill/combat/crossbows = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/knives = SKILL_LEVEL_JOURNEYMAN,
-		/datum/skill/combat/swords = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/combat/swords = SKILL_LEVEL_JOURNEYMAN, //they get the whole cane sword, they should use the whole cane sword
 		/datum/skill/combat/staves = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/swimming = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/climbing = SKILL_LEVEL_JOURNEYMAN,
@@ -197,6 +197,7 @@
 		/datum/skill/misc/medicine = SKILL_LEVEL_EXPERT,
 		/datum/skill/misc/lockpicking = SKILL_LEVEL_EXPERT,
 		/datum/skill/magic/arcane = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/misc/hunting = SKILL_LEVEL_APPRENTICE,
 	)
 /datum/outfit/job/roguetown/hand/advisor
 	armor = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/hand/advisor
@@ -208,19 +209,16 @@
 
 //Advisor start. Trades combat skills for more knowledge and skills - for older hands, hands that don't do combat - people who wanna play wizened old advisors.
 /datum/outfit/job/roguetown/hand/advisor/pre_equip(mob/living/carbon/human/H)
-	if(should_wear_femme_clothes(H))
-		shirt = /obj/item/clothing/suit/roguetown/shirt/dress/royal/hand_f
-	else if(should_wear_masc_clothes(H))
-		shirt = /obj/item/clothing/suit/roguetown/shirt/dress/royal/hand_m
 	backpack_contents = list(
 		/obj/item/rogueweapon/scabbard/sheath/noble = 1,
 		/obj/item/storage/keyring/lord = 1,
 		/obj/item/roguekey/skeleton = 1,
 		/obj/item/lockpickring/mundane = 1,
 		/obj/item/reagent_containers/glass/bottle/rogue/poison = 1,//starts with a vial of poison, like all wizened evil advisors do!
+		/obj/item/book/spellbook = 1,
 	)
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 
 ////////////////////
 ///SPELLS & VERBS///

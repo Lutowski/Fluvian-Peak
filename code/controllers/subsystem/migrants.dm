@@ -258,7 +258,7 @@ SUBSYSTEM_DEF(migrants)
 
 	SSticker.minds += character.mind
 	GLOB.joined_player_list += character.ckey
-	update_wretch_slots()
+	update_scaling_slots()
 	if(character.client)
 		character.client.update_ooc_verb_visibility()
 
@@ -367,7 +367,7 @@ SUBSYSTEM_DEF(migrants)
 	if(!player.prefs)
 		return FALSE
 	var/datum/preferences/prefs = player.prefs
-	if(role.allowed_races && !(prefs.pref_species.type in role.allowed_races))
+	if(role.forbidden_races && (prefs.pref_species.type in role.forbidden_races))
 		return FALSE
 	if(role.allowed_sexes && !(prefs.gender in role.allowed_sexes))
 		return FALSE

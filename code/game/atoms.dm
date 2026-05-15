@@ -48,14 +48,7 @@
 
 	var/voicecolor_override
 
-	///overlays that should remain on top and not normally removed when using cut_overlay functions, like c4.
-	var/list/priority_overlays
-	/// a very temporary list of overlays to remove
-	var/list/remove_overlays
-	/// a very temporary list of overlays to add
-	var/list/add_overlays
-
-	///vis overlays managed by SSvis_overlays to automaticaly turn them like other overlays
+	///vis overlays managed by SSvis_overlays so they survive icon rebuilds while inheriting owner dir
 	var/list/managed_vis_overlays
 	///overlays managed by update_overlays() to prevent removing overlays that weren't added by the same proc
 	var/list/managed_overlays
@@ -231,7 +224,6 @@
 	orbiters = null // The component is attached to us normaly and will be deleted elsewhere
 
 	LAZYCLEARLIST(overlays)
-	LAZYCLEARLIST(priority_overlays)
 
 	QDEL_NULL(light)
 	QDEL_NULL(ai_controller)
@@ -458,7 +450,7 @@
 				var/obj/item/reagent_containers/container = src
 				is_closed = !container.spillable
 			if(is_closed == FALSE && reagents.total_volume) // if the container is open, and there's liquids in there
-				user.visible_message(span_info("[user] takes a whiff of the [src]..."), span_info("I take a whiff of the [src]..."))
+				user.visible_message(span_info("[user] takes a whiff of [src]..."), span_info("I take a whiff of [src]..."))
 				. += span_notice("I smell [src.reagents.generate_scent_message()].")
 				if (HAS_TRAIT(user, TRAIT_LEGENDARY_ALCHEMIST))
 					var/full_reagents = ""
@@ -506,6 +498,8 @@
 		update_icon_state()
 
 	if(!(signalOut & COMSIG_ATOM_NO_UPDATE_OVERLAYS))
+		if(length(managed_vis_overlays))
+			SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
 		var/list/new_overlays = update_overlays()
 		if(managed_overlays)
 			cut_overlay(managed_overlays)
@@ -565,7 +559,7 @@
  */
 /atom/proc/hitby(atom/movable/AM, skipcatch, hitpush, blocked, datum/thrownthing/throwingdatum, damage_flag = "blunt")
 	SEND_SIGNAL(src, COMSIG_ATOM_HITBY, AM, skipcatch, hitpush, blocked, throwingdatum, damage_flag)
-	if(density) //thrown stuff bounces off dense stuff in no grav, unless the thrown stuff ends up inside what it hit(embedding, bola, etc...).
+	if(density && !(pass_flags_self & LETPASSTHROW)) //thrown stuff bounces off dense stuff in no grav, unless the thrown stuff ends up inside what it hit(embedding, bola, etc...).
 		addtimer(CALLBACK(src, PROC_REF(hitby_react), AM), 2)
 
 /**
@@ -615,7 +609,9 @@
 	var/list/blood_dna = M.get_blood_dna_list()
 	if(!blood_dna)
 		return FALSE
-	return add_blood_DNA(blood_dna)
+	. = add_blood_DNA(blood_dna)
+	var/datum/component/decal/blood/B = GetComponent(/datum/component/decal/blood)
+	B?.set_blood_color(M.get_blood_color())
 
 ///Called when gravity returns after floating I think
 /atom/proc/handle_fall()
@@ -1077,6 +1073,8 @@
 			log_game(log_text)
 		if(LOG_MECHA)
 			log_mecha(log_text)
+		if(LOG_NPC_SAY)
+			log_npc_say(log_text)
 		else
 			stack_trace("Invalid individual logging type: [message_type]. Defaulting to [LOG_GAME] (LOG_GAME).")
 			log_game(log_text)
@@ -1277,7 +1275,7 @@
 /atom/proc/get_filter_index(name)
 	return filter_data?.Find(name)
 
-//Automatically turns based on nearby walls, destroys if not valid. 
+//Automatically turns based on nearby walls, destroys if not valid.
 /atom/proc/auto_turn_destructive()
 	var/turf/closed/T = null
 	var/gotdir = 0

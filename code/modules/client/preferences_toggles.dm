@@ -60,6 +60,22 @@
 		else
 			to_chat(src, "Your character information will no longer be viewable when masked.")
 
+/client/verb/toggle_instruments()
+	set category = "Options"
+	set name = "Toggle Instrument Sounds"
+	if(prefs)
+		prefs.toggles ^= SOUND_INSTRUMENTS
+		prefs.save_preferences()
+	to_chat(src, "You will[(prefs.toggles & SOUND_INSTRUMENTS) ? "" : " no longer"] hear instrument-played songs.")
+
+/client/verb/toggle_midis()
+	set category = "Options"
+	set name = "Toggle Admin Midis"
+	if(prefs)
+		prefs.toggles ^= SOUND_MIDI
+		prefs.save_preferences()
+	to_chat(src, "You will[prefs.toggles & SOUND_MIDI ? "" : " no longer"] hear admin-played sounds.")
+
 /client/verb/mute_animal_emotes()
 	set category = "Options"
 	set name = "Toggle Animal Noise Emotes"
@@ -95,7 +111,7 @@
 
 /client/verb/toggle_compliance_notifs() // The messages need to be on-by-default while this is in its early stages.
 	set category = "Options"
-	set name = "Compliance Notifs"
+	set name = "Toggle Compliance Notifs"
 	if(prefs)
 		prefs.compliance_notifs = !prefs.compliance_notifs
 		prefs.save_preferences()
@@ -190,14 +206,37 @@
 	if(mob)
 		SEND_SOUND(mob, sound(null))
 
+/client/verb/toggle_area_music()
+	set category = "Options"
+	set name = "Toggle Area Music"
+	if(prefs)
+		prefs.stopdroning = !prefs.stopdroning
+		prefs.save_preferences()
+
+		if(prefs.stopdroning)
+			to_chat(src, "You will no longer hear looping area music.")
+			SSdroning.kill_droning(src)
+			SSdroning.kill_loop(src)
+		else
+			to_chat(src, "You will now hear looping area music.")
+
 /client/verb/cmode_strip()
 	set name = "Combat Mode Stripping"
 	set category = "Options"
 	set desc = ""
 	if(prefs)
-		prefs.toggles ^= CMODE_STRIPPING
+		prefs.combat_toggles ^= CMODE_STRIPPING
 		prefs.save_preferences()
-	to_chat(src, "You will [prefs.toggles & CMODE_STRIPPING ? "" : "not"] be able to open the strip menu in combat mode.")
+	to_chat(src, "You will [prefs.combat_toggles & CMODE_STRIPPING ? "" : "not"] be able to open the strip menu in combat mode.")
+
+/client/verb/antighost()
+	set name = "Toggle Antighost"
+	set category = "Options"
+	set desc = ""
+	if(prefs)
+		prefs.ghost_toggles ^= TOGGLE_ANTIGHOST
+		prefs.save_preferences()
+	to_chat(src, "You are currently[prefs.ghost_toggles & TOGGLE_ANTIGHOST ? " not" : ""] orbitable.")
 
 /client/verb/mood_messages_in_chat()
 	set category = "Options"
@@ -232,25 +271,25 @@
 	set category = "Options"
 	set name = "Toggle XP Text"
 	if(prefs)
-		prefs.floating_text_toggles ^= XP_TEXT
+		prefs.combat_toggles ^= XP_TEXT
 		prefs.save_preferences()
-	to_chat(src, "You will[prefs.floating_text_toggles & XP_TEXT ? "" : " not"] see XP pop ups.")
+	to_chat(src, "You will[prefs.combat_toggles & XP_TEXT ? "" : " not"] see XP pop ups.")
 
 /client/verb/toggle_hitzonetext() // Whether the user can see a text popup for where they got hit.
 	set category = "Options"
 	set name = "Toggle Hitzone Text"
 	if(prefs)
-		prefs.floating_text_toggles ^= HITZONE_TEXT
+		prefs.combat_toggles ^= HITZONE_TEXT
 		prefs.save_preferences()
-	to_chat(src, "You will[prefs.floating_text_toggles & HITZONE_TEXT ? "" : " not"] see floating text for where you were hit.")
+	to_chat(src, "You will[prefs.combat_toggles & HITZONE_TEXT ? "" : " not"] see floating text for where you were hit.")
 
 /client/verb/toggle_floatingtext() // Whether the user can see the balloon pop ups at all.
 	set category = "Options"
 	set name = "Toggle Floating Text"
 	if(prefs)
-		prefs.floating_text_toggles ^= FLOATING_TEXT
+		prefs.combat_toggles ^= FLOATING_TEXT
 		prefs.save_preferences()
-	to_chat(src, "You will [prefs.floating_text_toggles & FLOATING_TEXT ? "see" : "not see any"] floating text.")
+	to_chat(src, "You will [prefs.combat_toggles & FLOATING_TEXT ? "see" : "not see any"] floating text.")
 
 /client/verb/toggle_deadchat() // Whether the user can see DSAY or not.
 	set name = "Show/Hide Deadchat"
