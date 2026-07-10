@@ -92,10 +92,18 @@
 
 /datum/emote/living/meditate/run_emote(mob/user, params, type_override, intentional)
 	. = ..()
-	if(do_after(user, 1 MINUTES))
-		user.add_stress(/datum/stressevent/meditation)
-		to_chat(user, span_green("My meditations were rewarding."))
-
+	if(HAS_TRAIT(user, TRAIT_IRONMAN))
+		to_chat(user, span_green("You focus inwards..."))
+		if(do_after(user, 1 MINUTES))
+			var/mob/living/U = user
+			var/percent = U.max_energy * 0.3
+			user.add_stress(/datum/stressevent/meditation_ironman)
+			user.energy_add(percent)
+			playsound(user, 'sound/misc/machineyes.ogg', 25)
+	else
+		to_chat(user, span_green("You focus inwards..."))
+		if(do_after(user, 1 MINUTES))
+			user.add_stress(/datum/stressevent/meditation)
 
 /datum/emote/living/bow
 	key = "bow"
@@ -130,7 +138,7 @@
 
 /mob/living/carbon/human/verb/emote_burp()
 	set name = "Burp"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("burp", intentional = TRUE)
 
@@ -144,7 +152,7 @@
 
 /mob/living/carbon/human/verb/emote_choke()
 	set name = "Choke"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("choke", intentional = TRUE)
 
@@ -200,7 +208,7 @@
 
 /mob/living/carbon/human/verb/emote_cough()
 	set name = "Cough"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("cough", intentional = TRUE)
 
@@ -214,7 +222,7 @@
 
 /mob/living/carbon/human/verb/emote_clearthroat()
 	set name = "Clear Throat"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("clearthroat", intentional = TRUE)
 
@@ -235,7 +243,6 @@
 	key = ""
 	key_third_person = ""
 	message = "gasps out their last breath."
-	message_monkey = "lets out a faint chimper as it collapses and stops moving..."
 	message_simple =  "falls limp."
 	stat_allowed = UNCONSCIOUS
 
@@ -308,7 +315,7 @@
 
 /mob/living/carbon/human/verb/emote_gag()
 	set name = "Gag"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("gag", intentional = TRUE)
 
@@ -323,7 +330,7 @@
 
 /mob/living/carbon/human/verb/emote_gasp()
 	set name = "Gasp"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("gasp", intentional = TRUE)
 
@@ -357,7 +364,7 @@
 
 /mob/living/carbon/human/verb/emote_giggle()
 	set name = "Giggle"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("giggle", intentional = TRUE)
 
@@ -383,7 +390,7 @@
 
 /mob/living/carbon/human/verb/emote_chuckle()
 	set name = "Chuckle"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("chuckle", intentional = TRUE)
 
@@ -432,7 +439,7 @@
 
 /mob/living/carbon/human/verb/emote_groan()
 	set name = "Groan"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("groan", intentional = TRUE)
 
@@ -504,6 +511,12 @@
 				message_param = "kisses %t on \the [parse_zone(H.zone_selected)]."
 	playsound(target.loc, pick('sound/vo/kiss (1).ogg','sound/vo/kiss (2).ogg'), 100, FALSE, -1)
 	if(user.mind)
+		/// Blackblood hidden interactions
+		var/mob/living/carbon/carbs = target
+		if(HAS_TRAIT(carbs, TRAIT_BLACKBLOOD) && HAS_TRAIT(user, TRAIT_INQUISITION) && !HAS_TRAIT(carbs, TRAIT_PSYDONIAN_GRIT))
+			user.add_stress(/datum/stressevent/inq_trauma)
+			carbs.emote("whimper")
+
 		record_round_statistic(STATS_KISSES_MADE)
 
 /datum/emote/living/lick
@@ -606,6 +619,11 @@
 	if(ishuman(target))
 		playsound(target.loc, pick('sound/vo/hug.ogg'), 100, FALSE, -1)
 		if(user.mind)
+			/// Blackblood hidden interactions
+			var/mob/living/carbon/carbs = target
+			if(HAS_TRAIT(carbs, TRAIT_BLACKBLOOD) && HAS_TRAIT(user, TRAIT_INQUISITION) && !HAS_TRAIT(carbs, TRAIT_PSYDONIAN_GRIT))
+				carbs.add_stress(/datum/stressevent/inq_trauma)
+				carbs.stress_freakout()
 			record_round_statistic(STATS_HUGS_MADE)
 			SEND_SIGNAL(user, COMSIG_MOB_HUGGED, target)
 
@@ -684,6 +702,12 @@
 		H.flash_fullscreen("redflash3")
 		H.AdjustSleeping(-50)
 		playsound(target.loc, 'sound/foley/slap.ogg', 100, TRUE, -1)
+		/// Blackblood hidden interactions
+		var/mob/living/carbon/carbs = target
+		if(HAS_TRAIT(target, TRAIT_BLACKBLOOD) && HAS_TRAIT(user, TRAIT_INQUISITION) && !HAS_TRAIT(target, TRAIT_PSYDONIAN_GRIT))
+			user.add_stress(/datum/stressevent/inq_trauma)
+			carbs.emote("whimper")
+
 
 /datum/emote/living/pinch
 	key = "pinch"
@@ -742,7 +766,7 @@
 
 /mob/living/carbon/human/verb/emote_laugh()
 	set name = "Laugh"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("laugh", intentional = TRUE)
 
@@ -803,7 +827,7 @@
 
 /mob/living/carbon/human/verb/emote_scream()
 	set name = "Scream"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("scream", intentional = TRUE)
 
@@ -856,6 +880,24 @@
 	needs_emotion = TRUE
 
 /datum/emote/living/scream/agony/run_emote(mob/user, params, type_override, intentional)
+	. = ..()
+	if(.)
+		for(var/mob/living/carbon/human/L in viewers(7,user))
+			if(L == user)
+				L.sate_addiction(/datum/charflaw/addiction/masochist)
+				continue
+			if(get_dist(L, user) <= 2 && L != user)
+				L.sate_addiction(/datum/charflaw/addiction/sadist)
+
+/datum/emote/living/scream/superagony
+	key = "superagony"
+	message = "screams in ungodly agony!"
+	emote_type = EMOTE_AUDIBLE
+	only_forced_audio = TRUE
+	show_runechat = FALSE
+	needs_emotion = TRUE
+
+/datum/emote/living/scream/superagony/run_emote(mob/user, params, type_override, intentional)
 	. = ..()
 	if(.)
 		for(var/mob/living/carbon/human/L in viewers(7,user))
@@ -994,7 +1036,7 @@
 
 /mob/living/carbon/human/verb/emote_rage()
 	set name = "Rage"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("rage", intentional = TRUE)
 
@@ -1012,7 +1054,7 @@
 
 /mob/living/carbon/human/verb/emote_attnwhistle()
 	set name = "Attnwhistle"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("attnwhistle", intentional = TRUE)
 
@@ -1066,7 +1108,7 @@
 
 /mob/living/carbon/human/verb/emote_sigh()
 	set name = "Sigh"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("sigh", intentional = TRUE)
 
@@ -1085,7 +1127,7 @@
 
 /mob/living/carbon/human/verb/emote_whistle()
 	set name = "Whistle"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("whistle", intentional = TRUE)
 
@@ -1099,7 +1141,7 @@
 
 /mob/living/carbon/human/verb/emote_hmm()
 	set name = "Hmm"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("hmm", intentional = TRUE)
 
@@ -1113,7 +1155,7 @@
 
 /mob/living/carbon/human/verb/emote_huh()
 	set name = "Huh"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("huh", intentional = TRUE)
 
@@ -1127,7 +1169,7 @@
 
 /mob/living/carbon/human/verb/emote_hum()
 	set name = "Hum"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("hum", intentional = TRUE)
 
@@ -1176,7 +1218,7 @@
 
 /mob/living/carbon/human/verb/emote_shh()
 	set name = "Shh"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("shh", intentional = TRUE)
 
@@ -1204,7 +1246,7 @@
 
 /mob/living/carbon/human/verb/emote_snore()
 	set name = "Snore"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 	emote("snore", intentional = TRUE)
 
 /datum/emote/living/stare
@@ -1259,7 +1301,7 @@
 
 /mob/living/carbon/human/verb/emote_warcry()
 	set name = "Warcry"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("warcry", intentional = TRUE)
 
@@ -1279,7 +1321,7 @@
 
 /mob/living/carbon/human/verb/emote_whimper()
 	set name = "Whimper"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("whimper", intentional = TRUE)
 
@@ -1298,7 +1340,7 @@
 
 /mob/living/carbon/human/verb/emote_yawn()
 	set name = "Yawn"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("yawn", intentional = TRUE)
 
@@ -1461,7 +1503,7 @@
 
 /mob/living/carbon/human/verb/emote_snap()
 	set name = "Snap"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("snap", intentional = TRUE)
 
@@ -1474,7 +1516,7 @@
 
 /mob/living/carbon/human/verb/emote_blink()
 	set name = "Blink"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("blink", intentional = TRUE)
 
@@ -1487,7 +1529,7 @@
 
 /mob/living/carbon/human/verb/emote_stomp()
 	set name = "Stomp"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("stomp", intentional = TRUE)
 
@@ -1500,7 +1542,7 @@
 
 /mob/living/carbon/human/verb/emote_snap2()
 	set name = "Snap2"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("snap2", intentional = TRUE)
 
@@ -1513,7 +1555,7 @@
 
 /mob/living/carbon/human/verb/emote_snap3()
 	set name = "Snap3"
-	set category = "Noises"
+	set category = "Emotes.Noises"
 
 	emote("snap3", intentional = TRUE)
 
@@ -1914,57 +1956,3 @@
 	set category = "Emotes"
 
 	emote("charisma", intentional = TRUE)
-
-/mob/living/carbon/human/verb/dive()
-	set name = "Dive"
-	set category = "Swimming"
-	
-	var/turf/T = get_turf(src)
-	if(!istype(T, /turf/open/water/transparent))
-		to_chat(src, span_warning("You must be in deep water to dive!"))
-		return
-	
-	var/turf/below = GET_TURF_BELOW(T)
-	if(!below || !istype(below, /turf/open/water/transparent))
-		to_chat(src, span_warning("It's not deep enough here to dive."))
-		return
-
-	src.swim_z(DOWN)
-
-/mob/living/carbon/human/verb/surface()
-	set name = "Surface"
-	set category = "Swimming"
-	
-	var/turf/T = get_turf(src)
-	
-	if(!istype(T, /turf/open/water/transparent/inner))
-		to_chat(src, span_warning("You are already at the surface!"))
-		return
-
-	var/turf/above = GET_TURF_ABOVE(T)
-	if(!above || !istype(above, /turf/open/water/transparent))
-		to_chat(src, span_warning("Something is blocking you from surfacing here."))
-		return
-
-	src.swim_z(UP)
-
-/mob/living/carbon/human/proc/swim_z(direction)
-	if(stat || IsKnockdown() || IsParalyzed()) 
-		to_chat(src, span_warning("You are too incapacitated to move!"))
-		return FALSE
-	
-	var/turf/current_T = get_turf(src)
-	var/target_z = (direction == UP) ? (z + 1) : (z - 1)
-	var/turf/target_T = locate(current_T.x, current_T.y, target_z)
-
-	if(istype(target_T, /turf/open/water))
-		if(!stamina_add(direction == DOWN ? 20 : 10)) 
-			to_chat(src, span_warning("You are too exhausted to [direction == UP ? "surface" : "dive"]!"))
-			return FALSE
-
-		visible_message(span_notice("[src] [direction == UP ? "emerges to the surface" : "dives into the depths"]."))
-		forceMove(target_T)
-		return TRUE
-		
-	to_chat(src, span_warning("You can't [direction == UP ? "emerge" : "dive"] here."))
-	return FALSE

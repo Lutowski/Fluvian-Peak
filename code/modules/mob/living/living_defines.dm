@@ -124,7 +124,7 @@
 
 	var/list/obj/effect/proc_holder/abilities = list()
 
-	var/can_be_held = FALSE	//whether this can be picked up and held.
+	var/item_state // iconstate for when we get turned into an item
 
 	var/ventcrawl_layer = PIPING_LAYER_DEFAULT
 	var/losebreath = 0
@@ -218,7 +218,6 @@
 
 	var/tempatarget = null
 	var/pegleg = 0			//Handles check & slowdown for peglegs. Fuckin' bootleg, literally, but hey it at least works.
-	var/construct = 0
 	var/burialrited = FALSE
 
 	/// Toggle delay for Specials, or really anything else that you don't want input spam to instantly cycle through.
@@ -228,13 +227,17 @@
 
 	/// Whether we are in a swingdelay, used to check for disrupted swingdelays.
 	var/swing_state = FALSE
-	var/is_swimming = FALSE
-	var/is_underwater = FALSE
-	var/drowning_drowniness = 0
-	var/breath_remaining = 100
-	var/max_breath = 100
-	var/last_breath_spent = 0
-	var/client/swimming_filter_client = null
-
+	/// Whether we are mid-climb-action, so an incoming attack can disrupt it. Distinct from climbing (wall hang).
+	var/mid_climb = FALSE
 	/// This one's for when you're choking to death.
 	var/last_gasp
+
+	/// Had to put this here because attack() is not used solely by humans. That's fucked up, manne.
+	var/dualwield_attack_count = 0
+	var/dualwield_processing = FALSE
+	var/dualwield_finisher = FALSE
+	var/dualwield_resets_in = 0
+	var/dualwield_buff_cd = 0
+  
+	/// "In Combat" timer that is used to prevent stealth and a few other mechanics while active.
+	var/in_combat_until

@@ -103,45 +103,6 @@
 	log_game("[key_name(user)] sent a message to [key_name(summoner)] with contents [message]")
 	return TRUE
 
-/datum/action/cooldown/spell/familiar_transform
-	name = "Spirit Transformation"
-	desc = "Draw your form into itself, becoming a small orb that is wearable as a pendant, or revert to your original form."
-	button_icon_state = "rune2"
-
-	click_to_activate = FALSE
-	self_cast_possible = TRUE
-	charge_required = FALSE
-	cooldown_time = 1 SECONDS
-
-	primary_resource_type = SPELL_COST_NONE
-	spell_requirements = NONE
-	spell_impact_intensity = SPELL_IMPACT_NONE
-
-/datum/action/cooldown/spell/familiar_transform/cast(mob/living/simple_animal/pet/familiar/user)
-	. = ..()
-	if(!istype(user))
-		return FALSE
-	if(isturf(user.loc))
-		// we're on the ground somewhere, so we should become orb
-		var/obj/item/magic/familiar/familiar_spirit/spirit = new /obj/item/magic/familiar/familiar_spirit(user.loc)
-		spirit.icon = user.icon
-		spirit.icon_state = user.icon_living
-		spirit.name = user.name
-		spirit.desc = "A small orb, containing the spirit of [user.name]."
-		user.forceMove(spirit)
-		user.status_flags |= GODMODE
-		return TRUE
-	else
-		if(user.health<=0) // you shouldn't be able to cast this while dead, but just in case
-			return FALSE
-		var/obj/item/magic/familiar/familiar_spirit/spirit = user.loc
-		if(!istype(spirit)) // we might be inside another item like warden tools
-			return FALSE
-		user.forceMove(get_turf(user))
-		user.status_flags &= ~GODMODE
-		qdel(spirit)
-		return TRUE
-
 /datum/action/cooldown/spell/fae_brew
 	name = "Alchemical Stomach"
 	desc = "Toggle your brewing ability; while enabled, and you have a stock of reagents inside yourself, you will attempt to brew them into a potion using your summoner's alchemical skill."
@@ -246,12 +207,14 @@
 		return FALSE
 	target.fire_act(1,10) // shouldn't be oppressive by any means it's 1 stack every 10 seconds
 
-/obj/effect/proc_holder/spell/invoked/matthios_firebreath/infernal
+/datum/action/cooldown/spell/matthios/raze/infernal
 	name = "Hellfyre Wave"
-	desc = "Manifest your flames in a wave in front of you, burning down all in your path."
-	miracle = FALSE
-	devotion_cost = 0 // not a miracle
-	recharge_time = 30 SECONDS // on par with other familiar abilities. from inround testing this really is not strong enough to warrant a 2 min cd
+	desc = "Exhale a cone of hellfyre before you, scorching enemies and igniting the ground. These flames are also strong enough to turn unworthy corpses into ashes and dust."
+	fluff_desc = "The hellfyre is always within your lungs, for you have breathed it, lived in it. Exhaling that to profane this realm is no difficult task."
+	primary_resource_cost = 0
+	cooldown_time = 1 MINUTES
+	familiar = TRUE
+	required_items = null
 
 /obj/effect/proc_holder/spell/self/infernal_surge
 	name = "Infernal Surge"
@@ -437,7 +400,7 @@
 	R.fiber_salvage = FALSE
 
 	// Conjured glow
-	R.AddComponent(/datum/component/conjured_item, GLOW_COLOR_EARTHEN)
+	R.AddComponent(/datum/component/conjured_item, GLOW_COLOR_EARTHEN, FALSE, H, src)
 
 	H.put_in_hands(R)
 	conjured_item = R
